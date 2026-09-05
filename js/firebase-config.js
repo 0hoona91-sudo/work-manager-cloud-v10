@@ -1,11 +1,11 @@
 // Firebase Console에서 발급되는 웹앱 공개 설정입니다. 비밀번호나 비밀키가 아닙니다.
 export const firebaseConfig = {
-  apiKey: "__FIREBASE_API_KEY__",
-  authDomain: "__FIREBASE_AUTH_DOMAIN__",
-  projectId: "__FIREBASE_PROJECT_ID__",
-  storageBucket: "__FIREBASE_STORAGE_BUCKET__",
-  messagingSenderId: "__FIREBASE_MESSAGING_SENDER_ID__",
-  appId: "__FIREBASE_APP_ID__",
+  apiKey: "AIzaSyAnFfqYDusrRl3cYSMNkQiaLcoDBpFztXE",
+  authDomain: "work-management-nh-260905.firebaseapp.com",
+  projectId: "work-management-nh-260905",
+  storageBucket: "work-management-nh-260905.firebasestorage.app",
+  messagingSenderId: "800936904414",
+  appId: "1:800936904414:web:a27fb52acfb4fb9942a44f",
 };
 
 export const appConfig = {
