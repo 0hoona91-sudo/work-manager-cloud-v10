@@ -31,6 +31,8 @@ assert.match(cloud, /https:\/\/www\.googleapis\.com\/auth\/drive\.file/, "Drive 
 assert.doesNotMatch(cloud, /auth\/drive(?:["'])/, "전체 Google Drive 권한을 요청하면 안 됩니다.");
 assert.match(cloud, /generatedKeys/, "생성 키 잠금 컬렉션이 있어야 합니다.");
 assert.match(cloud, /changeLogs/, "문서 단위 변경이력 컬렉션이 있어야 합니다.");
+assert.match(cloud, /id="cloudOwnerUid"/, "최초 로그인에서 소유자 UID를 확인할 수 있어야 합니다.");
+assert.match(cloud, /UID는 비밀번호나 인증코드가 아닌 계정 식별값입니다/, "UID 안내가 비밀정보와 구분되어야 합니다.");
 
 assert.match(rules, /function isOwner\(\)/, "소유자 검사 함수가 있어야 합니다.");
 assert.match(rules, /request\.auth\.uid == '(?:__OWNER_UID__|[A-Za-z0-9_-]+)'/, "Firebase UID로 소유자를 제한해야 합니다.");
