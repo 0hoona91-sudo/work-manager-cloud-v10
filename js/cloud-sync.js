@@ -28,7 +28,7 @@ import {
   serverTimestamp,
   writeBatch,
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
-import { appConfig, firebaseConfig } from "./firebase-config.js";
+import { appConfig, firebaseConfig } from "./firebase-config.js?v=20260905-1";
 
 const SCHEMA_VERSION = 11;
 const DATA_COLLECTIONS = [
