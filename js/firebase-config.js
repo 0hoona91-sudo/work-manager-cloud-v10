@@ -9,8 +9,8 @@ export const firebaseConfig = {
 };
 
 export const appConfig = {
-  // 배포 직전 최초 로그인에서 확인한 Firebase Authentication UID로 고정합니다.
-  ownerUid: "__OWNER_UID__",
+  // Firebase Authentication에서 확인한 단일 소유자 UID입니다.
+  ownerUid: "gj0UktB96BOo5UWO9Q4pZopSS6w1",
   driveFolderName: "업무관리시스템_매뉴얼사진",
   driveAppMarker: "work-manager-cloud-v10",
 };
