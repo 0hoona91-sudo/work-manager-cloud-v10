@@ -43,7 +43,13 @@ service cloud.firestore {
     }
     match /generatedKeys/{id} {
       allow read, create: if isOwner();
-      allow update, delete: if false;
+      // 오프라인인 두 기기가 같은 자동업무를 만들었을 때 두 번째 전송은
+      // create가 아니라 update로 판정될 수 있다. 잠금의 핵심 값이 완전히
+      // 같을 때만 멱등 재전송을 허용하고, 다른 업무 ID로 바꾸는 것은 막는다.
+      allow update: if isOwner()
+        && request.resource.data.generatedKey == resource.data.generatedKey
+        && request.resource.data.taskId == resource.data.taskId;
+      allow delete: if false;
     }
     match /changeLogs/{id} {
       allow read: if isOwner();
