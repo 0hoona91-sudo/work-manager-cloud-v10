@@ -1,0 +1,46 @@
+import assert from "node:assert/strict";
+import fs from "node:fs";
+
+const cloud = fs.readFileSync(new URL("../js/cloud-sync.js", import.meta.url), "utf8");
+const rules = fs.readFileSync(new URL("../firestore.rules", import.meta.url), "utf8");
+const manifest = JSON.parse(fs.readFileSync(new URL("../manifest.webmanifest", import.meta.url), "utf8"));
+const serviceWorker = fs.readFileSync(new URL("../sw.js", import.meta.url), "utf8");
+
+for (const collection of [
+  "tasks",
+  "checklistItems",
+  "taskLinks",
+  "templates",
+  "linkedRules",
+  "manualBlocks",
+  "owners",
+  "categories",
+  "holidays",
+  "settings",
+  "meta",
+  "generatedKeys",
+  "changeLogs",
+]) {
+  assert.match(cloud, new RegExp(`\\b${collection}\\b`), `${collection} 컬렉션 계약이 있어야 합니다.`);
+}
+
+assert.match(cloud, /runTransaction\(/, "문서 충돌 처리를 위한 Firestore 트랜잭션을 사용해야 합니다.");
+assert.match(cloud, /persistentLocalCache/, "Firestore 영속 오프라인 캐시를 켜야 합니다.");
+assert.match(cloud, /persistentMultipleTabManager/, "여러 탭이 같은 오프라인 캐시를 안전하게 공유해야 합니다.");
+assert.match(cloud, /https:\/\/www\.googleapis\.com\/auth\/drive\.file/, "Drive 권한은 앱이 만든/연 파일로 제한해야 합니다.");
+assert.doesNotMatch(cloud, /auth\/drive(?:["'])/, "전체 Google Drive 권한을 요청하면 안 됩니다.");
+assert.match(cloud, /generatedKeys/, "생성 키 잠금 컬렉션이 있어야 합니다.");
+assert.match(cloud, /changeLogs/, "문서 단위 변경이력 컬렉션이 있어야 합니다.");
+
+assert.match(rules, /function isOwner\(\)/, "소유자 검사 함수가 있어야 합니다.");
+assert.match(rules, /request\.auth\.uid == '(?:__OWNER_UID__|[A-Za-z0-9_-]+)'/, "Firebase UID로 소유자를 제한해야 합니다.");
+assert.match(rules, /match \/\{document=\*\*\}\s*\{\s*allow read, write: if false;/s, "기본 거부 규칙이 있어야 합니다.");
+assert.match(rules, /match \/generatedKeys\/\{(?:docId|id)\}/, "중복 방지 잠금 규칙이 있어야 합니다.");
+assert.match(rules, /allow update, delete: if false;/, "생성 키와 변경이력은 불변이어야 합니다.");
+
+assert.equal(manifest.display, "standalone", "PWA는 standalone 모드로 열려야 합니다.");
+assert.ok(Array.isArray(manifest.icons) && manifest.icons.some((icon) => icon.sizes === "192x192"), "192px PWA 아이콘이 있어야 합니다.");
+assert.ok(manifest.icons.some((icon) => icon.sizes === "512x512"), "512px PWA 아이콘이 있어야 합니다.");
+assert.match(serviceWorker, /self\.addEventListener\("fetch"/, "서비스 워커가 오프라인 요청을 처리해야 합니다.");
+
+console.log("PASS cloud/PWA contract: 30 assertions");
