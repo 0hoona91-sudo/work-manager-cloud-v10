@@ -1,4 +1,4 @@
-const CACHE_NAME = "work-manager-v10-shell-2026-09-05-2";
+const CACHE_NAME = "work-manager-v10-shell-2026-09-05-3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -9,9 +9,20 @@ const APP_SHELL = [
   "./icons/app-icon-512.png",
   "./icons/drive-photo-placeholder.svg"
 ];
+const FIREBASE_MODULES = [
+  "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js",
+  "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js",
+  "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js"
+];
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => Promise.all([
+      cache.addAll(APP_SHELL),
+      // CDN이 잠시 응답하지 않아도 앱 셸 설치 자체는 유지한다.
+      cache.addAll(FIREBASE_MODULES).catch(() => undefined)
+    ]))
+  );
   self.skipWaiting();
 });
 
