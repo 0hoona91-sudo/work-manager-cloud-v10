@@ -498,12 +498,36 @@ export async function bootstrapCloud({ state, legacyState = null } = {}) {
   });
   currentUser = await authenticate();
   const configuredUid = String(appConfig.ownerUid || "");
+  document.getElementById("cloudUser").textContent = currentUser.email || currentUser.displayName || "Google 계정";
+  if (!configuredUid || configuredUid.startsWith("__")) {
+    gate(
+      "최초 보안 설정을 마치려면 이 계정의 Firebase UID를 앱 설정과 보안규칙에 한 번 등록해야 합니다.",
+      `<div style="display:grid;gap:9px;text-align:left">
+        <label for="cloudOwnerUid" style="font-size:12px;font-weight:800;color:#526158">내 Firebase UID</label>
+        <input id="cloudOwnerUid" readonly style="width:100%;box-sizing:border-box;border:1px solid #cddbd1;border-radius:12px;padding:12px;background:#f7faf8;font:600 13px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace">
+        <button class="cloud-secondary-btn" id="cloudCopyOwnerUid" type="button">UID 복사</button>
+      </div>`,
+      "UID는 비밀번호나 인증코드가 아닌 계정 식별값입니다.",
+    );
+    const field = document.getElementById("cloudOwnerUid");
+    const copyButton = document.getElementById("cloudCopyOwnerUid");
+    field.value = currentUser.uid;
+    copyButton.onclick = async () => {
+      field.select();
+      try {
+        await navigator.clipboard.writeText(currentUser.uid);
+      } catch {
+        document.execCommand("copy");
+      }
+      copyButton.textContent = "복사됨";
+    };
+    throw new Error("Firebase owner UID is not configured.");
+  }
   if (configuredUid && !configuredUid.startsWith("__") && currentUser.uid !== configuredUid) {
     await signOut(auth);
     gate("이 업무관리시스템에 등록된 Google 계정이 아닙니다.", "", "다른 계정으로 로그인해 주세요.");
     throw new Error("Unauthorized account.");
   }
-  document.getElementById("cloudUser").textContent = currentUser.email || currentUser.displayName || "Google 계정";
   document.getElementById("cloudSignOut").onclick = async () => {
     await signOut(auth);
     location.reload();
