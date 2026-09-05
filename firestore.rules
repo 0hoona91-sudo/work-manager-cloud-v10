@@ -5,7 +5,7 @@ service cloud.firestore {
     function isOwner() {
       return request.auth != null
         && request.auth.token.firebase.sign_in_provider == 'google.com'
-        && request.auth.uid == '__OWNER_UID__';
+        && request.auth.uid == 'gj0UktB96BOo5UWO9Q4pZopSS6w1';
     }
 
     match /tasks/{id} {
