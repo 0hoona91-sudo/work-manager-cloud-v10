@@ -16,7 +16,7 @@
 | PC 화면에서 핵심 UI가 열린다 | 실제 통과 | 배포 URL의 2026년 9월 HOME·간트·달력·내비게이션 렌더 확인 |
 | 360px 모바일·태블릿·1280px PC에서 핵심 조작 가능 | 실기기 대기 | 반응형 규칙 존재, Cloud Browser 파일 선택창 장애로 최종 화면 회귀 미완료 |
 | Android·갤럭시탭·iPad에서 홈 화면 설치 후 standalone 실행 | 실기기 대기 | manifest `standalone`, 192/512 아이콘, 서비스 워커·Firebase 모듈 사전 캐시 계약 통과 |
-| Google Drive 사진 업로드·다른 기기 열람 | 실기기 대기 | `drive.file` 최소 권한과 Drive 파일 ID 저장 구현, Drive API 승인 뒤 확인 필요 |
+| Google Drive 사진 업로드·다른 기기 열람 | 설정 대기 | `drive.file` 최소 권한과 Drive 파일 ID 저장 구현. 비인증 진단에서 Drive API가 `SERVICE_DISABLED`로 확인되어 콘솔에서 한 번 활성화 필요 |
 
 개발 검증 명령은 아래와 같다. 이 명령은 유지보수 검사용이며 회사 PC나 최종 사용 기기에 Node.js 설치를 요구하지 않는다.
 
