@@ -45,5 +45,9 @@ assert.equal(manifest.display, "standalone", "PWA는 standalone 모드로 열려
 assert.ok(Array.isArray(manifest.icons) && manifest.icons.some((icon) => icon.sizes === "192x192"), "192px PWA 아이콘이 있어야 합니다.");
 assert.ok(manifest.icons.some((icon) => icon.sizes === "512x512"), "512px PWA 아이콘이 있어야 합니다.");
 assert.match(serviceWorker, /self\.addEventListener\("fetch"/, "서비스 워커가 오프라인 요청을 처리해야 합니다.");
+for (const moduleName of ["firebase-app.js", "firebase-auth.js", "firebase-firestore.js"]) {
+  assert.match(serviceWorker, new RegExp(moduleName.replace(".", "\\.")), `${moduleName}을 첫 설치 때 미리 캐시해야 합니다.`);
+}
+assert.match(serviceWorker, /cache\.addAll\(FIREBASE_MODULES\)\.catch/, "Firebase CDN 장애가 앱 셸 설치를 막으면 안 됩니다.");
 
 console.log("PASS cloud/PWA contract: 30 assertions");
