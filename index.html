@@ -589,7 +589,7 @@ const DBNAME='TaskManagerLocalDB_v1';
 function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DBNAME,1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('data'))e.target.result.createObjectStore('data')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function readLocalState(){try{const db=await openDb();const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get('state');const saved=await new Promise((res,rej)=>{req.onsuccess=()=>res(req.result||null);req.onerror=()=>rej(req.error)});db.close();return saved}catch(e){console.warn('로컬 데이터 확인 실패',e);return null}}
 async function writeLocalState(snapshot){try{const db=await openDb();const tx=db.transaction('data','readwrite');tx.objectStore('data').put(clone(snapshot),'state');await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){console.warn('기기 캐시 저장 실패',e)}}
-async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260905-3');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
+async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260905-4');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
 async function saveState(meta={}){const snapshot=clone(state);await writeLocalState(snapshot);if(window.cloudSync)await window.cloudSync.save(snapshot,meta)}
 function seed(){state.categories=['소방','시설','행정','교육','회계','인사','복지','기타'];state.owners=['나영훈','관리소장','시설담당','경리담당'];state.holidays=clone(holidaySeed);state.templates=clone(sampleTemplates);state.tasks=clone(sampleTasks);state.selectedCategories=[]}
 
@@ -912,7 +912,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260905-4').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260905-5').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
