@@ -374,7 +374,7 @@ function setSyncStatus(kind, text) {
 }
 
 function waitForAuthState(authInstance) {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const off = onAuthStateChanged(authInstance, (user) => {
       off();
       resolve(user);
