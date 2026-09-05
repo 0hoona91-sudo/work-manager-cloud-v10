@@ -36,7 +36,10 @@ assert.match(rules, /function isOwner\(\)/, "소유자 검사 함수가 있어�
 assert.match(rules, /request\.auth\.uid == '(?:__OWNER_UID__|[A-Za-z0-9_-]+)'/, "Firebase UID로 소유자를 제한해야 합니다.");
 assert.match(rules, /match \/\{document=\*\*\}\s*\{\s*allow read, write: if false;/s, "기본 거부 규칙이 있어야 합니다.");
 assert.match(rules, /match \/generatedKeys\/\{(?:docId|id)\}/, "중복 방지 잠금 규칙이 있어야 합니다.");
-assert.match(rules, /allow update, delete: if false;/, "생성 키와 변경이력은 불변이어야 합니다.");
+assert.match(rules, /request\.resource\.data\.generatedKey == resource\.data\.generatedKey/, "생성 키 값이 같은 멱등 재전송만 허용해야 합니다.");
+assert.match(rules, /request\.resource\.data\.taskId == resource\.data\.taskId/, "생성 키가 다른 업무로 바뀌면 안 됩니다.");
+assert.match(rules, /allow delete: if false;/, "생성 키 잠금은 삭제할 수 없어야 합니다.");
+assert.match(rules, /match \/changeLogs\/\{id\}[\s\S]*allow update, delete: if false;/, "변경이력은 수정·삭제할 수 없어야 합니다.");
 
 assert.equal(manifest.display, "standalone", "PWA는 standalone 모드로 열려야 합니다.");
 assert.ok(Array.isArray(manifest.icons) && manifest.icons.some((icon) => icon.sizes === "192x192"), "192px PWA 아이콘이 있어야 합니다.");
