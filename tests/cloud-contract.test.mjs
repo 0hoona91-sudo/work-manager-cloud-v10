@@ -31,6 +31,10 @@ assert.match(cloud, /https:\/\/www\.googleapis\.com\/auth\/drive\.file/, "Drive 
 assert.doesNotMatch(cloud, /auth\/drive(?:["'])/, "전체 Google Drive 권한을 요청하면 안 됩니다.");
 assert.match(cloud, /hasDriveAccess\(\)/, "사진 선택 전에 Drive 권한 준비 여부를 확인할 수 있어야 합니다.");
 assert.match(cloud, /popup-blocked/, "팝업 차단 오류를 사용자가 해결할 수 있는 안내로 변환해야 합니다.");
+assert.doesNotMatch(cloud, /signInWithRedirect/, "iPad 저장공간 제한을 유발하는 리디렉션 로그인을 사용하면 안 됩니다.");
+assert.doesNotMatch(cloud, /getRedirectResult/, "사용하지 않는 리디렉션 로그인 결과를 확인하면 안 됩니다.");
+assert.match(cloud, /browserSessionPersistence/, "로컬 인증 저장소를 사용할 수 없을 때 세션 저장소로 대체해야 합니다.");
+assert.match(cloud, /inMemoryPersistence/, "브라우저 저장소가 모두 제한되면 메모리 인증으로 대체해야 합니다.");
 assert.match(cloud, /generatedKeys/, "생성 키 잠금 컬렉션이 있어야 합니다.");
 assert.match(cloud, /changeLogs/, "문서 단위 변경이력 컬렉션이 있어야 합니다.");
 assert.match(cloud, /id="cloudOwnerUid"/, "최초 로그인에서 소유자 UID를 확인할 수 있어야 합니다.");
@@ -54,4 +58,4 @@ for (const moduleName of ["firebase-app.js", "firebase-auth.js", "firebase-fires
 }
 assert.match(serviceWorker, /cache\.addAll\(FIREBASE_MODULES\)\.catch/, "Firebase CDN 장애가 앱 셸 설치를 막으면 안 됩니다.");
 
-console.log("PASS cloud/PWA contract: 32 assertions");
+console.log("PASS cloud/PWA contract: 36 assertions");

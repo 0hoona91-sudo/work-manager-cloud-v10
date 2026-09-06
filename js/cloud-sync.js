@@ -2,13 +2,13 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/fireba
 import {
   GoogleAuthProvider,
   browserLocalPersistence,
+  browserSessionPersistence,
   getAuth,
-  getRedirectResult,
+  inMemoryPersistence,
   onAuthStateChanged,
   reauthenticateWithPopup,
   setPersistence,
   signInWithPopup,
-  signInWithRedirect,
   signOut,
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 import {
@@ -383,14 +383,6 @@ function waitForAuthState(authInstance) {
 }
 
 async function authenticate() {
-  let redirectResult = null;
-  try {
-    redirectResult = await getRedirectResult(auth);
-    const credential = redirectResult && GoogleAuthProvider.credentialFromResult(redirectResult);
-    if (credential?.accessToken) driveAccessToken = credential.accessToken;
-  } catch (error) {
-    console.warn("redirect sign-in", error);
-  }
   let user = auth.currentUser || (await waitForAuthState(auth));
   if (user) return user;
 
@@ -410,10 +402,6 @@ async function authenticate() {
         if (credential?.accessToken) driveAccessToken = credential.accessToken;
         resolve(result.user);
       } catch (error) {
-        if (["auth/popup-blocked", "auth/operation-not-supported-in-this-environment"].includes(error?.code)) {
-          await signInWithRedirect(auth, provider);
-          return;
-        }
         button.disabled = false;
         if (error?.code === "auth/popup-closed-by-user") {
           document.getElementById("cloudGateError").textContent = "로그인 창이 닫혔습니다. 다시 눌러 로그인해 주세요.";
@@ -437,9 +425,31 @@ function friendlyError(error) {
   if (code.includes("unauthorized-domain")) return "이 주소가 Firebase 승인 도메인에 아직 등록되지 않았습니다.";
   if (code.includes("network")) return "인터넷 연결을 확인해 주세요.";
   if (code.includes("permission-denied")) return "이 계정에는 데이터 접근 권한이 없습니다.";
-  if (code.includes("popup-blocked")) return "브라우저가 Google 권한 창을 막았습니다. 주소창의 팝업 차단 표시에서 이 사이트의 팝업을 허용한 뒤 다시 눌러 주세요.";
+  if (code.includes("popup-blocked")) return "브라우저가 Google 로그인 창을 막았습니다. 이 사이트의 팝업을 허용한 뒤 Google로 로그인을 다시 눌러 주세요.";
   if (code.includes("popup-closed-by-user")) return "Google 권한 창이 닫혔습니다. 다시 눌러 권한 승인을 완료해 주세요.";
+  if (code.includes("web-storage-unsupported")) return "브라우저 저장공간이 제한되어 있습니다. 시크릿 탭이 아닌 일반 탭에서 열고 쿠키와 사이트 데이터를 허용한 뒤 다시 시도해 주세요.";
+  if (code.includes("operation-not-supported-in-this-environment")) return "현재 화면에서는 Google 로그인 창을 열 수 없습니다. 링크를 Chrome 또는 Safari의 일반 탭에서 직접 연 뒤 다시 시도해 주세요.";
   return error?.message || "잠시 후 다시 시도해 주세요.";
+}
+
+async function configureAuthPersistence(authInstance) {
+  const choices = [
+    [browserLocalPersistence, "local"],
+    [browserSessionPersistence, "session"],
+    [inMemoryPersistence, "memory"],
+  ];
+  let lastError = null;
+  for (const [persistence, label] of choices) {
+    try {
+      await setPersistence(authInstance, persistence);
+      if (label !== "local") console.warn(`Firebase Auth persistence fallback: ${label}`);
+      return label;
+    } catch (error) {
+      lastError = error;
+      console.warn(`Firebase Auth persistence unavailable: ${label}`, error);
+    }
+  }
+  throw lastError || new Error("Firebase 로그인 저장소를 준비하지 못했습니다.");
 }
 
 async function loadAllCollections() {
@@ -494,7 +504,7 @@ export async function bootstrapCloud({ state, legacyState = null } = {}) {
 
   firebaseApp = initializeApp(firebaseConfig);
   auth = getAuth(firebaseApp);
-  await setPersistence(auth, browserLocalPersistence);
+  await configureAuthPersistence(auth);
   db = initializeFirestore(firebaseApp, {
     localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
   });
