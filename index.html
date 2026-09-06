@@ -457,7 +457,7 @@ body[data-v7-theme] .home-layout-control button.active{color:var(--accent-deep)!
 .weather-icon-v12{width:54px;height:54px;display:grid;place-items:center;border-radius:16px;background:var(--accent-soft);font-size:32px;line-height:1}
 .weather-date-v12{font-weight:800;font-size:13px;color:#29362e;line-height:1.35}
 .weather-summary-v12{font-size:12px;color:#68736c;margin-top:4px;line-height:1.35}
-.weather-location-v12{font-size:10px;color:#8a928d;margin-top:3px}
+.weather-location-v12{font-size:10px;color:#8a928d;margin-top:3px}.weather-location-v12 a{color:inherit;text-underline-offset:2px}
 .weather-locate-v12{white-space:nowrap;min-height:38px}
 @media(max-width:850px){.home-heading-v12{flex-direction:column}.home-weather-card-v12{max-width:none;width:100%}}
 @media(max-width:520px){.home-weather-card-v12{min-width:0;grid-template-columns:48px minmax(0,1fr)}.weather-icon-v12{width:48px;height:48px;font-size:28px}.weather-locate-v12{grid-column:1/-1;width:100%}}
@@ -494,7 +494,7 @@ body[data-v7-theme] .home-layout-control button.active{color:var(--accent-deep)!
         <div class="home-heading-copy-v12"><h1 class="brand">업무관리시스템</h1><div class="sub">간트 + 달력 동시 HOME · 반복업무 실제 회차 생성 · 단계업무 · 체크리스트 · 업무 DB · 알림/푸시 없음</div></div>
         <div class="home-weather-card-v12" id="homeWeatherCardV12" aria-live="polite">
           <div class="weather-icon-v12" id="homeWeatherIconV12" aria-hidden="true">📅</div>
-          <div><div class="weather-date-v12" id="homeTodayV12"></div><div class="weather-summary-v12" id="homeWeatherSummaryV12">위치를 허용하면 현재 날씨를 표시합니다.</div><div class="weather-location-v12" id="homeWeatherLocationV12"></div></div>
+          <div><div class="weather-date-v12" id="homeTodayV12"></div><div class="weather-summary-v12" id="homeWeatherSummaryV12">위치를 허용하면 현재 날씨를 표시합니다.</div><div class="weather-location-v12"><span id="homeWeatherLocationV12"></span><span id="weatherCreditV12" class="hidden"> · <a href="https://www.weatherapi.com/" target="_blank" rel="noopener noreferrer">WeatherAPI.com</a></span></div></div>
           <button class="btn small weather-locate-v12" id="weatherLocateV12" type="button">현재 위치 날씨</button>
         </div>
       </div>
@@ -563,6 +563,7 @@ body[data-v7-theme] .home-layout-control button.active{color:var(--accent-deep)!
         <div class="card panel-body"><h3>백업 / 복원</h3><p class="muted">전체 업무 데이터와 비공개 Drive 사진 참조를 JSON으로 저장합니다. 기존 v10 백업도 그대로 불러올 수 있습니다.</p><div class="inline"><button class="btn primary" id="exportBackup">백업 다운로드</button><label class="btn">백업 불러오기<input type="file" id="importBackup" accept="application/json" hidden></label></div></div>
         <div class="card panel-body"><h3>데이터 내보내기</h3><p class="muted">수행업무·업무DB를 CSV로 내려받습니다.</p><div class="inline"><button class="btn" id="exportTaskCsv">수행업무 CSV</button><button class="btn" id="exportDbCsv">업무DB CSV</button></div></div>
         <div class="card panel-body"><h3>국가공휴일 데이터</h3><p class="muted">기본은 키 없이 동작하는 KR 공휴일 서비스를 사용합니다. 공공데이터포털의 한국천문연구원 특일정보 API 키(Decoding)가 있으면 우선 사용합니다.</p><div class="field"><label>공공데이터포털 서비스키 (선택)</label><input id="holidayApiKey" type="password" placeholder="없어도 사용 가능"></div><div class="muted" style="margin-top:8px">서비스키는 이 브라우저에만 저장됩니다.</div></div>
+        <div class="card panel-body" id="weatherApiSettingsV12"><h3>오늘 날씨 데이터</h3><p class="muted">회사 업무용 무료 사용이 가능한 WeatherAPI Free 키로 현재 위치의 날씨를 불러옵니다.</p><div class="field"><label>WeatherAPI 무료 API 키</label><input id="weatherApiKeyV12" type="password" autocomplete="off" placeholder="WeatherAPI에서 발급받은 키"></div><div class="settings-tools" style="margin-top:10px"><button class="btn" id="saveWeatherApiKeyV12" type="button">이 브라우저에 저장</button><button class="btn" id="clearWeatherApiKeyV12" type="button">키 지우기</button></div><div class="muted" style="margin-top:8px">키는 Firestore·백업·소스코드로 전송하지 않고 이 브라우저에만 저장됩니다. 기기마다 한 번 입력해야 합니다.</div></div>
         <div class="card panel-body"><h3>데이터 점검 / 반복업무 관리</h3><p class="muted">이전 버전에서 1건만 생성된 반복업무를 다시 펼치거나 현재 데이터를 점검합니다.</p><div class="settings-tools"><button class="btn" id="repairRepeatsSetting">반복업무 회차 복구</button><button class="btn" id="openHolidaySetting">휴일 DB 열기</button><button class="btn" id="openTaskSetting">수행업무 목록 열기</button><button class="btn" id="openDbSetting">업무 DB 열기</button></div><div class="inline" style="margin-top:12px;gap:8px"><div class="settings-stat"><span class="muted">수행업무</span><b id="settingsTaskCount">0</b></div><div class="settings-stat"><span class="muted">업무 DB</span><b id="settingsDbCount">0</b></div><div class="settings-stat"><span class="muted">휴일</span><b id="settingsHolidayCount">0</b></div></div></div>
       </div>
     </section>
@@ -1042,7 +1043,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260906-8').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260906-9').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2913,42 +2914,42 @@ const openDbFormV12Base=openDbForm;
 openDbForm=function(id=null){openDbFormV12Base(id);bindDrivePhotoAuthorizationV12()};
 
 const WEATHER_CACHE_KEY_V12='workManagerWeatherV12';
+const WEATHER_API_KEY_STORAGE_V12='workManagerWeatherApiKeyV12';
 let weatherLoadingV12=false;
 function todayLabelV12(){return new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'}).format(new Date())}
 function weatherInfoV12(code,isDay=true){
   code=Number(code);
-  if(code===0)return{icon:isDay?'☀️':'🌙',text:'맑음'};
-  if(code===1)return{icon:isDay?'🌤️':'🌙',text:'대체로 맑음'};
-  if(code===2)return{icon:'⛅',text:'구름 조금'};
-  if(code===3)return{icon:'☁️',text:'흐림'};
-  if(code===45||code===48)return{icon:'🌫️',text:'안개'};
-  if(code>=51&&code<=57)return{icon:'🌦️',text:'이슬비'};
-  if(code>=61&&code<=67)return{icon:'🌧️',text:'비'};
-  if(code>=71&&code<=77)return{icon:'🌨️',text:'눈'};
-  if(code>=80&&code<=82)return{icon:'🌦️',text:'소나기'};
-  if(code>=85&&code<=86)return{icon:'🌨️',text:'눈 소나기'};
-  if(code>=95)return{icon:'⛈️',text:'뇌우'};
+  if(code===1000)return{icon:isDay?'☀️':'🌙',text:'맑음'};
+  if(code===1003)return{icon:isDay?'🌤️':'☁️',text:'구름 조금'};
+  if(code===1006||code===1009)return{icon:'☁️',text:'흐림'};
+  if([1030,1135,1147].includes(code))return{icon:'🌫️',text:'안개'};
+  if([1066,1069,1072,1114,1117,1204,1207,1210,1213,1216,1219,1222,1225,1237,1249,1252,1255,1258,1261,1264].includes(code))return{icon:'🌨️',text:'눈 또는 진눈깨비'};
+  if([1087,1273,1276,1279,1282].includes(code))return{icon:'⛈️',text:'뇌우'};
+  if([1063,1150,1153,1168,1171,1180,1183,1186,1189,1192,1195,1198,1201,1240,1243,1246].includes(code))return{icon:'🌧️',text:'비'};
   return{icon:'🌡️',text:'현재 날씨'};
 }
+function weatherApiKeyV12(){try{return(localStorage.getItem(WEATHER_API_KEY_STORAGE_V12)||'').trim()}catch{return''}}
 function readWeatherCacheV12(){try{return JSON.parse(localStorage.getItem(WEATHER_CACHE_KEY_V12)||'null')}catch{return null}}
 function renderWeatherV12(data=null,message=''){
-  const date=$('#homeTodayV12'),icon=$('#homeWeatherIconV12'),summary=$('#homeWeatherSummaryV12'),location=$('#homeWeatherLocationV12'),button=$('#weatherLocateV12');if(!date||!icon||!summary)return;
+  const date=$('#homeTodayV12'),icon=$('#homeWeatherIconV12'),summary=$('#homeWeatherSummaryV12'),location=$('#homeWeatherLocationV12'),credit=$('#weatherCreditV12'),button=$('#weatherLocateV12');if(!date||!icon||!summary)return;
   date.textContent=todayLabelV12();
-  if(data){const info=weatherInfoV12(data.code,data.isDay);icon.textContent=info.icon;summary.textContent=`${info.text} · ${Math.round(data.temperature)}℃${Number.isFinite(data.apparent)?` · 체감 ${Math.round(data.apparent)}℃`:''}`;location.textContent=`현재 위치 · ${new Intl.DateTimeFormat('ko-KR',{hour:'2-digit',minute:'2-digit'}).format(new Date(data.savedAt))} 기준`;if(button)button.textContent='날씨 새로고침';return}
-  icon.textContent='📅';summary.textContent=message||'위치를 허용하면 현재 날씨를 표시합니다.';location.textContent='';if(button)button.textContent='현재 위치 날씨';
+  if(data){const info=weatherInfoV12(data.code,data.isDay);icon.textContent=info.icon;summary.textContent=`${data.condition||info.text} · ${Math.round(data.temperature)}℃${Number.isFinite(data.apparent)?` · 체감 ${Math.round(data.apparent)}℃`:''}`;location.textContent=`${data.place||'현재 위치'} · ${new Intl.DateTimeFormat('ko-KR',{hour:'2-digit',minute:'2-digit'}).format(new Date(data.savedAt))} 기준`;credit?.classList.remove('hidden');if(button)button.textContent='날씨 새로고침';return}
+  icon.textContent='📅';summary.textContent=message||'위치를 허용하면 현재 날씨를 표시합니다.';location.textContent='';credit?.classList.add('hidden');if(button)button.textContent='현재 위치 날씨';
 }
 function geolocationV12(){return new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:true,timeout:12000,maximumAge:10*60*1000}))}
 async function loadLocationWeatherV12(){
   if(weatherLoadingV12)return;
+  const apiKey=weatherApiKeyV12();
+  if(!apiKey){showPage('settingsPage');renderWeatherSettingsV12();$('#weatherApiKeyV12')?.focus();toast('설정/백업에서 WeatherAPI 무료 키를 먼저 저장하세요.');return}
   if(!navigator.geolocation)return renderWeatherV12(null,'이 브라우저는 위치 기능을 지원하지 않습니다.');
   weatherLoadingV12=true;const button=$('#weatherLocateV12');if(button){button.disabled=true;button.textContent='날씨 확인 중…'}
   try{
     const position=await geolocationV12(),latitude=position.coords.latitude,longitude=position.coords.longitude;
-    const url=new URL('https://api.open-meteo.com/v1/forecast');
-    url.searchParams.set('latitude',latitude.toFixed(4));url.searchParams.set('longitude',longitude.toFixed(4));url.searchParams.set('current','temperature_2m,apparent_temperature,weather_code,is_day');url.searchParams.set('timezone','auto');url.searchParams.set('forecast_days','1');
-    const response=await fetch(url);if(!response.ok)throw new Error('날씨 서버 응답을 확인하지 못했습니다.');
+    const url=new URL('https://api.weatherapi.com/v1/current.json');
+    url.searchParams.set('key',apiKey);url.searchParams.set('q',`${latitude.toFixed(4)},${longitude.toFixed(4)}`);url.searchParams.set('lang','ko');
+    const response=await fetch(url,{cache:'no-store'});if(response.status===401||response.status===403)throw new Error('WeatherAPI 키가 올바르지 않습니다. 설정/백업에서 다시 확인해 주세요.');if(!response.ok)throw new Error('날씨 서버 응답을 확인하지 못했습니다.');
     const json=await response.json(),current=json.current;if(!current)throw new Error('현재 날씨 정보가 없습니다.');
-    const data={temperature:Number(current.temperature_2m),apparent:Number(current.apparent_temperature),code:Number(current.weather_code),isDay:Number(current.is_day)===1,savedAt:Date.now()};
+    const data={temperature:Number(current.temp_c),apparent:Number(current.feelslike_c),code:Number(current.condition?.code),condition:current.condition?.text||'',isDay:Number(current.is_day)===1,place:json.location?.name||'현재 위치',savedAt:Date.now()};
     localStorage.setItem(WEATHER_CACHE_KEY_V12,JSON.stringify(data));renderWeatherV12(data);
   }catch(error){
     const cached=readWeatherCacheV12();if(cached)renderWeatherV12(cached);
@@ -2956,13 +2957,19 @@ async function loadLocationWeatherV12(){
     else renderWeatherV12(null,error?.message||'날씨를 불러오지 못했습니다. 다시 눌러 주세요.');
   }finally{weatherLoadingV12=false;if(button)button.disabled=false}
 }
+function renderWeatherSettingsV12(){const input=$('#weatherApiKeyV12');if(input)input.value=weatherApiKeyV12()}
 function bindWeatherV12(){
   const button=$('#weatherLocateV12');if(!button||button.dataset.bound==='true')return;button.dataset.bound='true';button.onclick=loadLocationWeatherV12;
+  const save=$('#saveWeatherApiKeyV12'),clear=$('#clearWeatherApiKeyV12'),input=$('#weatherApiKeyV12');renderWeatherSettingsV12();
+  if(save)save.onclick=()=>{const key=(input?.value||'').trim();if(!key)return toast('WeatherAPI 무료 키를 입력하세요.');try{localStorage.setItem(WEATHER_API_KEY_STORAGE_V12,key)}catch{return toast('이 브라우저에 날씨 키를 저장하지 못했습니다.')}toast('날씨 키를 이 브라우저에 저장했습니다.');showPage('homePage');loadLocationWeatherV12()};
+  if(clear)clear.onclick=()=>{try{localStorage.removeItem(WEATHER_API_KEY_STORAGE_V12);localStorage.removeItem(WEATHER_CACHE_KEY_V12)}catch{}if(input)input.value='';renderWeatherV12(null,'날씨 API 키가 삭제되었습니다.');toast('이 브라우저의 날씨 키를 지웠습니다.')};
   const cached=readWeatherCacheV12();renderWeatherV12(cached);
-  if(navigator.permissions?.query)navigator.permissions.query({name:'geolocation'}).then(result=>{if(result.state==='granted')loadLocationWeatherV12();else if(result.state==='denied'&&!cached)renderWeatherV12(null,'위치 권한이 꺼져 있습니다. 버튼을 눌러 설정을 확인하세요.')}).catch(()=>{});
+  if(navigator.permissions?.query)navigator.permissions.query({name:'geolocation'}).then(result=>{if(result.state==='granted'&&weatherApiKeyV12())loadLocationWeatherV12();else if(result.state==='denied'&&!cached)renderWeatherV12(null,'위치 권한이 꺼져 있습니다. 버튼을 눌러 설정을 확인하세요.')}).catch(()=>{});
 }
 const renderHomeV12Base=renderHome;
 renderHome=function(){const result=renderHomeV12Base();renderWeatherV12(readWeatherCacheV12());return result};
+const renderSettingsV12Base=renderSettings;
+renderSettings=function(){const result=renderSettingsV12Base();renderWeatherSettingsV12();return result};
 const bindV12Base=bind;
 bind=function(){bindV12Base();bindWeatherV12()};
 
