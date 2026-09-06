@@ -387,7 +387,9 @@ assert.ok(html.includes("(x.step||1)>(parent.step||1)"), "중간 단계 수정 �
 assert.ok(html.includes('class="step-check-editor root-check-editor-v12"'), "1단계 체크리스트가 후속 단계와 같은 행 구조를 사용해야 합니다.");
 assert.ok(html.includes('id="dbDeleteSelected"'), "업무 DB 목록에 선택 삭제 버튼이 있어야 합니다.");
 assert.ok(html.includes('id="homeWeatherCardV12"'), "HOME에 오늘 날짜와 날씨 카드가 있어야 합니다.");
-assert.ok(html.includes("api.open-meteo.com/v1/forecast"), "위치 기반 현재 날씨를 무료 API에서 조회해야 합니다.");
+assert.ok(html.includes("api.weatherapi.com/v1/current.json"), "위치 기반 현재 날씨를 상업 이용 가능한 무료 API에서 조회해야 합니다.");
+assert.ok(html.includes('id="weatherApiKeyV12"'), "날씨 API 키를 앱 설정에서 직접 입력할 수 있어야 합니다.");
+assert.ok(html.includes("WEATHER_API_KEY_STORAGE_V12"), "날씨 API 키는 브라우저 로컬 저장소로만 관리해야 합니다.");
 assert.ok(html.includes("bindDrivePhotoAuthorizationV12"), "사진 선택 전에 Drive 권한을 사용자 클릭으로 요청해야 합니다.");
 
 assert.match(
