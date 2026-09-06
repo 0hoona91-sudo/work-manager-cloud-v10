@@ -328,6 +328,7 @@ for (const marker of ["data-scategory", "data-sowner", "data-sworktype", "data-s
 }
 assert.ok(html.includes("s.name=name.value"), "단계 추가 전 현재 업무명을 즉시 임시 상태에 보존해야 합니다.");
 assert.ok(html.includes("steps[i].checklist[j].text=el.value"), "단계 추가 전 현재 체크리스트 입력값을 즉시 임시 상태에 보존해야 합니다.");
+assert.ok(html.includes("(x.step||1)>(parent.step||1)"), "중간 단계 수정 시 앞 단계 업무를 삭제 대상으로 잡으면 안 됩니다.");
 
 assert.match(
   html,
@@ -345,4 +346,4 @@ assert.match(
   "1단계 인라인 날짜 변경 후 연계 재계산 경로가 있어야 합니다.",
 );
 
-console.log("PASS v10 business regression: 28 assertions");
+console.log("PASS v10 business regression: 29 assertions");
