@@ -143,6 +143,10 @@ const functions = [
   "isCanonicalDbKeyV9",
   "dedupeGeneratedKeysV9",
   "taskStepChecksV11",
+  "normalizeTaskStepLinkV12",
+  "createLinkedStepsV2",
+  "detachDeletedDbHistoryV12",
+  "removeDbTemplatesV12",
 ];
 for (const name of functions) vm.runInContext(extractLastFunction(name), context);
 
@@ -323,12 +327,68 @@ assert.equal(preservedStepChecks.length, 2, "연계 단계의 빈 체크항목�
 assert.equal(preservedStepChecks[0].done, true, "기존 연계 단계 체크리스트의 완료 상태를 보존해야 합니다.");
 assert.equal(preservedStepChecks[1].done, false, "새 연계 단계 체크항목은 미완료로 시작해야 합니다.");
 
+const manualRoot = {
+  id: "qa-manual-root",
+  groupId: "qa-manual-group",
+  step: 1,
+  category: "시설",
+  name: "A업무 1단계",
+  owner: "QA담당",
+  start: "2026-09-05",
+  end: "2026-09-05",
+  deadline: "2026-09-05",
+  checklist: [],
+};
+context.state = { tasks: [manualRoot], templates: [], holidays: [], settings: {} };
+const manualChildren = context.createLinkedStepsV2(manualRoot, [
+  {
+    name: "A업무 2단계",
+    category: "시설",
+    owner: "QA담당",
+    checklist: [{ id: "qa-c2", text: "2단계 확인", done: false }],
+    link: { dynamic: true, basis: "actualEnd", startOffset: 1, startMode: "business", startHolidayShift: "next" },
+  },
+  {
+    name: "A업무 3단계",
+    category: "행정",
+    owner: "QA검토자",
+    checklist: [{ id: "qa-c3", text: "3단계 승인", done: false }],
+    link: { dynamic: true, basis: "end", startOffset: 2, startMode: "calendar", startHolidayShift: "next" },
+  },
+]);
+assert.equal(manualChildren.length, 2, "업무등록의 2·3단계가 빈 단계 처리 없이 모두 생성되어야 합니다.");
+assert.equal(context.state.tasks.length, 3, "1단계와 2·3단계가 모두 업무목록 상태에 남아야 합니다.");
+assert.deepEqual(Array.from(manualChildren, (task) => task.name), ["A업무 2단계", "A업무 3단계"], "저장 직전 복사한 단계명이 유지되어야 합니다.");
+assert.equal(manualChildren[0].checklist[0].text, "2단계 확인", "2단계 체크리스트를 함께 저장해야 합니다.");
+assert.equal(manualChildren[1].link.parentId, manualChildren[0].id, "3단계는 생성된 2단계 문서를 부모로 연결해야 합니다.");
+
+context.state = {
+  tasks: [
+    { id: "qa-db-pending", name: "삭제할 미완료 업무", status: "planned", autoSourceTemplateId: "qa-delete-template", templateId: "qa-delete-template" },
+    { id: "qa-db-done", name: "보존할 완료 업무", status: "done", actualComplete: "2026-09-01", dbManualRootTemplateId: "qa-delete-template", templateId: "qa-delete-template" },
+  ],
+  templates: [{ id: "qa-delete-template", name: "삭제 대상 DB", linkedSteps: [] }],
+  holidays: [],
+  settings: {},
+};
+const deleteResult = context.removeDbTemplatesV12(["qa-delete-template"]);
+assert.equal(deleteResult.removed, 1, "DB 삭제 시 연결된 미완료 수행업무를 삭제해야 합니다.");
+assert.equal(deleteResult.preserved, 1, "DB 삭제 시 완료된 과거 이력을 보존해야 합니다.");
+assert.equal(context.state.templates.length, 0, "선택한 업무 DB 문서가 삭제되어야 합니다.");
+assert.equal(context.state.tasks.length, 1, "완료 이력만 수행업무에 남아야 합니다.");
+assert.equal(context.state.tasks[0].archivedSourceDeleted, true, "보존 이력은 삭제된 DB와 분리해 표시해야 합니다.");
+
 for (const marker of ["data-scategory", "data-sowner", "data-sworktype", "data-slimit", "data-scheck", "data-scheckadd"]) {
   assert.ok(html.includes(marker), `업무목록 연계 단계 폼에 ${marker} 입력 항목이 있어야 합니다.`);
 }
 assert.ok(html.includes("s.name=name.value"), "단계 추가 전 현재 업무명을 즉시 임시 상태에 보존해야 합니다.");
 assert.ok(html.includes("steps[i].checklist[j].text=el.value"), "단계 추가 전 현재 체크리스트 입력값을 즉시 임시 상태에 보존해야 합니다.");
 assert.ok(html.includes("(x.step||1)>(parent.step||1)"), "중간 단계 수정 시 앞 단계 업무를 삭제 대상으로 잡으면 안 됩니다.");
+assert.ok(html.includes('class="step-check-editor root-check-editor-v12"'), "1단계 체크리스트가 후속 단계와 같은 행 구조를 사용해야 합니다.");
+assert.ok(html.includes('id="dbDeleteSelected"'), "업무 DB 목록에 선택 삭제 버튼이 있어야 합니다.");
+assert.ok(html.includes('id="homeWeatherCardV12"'), "HOME에 오늘 날짜와 날씨 카드가 있어야 합니다.");
+assert.ok(html.includes("api.open-meteo.com/v1/forecast"), "위치 기반 현재 날씨를 무료 API에서 조회해야 합니다.");
+assert.ok(html.includes("bindDrivePhotoAuthorizationV12"), "사진 선택 전에 Drive 권한을 사용자 클릭으로 요청해야 합니다.");
 
 assert.match(
   html,
@@ -346,4 +406,4 @@ assert.match(
   "1단계 인라인 날짜 변경 후 연계 재계산 경로가 있어야 합니다.",
 );
 
-console.log("PASS v10 business regression: 29 assertions");
+console.log("PASS v10 business regression: 44 assertions");
