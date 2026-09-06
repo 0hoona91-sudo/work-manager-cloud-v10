@@ -796,10 +796,60 @@ function cloneOccurrenceV2(base,ds,seriesId,index,repeatMeta){const dur=Math.max
 function openTaskForm(id=null){
   const t=id?state.tasks.find(x=>x.id===id):null;modal(t?'업무 수정':'업무 작성',taskFormHtml(t),`<button class="btn" data-close>취소</button>${t?'<button class="btn danger" id="deleteTask">삭제</button>':''}<button class="btn primary" id="saveTask">저장</button>`);const work=clone(t||{category:state.categories[0]||'',urgent:false,status:'planned',owner:state.owners[0]||'',start:todayISO(),end:todayISO(),deadline:todayISO(),unconfirmed:false,checklist:[],templateId:null,notes:'',repeat:null,groupId:null,step:1});let checks=clone(work.checklist||[]);let steps=[];if(t?.groupId){steps=state.tasks.filter(x=>x.groupId===t.groupId&&x.step>(t.step||1)).sort((a,b)=>a.step-b.step).map(x=>clone(x))}
   function renderChecks(){const root=$('#tfChecks');root.innerHTML=checks.map((c,i)=>`<div class="editrow"><span>□</span><input type="text" value="${esc(c.text)}" data-ci="${i}"><button class="btn small danger" data-rmci="${i}">×</button></div>`).join('');$$('[data-ci]').forEach(x=>x.oninput=()=>checks[+x.dataset.ci].text=x.value);$$('[data-rmci]').forEach(x=>x.onclick=()=>{checks.splice(+x.dataset.rmci,1);renderChecks()})}
-  function renderSteps(){const root=$('#tfSteps');root.innerHTML=steps.map((s,i)=>`<div class="linked-step"><div class="linked-step-head"><b>${i+2}단계</b><button class="btn small danger" data-rms="${i}">삭제</button></div><div class="linked-step-grid"><div class="field wide"><label>업무명</label><input data-sname="${i}" value="${esc(s.name||'')}"></div><div class="field"><label>상위 일정</label><select data-sdyn="${i}"><option value="true">따라가기</option><option value="false">고정</option></select></div><div class="field"><label>기준</label><select data-sbasis="${i}"><option value="actualEnd">실제완료일</option><option value="end">종료일</option><option value="start">시작일</option></select></div><div class="field"><label>+ 일수</label><input type="number" data-soffset="${i}" value="${s.link?.offset??0}"></div><div class="field"><label>계산</label><select data-smode="${i}"><option value="business">근무일</option><option value="calendar">달력일</option></select></div><div class="field"><label>휴일이면</label><select data-sshift="${i}"><option value="prev">전 근무일</option><option value="next">다음 근무일</option><option value="keep">그대로</option></select></div></div></div>`).join('');steps.forEach((s,i)=>{const l=s.link||{};$(`[data-sdyn="${i}"]`).value=String(l.dynamic!==false);$(`[data-sbasis="${i}"]`).value=l.basis||'actualEnd';$(`[data-smode="${i}"]`).value=l.mode||'business';$(`[data-sshift="${i}"]`).value=l.holidayShift||'next'});$$('[data-rms]').forEach(x=>x.onclick=()=>{steps.splice(+x.dataset.rms,1);renderSteps()})}
+  function renderSteps(){
+    const root=$('#tfSteps');
+    steps.forEach(s=>{
+      s.category=s.category||$('#tfCategory')?.value||work.category||state.categories[0]||'';
+      s.owner=s.owner||$('#tfOwner')?.value||work.owner||state.owners[0]||'';
+      s.checklist=(s.checklist||[]).map(c=>typeof c==='string'?{id:uid('c'),text:c,done:false}:{id:c.id||uid('c'),text:c.text||'',done:!!c.done});
+      const l=s.link=s.link||{};
+      l.dynamic=l.dynamic!==false;l.basis=l.basis||'actualEnd';
+      l.startOffset=Number(l.startOffset??l.offset??0);l.offset=l.startOffset;
+      l.startMode=l.startMode||l.mode||'business';l.mode=l.startMode;
+      l.startHolidayShift=l.startHolidayShift||l.holidayShift||'next';l.holidayShift=l.startHolidayShift;
+      l.workType=l.workType||'single';l.limitDays=Number(l.limitDays||0);
+      l.limitMode=l.limitMode||'calendar';l.limitHolidayShift=l.limitHolidayShift||'next';
+    });
+    root.innerHTML=steps.map((s,i)=>`<div class="db-linked-step">
+      <div class="db-step-top"><b>${i+2}단계 연계업무</b><button class="btn small danger" data-rms="${i}" type="button">삭제</button></div>
+      <div class="db-step-grid-v6">
+        <div class="field wide"><label>업무 DB 검색 또는 직접 작성</label><input data-sname="${i}" value="${esc(s.name||'')}" placeholder="업무명을 입력하면 DB에서 즉시 검색"><div class="db-step-search-results hidden" data-sres="${i}"></div></div>
+        <div class="field"><label>구분</label><select data-scategory="${i}">${state.categories.map(c=>`<option ${c===s.category?'selected':''}>${esc(c)}</option>`).join('')}</select></div>
+        <div class="field"><label>담당자</label><select data-sowner="${i}">${state.owners.map(o=>`<option ${o===s.owner?'selected':''}>${esc(o)}</option>`).join('')}</select></div>
+        <div class="field"><label>상위 일정 따라가기</label><select data-sdyn="${i}"><option value="true">예</option><option value="false">아니오</option></select></div>
+        <div class="field"><label>시작 기준</label><select data-sbasis="${i}"><option value="actualEnd">상위 실제완료/종료일</option><option value="end">상위 종료일</option><option value="start">상위 시작일</option></select></div>
+        <div class="db-step-schedule span2"><b>시작일 계산</b><div class="inline" style="margin-top:7px"><span>상위 기준일 후</span><input type="number" min="0" data-soffset="${i}" value="${Number(s.link.startOffset)}" style="width:78px"><span>일 후</span><select data-smode="${i}"><option value="business">근무일</option><option value="calendar">달력일</option></select><span>휴일이면</span><select data-sshift="${i}"><option value="prev">전 근무일</option><option value="next">다음 근무일</option><option value="keep">그대로</option></select></div><div class="hint">0일이면 상위 기준일과 같은 날 시작합니다. 바로 다음 근무일은 1일 + 근무일로 설정합니다.</div></div>
+        <div class="field"><label>업무 형태</label><select data-sworktype="${i}"><option value="single">일회성 업무</option><option value="period">기간 업무</option></select></div>
+        <div class="db-step-schedule span2"><b>마감 / 기간</b><div class="inline" style="margin-top:7px"><span>시작일로부터</span><input type="number" min="0" data-slimit="${i}" value="${Number(s.link.limitDays)}" style="width:78px"><span>일 이내</span><select data-slimitmode="${i}"><option value="business">근무일</option><option value="calendar">달력일</option></select><span>휴일이면</span><select data-slimitshift="${i}"><option value="prev">전 근무일</option><option value="next">다음 근무일</option><option value="keep">그대로</option></select></div><div class="hint">일회성 업무는 시작일은 하루로 두고 마감일만 계산하며, 기간 업무는 계산된 날짜까지 이어집니다.</div></div>
+        <div class="field wide"><label>이 단계 체크리스트</label><div class="step-check-editor">${s.checklist.map((c,j)=>`<div class="step-check-row"><span>□</span><input data-scheck="${i}|${j}" value="${esc(c.text)}"><button class="btn small danger" data-scheckrm="${i}|${j}" type="button">×</button></div>`).join('')}<button class="btn small" data-scheckadd="${i}" type="button">＋ 체크항목</button></div></div>
+      </div>
+    </div>`).join('')||'<div class="muted">연계업무가 없으면 비워두면 됩니다.</div>';
+    steps.forEach((s,i)=>{
+      const l=s.link;
+      const values={sdyn:String(l.dynamic!==false),sbasis:l.basis,soffset:String(l.startOffset),smode:l.startMode,sshift:l.startHolidayShift,sworktype:l.workType,slimit:String(l.limitDays),slimitmode:l.limitMode,slimitshift:l.limitHolidayShift};
+      Object.entries(values).forEach(([key,value])=>{const el=$(`[data-${key}="${i}"]`);if(el)el.value=value});
+      const name=$(`[data-sname="${i}"]`),results=$(`[data-sres="${i}"]`);
+      if(name)name.oninput=()=>{
+        s.name=name.value;s.templateId=null;
+        const q=name.value.trim().toLowerCase(),hits=state.templates.filter(tp=>q&&[tp.name,tp.category,tp.keywords].join(' ').toLowerCase().includes(q)).slice(0,8);
+        results.classList.toggle('hidden',!q);
+        results.innerHTML=hits.map(tp=>`<div class="db-step-search-hit" data-stpl="${i}|${tp.id}"><b>${esc(tp.name)}</b><div class="muted">${esc(tp.category)} · ${esc(templatePeriodLabel(tp))}</div></div>`).join('')||'<div class="db-step-search-hit muted">DB 검색 결과 없음 · 그대로 직접 작성 가능</div>';
+        $$(`[data-stpl^="${i}|"]`).forEach(el=>el.onclick=()=>{const tid=el.dataset.stpl.split('|')[1],tp=state.templates.find(x=>x.id===tid);if(!tp)return;s.templateId=tp.id;s.name=tp.name;s.category=tp.category||s.category;s.owner=tp.owner||s.owner;s.checklist=(tp.checklist||[]).map(text=>({id:uid('c'),text,done:false}));renderSteps()});
+      };
+      const category=$(`[data-scategory="${i}"]`),owner=$(`[data-sowner="${i}"]`);
+      if(category)category.onchange=()=>s.category=category.value;
+      if(owner)owner.onchange=()=>s.owner=owner.value;
+      const bindings=[['sdyn','dynamic',v=>v!=='false'],['sbasis','basis',v=>v],['soffset','startOffset',Number],['smode','startMode',v=>v],['sshift','startHolidayShift',v=>v],['sworktype','workType',v=>v],['slimit','limitDays',Number],['slimitmode','limitMode',v=>v],['slimitshift','limitHolidayShift',v=>v]];
+      bindings.forEach(([attr,key,convert])=>{const el=$(`[data-${attr}="${i}"]`);if(!el)return;const update=()=>{l[key]=convert(el.value);if(key==='startOffset')l.offset=l.startOffset;if(key==='startMode')l.mode=l.startMode;if(key==='startHolidayShift')l.holidayShift=l.startHolidayShift};el.onchange=update;if(el.type==='number')el.oninput=update});
+    });
+    $$('[data-scheck]').forEach(el=>el.oninput=()=>{const [i,j]=el.dataset.scheck.split('|').map(Number);steps[i].checklist[j].text=el.value});
+    $$('[data-scheckrm]').forEach(el=>el.onclick=()=>{const [i,j]=el.dataset.scheckrm.split('|').map(Number);steps[i].checklist.splice(j,1);renderSteps()});
+    $$('[data-scheckadd]').forEach(el=>el.onclick=()=>{steps[Number(el.dataset.scheckadd)].checklist.push({id:uid('c'),text:'',done:false});renderSteps()});
+    $$('[data-rms]').forEach(el=>el.onclick=()=>{steps.splice(Number(el.dataset.rms),1);renderSteps()});
+  }
   function renderRepeatExtra(){const cyc=$('#tfRepeatCycle').value;const start=$('#tfStart').value||todayISO();const currentDays=work.repeat?.weekdays||[dateOf(start)?.getDay()??1];$('#tfRepeatExtra').innerHTML=cyc==='weekly'?`<div class="field"><label>반복 요일</label><div class="weekday-picks">${[['1','월'],['2','화'],['3','수'],['4','목'],['5','금'],['6','토'],['0','일']].map(([v,l])=>`<label><input type="checkbox" data-rwd="${v}" ${currentDays.map(Number).includes(Number(v))?'checked':''}>${l}</label>`).join('')}</div></div>`:`<div class="muted">${cyc==='monthly'?'첫 시작일의 일자를 기준으로 매월':cyc==='quarterly'?'첫 시작일 기준 3개월마다':cyc==='half'?'첫 시작일 기준 6개월마다':'첫 시작일 기준 매년'} 생성합니다.</div>`}
   renderChecks();renderSteps();$('#tfRepeatCycle').value=work.repeat?.cycle||'weekly';$('#tfRepeatHoliday').value=work.repeat?.holidayShift||'prev';renderRepeatExtra();$('#tfRepeatCycle').onchange=renderRepeatExtra;
-  $('#tfAddCheck').onclick=()=>{checks.push({id:uid('c'),text:'',done:false});renderChecks()};$('#tfAddStep').onclick=()=>{steps.push({name:'',link:{dynamic:true,basis:'actualEnd',offset:0,mode:'business',holidayShift:'next'}});renderSteps()};
+  $('#tfAddCheck').onclick=()=>{checks.push({id:uid('c'),text:'',done:false});renderChecks()};$('#tfAddStep').onclick=()=>{steps.push({name:'',category:$('#tfCategory')?.value||work.category||'',owner:$('#tfOwner')?.value||work.owner||'',checklist:[],link:{dynamic:true,basis:'actualEnd',startOffset:0,offset:0,startMode:'business',mode:'business',startHolidayShift:'next',holidayShift:'next',workType:'single',limitDays:0,limitMode:'calendar',limitHolidayShift:'next'}});renderSteps()};
   function toggleDb(){const isNew=$('#tfNew').checked;$('#tfSearchBox').classList.toggle('hidden',isNew);$('#tfName').readOnly=!isNew&&!!work.templateId}$('#tfNew').onchange=toggleDb;toggleDb();
   $('#tfSearch').oninput=()=>{const q=$('#tfSearch').value.trim().toLowerCase(),hits=state.templates.filter(x=>q&&[x.name,x.category,x.keywords].join(' ').toLowerCase().includes(q)).slice(0,12);$('#tfSearchResults').classList.toggle('hidden',!q);$('#tfSearchResults').innerHTML=hits.map(x=>`<div class="search-hit" data-tpl="${x.id}"><b>${esc(x.name)}</b><div class="muted">${esc(x.category)} · ${esc(templatePeriodLabel(x))}</div></div>`).join('')||'<div class="search-hit muted">검색 결과 없음</div>';$$('[data-tpl]').forEach(el=>el.onclick=()=>{const tp=state.templates.find(x=>x.id===el.dataset.tpl);work.templateId=tp.id;$('#tfName').value=tp.name;$('#tfCategory').value=tp.category;checks=(tp.checklist||[]).map(text=>({id:uid('c'),text,done:false}));renderChecks();if(tp.dayRule==='unknown')$('#tfUnconfirmed').checked=true;if(tp.cycle&&tp.cycle!=='none'){work.repeat={cycle:tp.cycle,holidayShift:tp.holidayShift||'prev',weekdays:tp.cycle==='weekly'?[Number(tp.weekday??dateOf($('#tfStart').value)?.getDay()??1)]:[]};$('#tfRepeat').checked=true;$('#tfRepeatCycle').value=tp.cycle;$('#tfRepeatHoliday').value=tp.holidayShift||'prev';renderRepeatExtra()}$('#tfSearchResults').classList.add('hidden');$('#tfName').readOnly=true})};
   function endTypeFromCurrent(){if(work.end===work.start)return'same';return'date'}$('#tfEndType').value=endTypeFromCurrent();function toggleEnd(){const v=$('#tfEndType').value;$('#tfEndDateField').classList.toggle('hidden',v!=='date');$('#tfAfterField').classList.toggle('hidden',v!=='after')}$('#tfEndType').onchange=toggleEnd;toggleEnd();
@@ -808,11 +858,55 @@ function openTaskForm(id=null){
     if(t){Object.assign(t,base);if(repeatOn){t.repeat={cycle:$('#tfRepeatCycle').value,until:$('#tfRepeatUntil').value||start,holidayShift:$('#tfRepeatHoliday').value,weekdays:$$('[data-rwd]:checked').map(x=>Number(x.dataset.rwd))}}else if(t.repeat)t.repeat=null}
     else if(repeatOn){const meta={cycle:$('#tfRepeatCycle').value,from:$('#tfStart').value||start,until:$('#tfRepeatUntil').value||start,holidayShift:$('#tfRepeatHoliday').value,weekdays:$$('[data-rwd]:checked').map(x=>Number(x.dataset.rwd))};const dates=recurrenceDatesV2(meta.from,meta.until,meta.cycle,meta.weekdays);if(!dates.length)return toast('반복 기간과 반복 요일을 확인하세요.');const sid=uid('series');dates.forEach((ds,i)=>{const occ=cloneOccurrenceV2(base,ds,sid,i+1,meta);occ.groupId=linked?uid('grp'):null;state.tasks.push(occ);if(linked)createLinkedStepsV2(occ,steps)});toast(`${dates.length}개의 반복 일정을 만들었습니다.`)}else{base.id=uid('task');base.step=1;base.groupId=linked?uid('grp'):null;base.actualComplete=null;state.tasks.push(base);if(linked)createLinkedStepsV2(base,steps)}
     if(t&&linked)syncLinkedStepsForEditedV2(t,steps);
-    if($('#tfNew').checked&&!base.templateId&&!t){if(confirm('신규업무입니다. 업무 DB에도 새 업무로 등록할까요?'))state.templates.push({id:uid('tpl'),category:base.category,name:base.name,cycle:'none',cycleMonths:[],dayRule:'exact',exactDay:Number(base.start.slice(-2)),holidayShift:$('#tfHolidayShift').value,checklist:base.checklist.map(x=>x.text),methodBlocks:[],keywords:'',notes:''})}
+    if($('#tfNew').checked&&!base.templateId&&!t){if(confirm('신규업무입니다. 업무 DB에도 새 업무로 등록할까요?')){const linkedSteps=linked?taskStepDefsFromDomV11(steps).map(taskStepTemplateV11):[];state.templates.push({id:uid('tpl'),category:base.category,name:base.name,owner:base.owner,cycle:'none',cycleMonths:[],dayRule:'exact',exactDay:Number(base.start.slice(-2)),holidayShift:$('#tfHolidayShift').value,checklist:base.checklist.map(x=>x.text),methodBlocks:[],keywords:'',notes:'',autoSchedule:false,linkedSteps})}}
     recalcLinks();await saveState();closeModal();renderTaskTable();renderHome();toast('업무를 저장했습니다.')}
 }
-function createLinkedStepsV2(parent,steps){let prev=parent;steps.forEach((s,i)=>{const nm=$(`[data-sname="${i}"]`)?.value?.trim()||s.name?.trim();if(!nm)return;const link={parentId:prev.id,dynamic:($(`[data-sdyn="${i}"]`)?.value??String(s.link?.dynamic!==false))!=='false',basis:$(`[data-sbasis="${i}"]`)?.value||s.link?.basis||'actualEnd',offset:Number($(`[data-soffset="${i}"]`)?.value??s.link?.offset??0),mode:$(`[data-smode="${i}"]`)?.value||s.link?.mode||'business',holidayShift:$(`[data-sshift="${i}"]`)?.value||s.link?.holidayShift||'next'};const stask={id:uid('task'),groupId:parent.groupId,step:(parent.step||1)+i+1,category:parent.category,name:nm,urgent:false,status:'planned',owner:parent.owner,start:parent.end,end:parent.end,deadline:parent.end,unconfirmed:false,checklist:[],notes:'',templateId:null,actualComplete:null,repeat:null,parentSeriesId:parent.seriesId||null,link};state.tasks.push(stask);prev=stask})}
-function syncLinkedStepsForEditedV2(parent,steps){if(!parent.groupId)return;const old=state.tasks.filter(x=>x.groupId===parent.groupId&&x.id!==parent.id);old.forEach(x=>{if(!steps.some(s=>s.id===x.id))state.tasks=state.tasks.filter(y=>y.id!==x.id)});let prev=parent;steps.forEach((s,i)=>{const existing=s.id?state.tasks.find(x=>x.id===s.id):null,nm=$(`[data-sname="${i}"]`)?.value?.trim()||s.name?.trim();if(!nm)return;const link={parentId:prev.id,dynamic:$(`[data-sdyn="${i}"]`)?.value!=='false',basis:$(`[data-sbasis="${i}"]`)?.value||'actualEnd',offset:Number($(`[data-soffset="${i}"]`)?.value||0),mode:$(`[data-smode="${i}"]`)?.value||'business',holidayShift:$(`[data-sshift="${i}"]`)?.value||'next'};if(existing){existing.name=nm;existing.link=link;existing.category=parent.category;existing.owner=parent.owner;prev=existing}else{const x={id:uid('task'),groupId:parent.groupId,step:(parent.step||1)+i+1,category:parent.category,name:nm,urgent:false,status:'planned',owner:parent.owner,start:parent.end,end:parent.end,deadline:parent.end,unconfirmed:false,checklist:[],notes:'',actualComplete:null,link};state.tasks.push(x);prev=x}})}
+function taskStepChecksV11(step,existing=null){
+  const previous=existing?.checklist||[],byId=new Map(previous.filter(x=>x.id).map(x=>[x.id,x])),byText=new Map(previous.map(x=>[x.text,x]));
+  return (step.checklist||[]).map(item=>{
+    const source=typeof item==='string'?{text:item}:item,text=String(source.text||'').trim();if(!text)return null;
+    const old=(source.id&&byId.get(source.id))||byText.get(text);
+    return{id:source.id||old?.id||uid('c'),text,done:old?!!old.done:!!source.done};
+  }).filter(Boolean);
+}
+function taskStepLinkV11(step,index,parentId){
+  const source=step.link||{},read=(attr,fallback)=>$(`[data-${attr}="${index}"]`)?.value??fallback;
+  const startOffset=Number(read('soffset',source.startOffset??source.offset??0)),startMode=read('smode',source.startMode||source.mode||'business'),startHolidayShift=read('sshift',source.startHolidayShift||source.holidayShift||'next');
+  return{parentId,dynamic:read('sdyn',String(source.dynamic!==false))!=='false',basis:read('sbasis',source.basis||'actualEnd'),startOffset,offset:startOffset,startMode,mode:startMode,startHolidayShift,holidayShift:startHolidayShift,workType:read('sworktype',source.workType||'single'),limitDays:Number(read('slimit',source.limitDays||0)),limitMode:read('slimitmode',source.limitMode||'calendar'),limitHolidayShift:read('slimitshift',source.limitHolidayShift||'next')};
+}
+function taskStepDefsFromDomV11(existing=[]){
+  return $$('[data-sname]').map((el,i)=>{
+    const old=clone(existing[i]||{}),checkInputs=$$('[data-scheck]').filter(input=>Number(input.dataset.scheck.split('|')[0])===i).sort((a,b)=>Number(a.dataset.scheck.split('|')[1])-Number(b.dataset.scheck.split('|')[1]));
+    const checklist=checkInputs.map((input,j)=>{const before=old.checklist?.[j],item=typeof before==='string'?{text:before}:before||{};return{id:item.id||uid('c'),text:input.value,done:!!item.done}});
+    const step={...old,name:el.value.trim(),category:$(`[data-scategory="${i}"]`)?.value||old.category||'',owner:$(`[data-sowner="${i}"]`)?.value||old.owner||'',checklist};
+    step.link=taskStepLinkV11(step,i,old.link?.parentId||'');return step;
+  }).filter(step=>step.name);
+}
+function taskStepTemplateV11(step){
+  const link=step.link||{};
+  return{templateId:step.templateId||null,name:step.name,category:step.category,owner:step.owner,checklist:(step.checklist||[]).map(item=>String(typeof item==='string'?item:item.text||'').trim()).filter(Boolean),dynamic:link.dynamic!==false,basis:link.basis||'actualEnd',startOffset:Number(link.startOffset??link.offset??0),startMode:link.startMode||link.mode||'business',startHolidayShift:link.startHolidayShift||link.holidayShift||'next',workType:link.workType||'single',limitDays:Number(link.limitDays||0),limitMode:link.limitMode||'calendar',limitHolidayShift:link.limitHolidayShift||'next'};
+}
+function createLinkedStepsV2(parent,steps){
+  let prev=parent;
+  steps.forEach((s,i)=>{
+    const name=$(`[data-sname="${i}"]`)?.value?.trim()||s.name?.trim();if(!name)return;
+    const link=taskStepLinkV11(s,i,prev.id),category=$(`[data-scategory="${i}"]`)?.value||s.category||parent.category,owner=$(`[data-sowner="${i}"]`)?.value||s.owner||parent.owner;
+    const task={id:uid('task'),groupId:parent.groupId,step:(parent.step||1)+i+1,category,name,urgent:false,status:'planned',owner,start:parent.end,end:parent.end,deadline:parent.end,unconfirmed:false,checklist:taskStepChecksV11(s),notes:s.notes||'',templateId:s.templateId||null,actualComplete:null,repeat:null,parentSeriesId:parent.seriesId||null,link};
+    state.tasks.push(task);prev=task;
+  });
+}
+function syncLinkedStepsForEditedV2(parent,steps){
+  if(!parent.groupId)return;
+  const old=state.tasks.filter(x=>x.groupId===parent.groupId&&x.id!==parent.id);
+  old.forEach(x=>{if(!steps.some(s=>s.id===x.id))state.tasks=state.tasks.filter(y=>y.id!==x.id)});
+  let prev=parent;
+  steps.forEach((s,i)=>{
+    const existing=s.id?state.tasks.find(x=>x.id===s.id):null,name=$(`[data-sname="${i}"]`)?.value?.trim()||s.name?.trim();if(!name)return;
+    const link=taskStepLinkV11(s,i,prev.id),category=$(`[data-scategory="${i}"]`)?.value||s.category||parent.category,owner=$(`[data-sowner="${i}"]`)?.value||s.owner||parent.owner,checklist=taskStepChecksV11(s,existing);
+    if(existing){Object.assign(existing,{name,step:(parent.step||1)+i+1,link,category,owner,checklist,templateId:s.templateId||null});prev=existing}
+    else{const task={id:uid('task'),groupId:parent.groupId,step:(parent.step||1)+i+1,category,name,urgent:false,status:'planned',owner,start:parent.end,end:parent.end,deadline:parent.end,unconfirmed:false,checklist,notes:s.notes||'',templateId:s.templateId||null,actualComplete:null,repeat:null,parentSeriesId:parent.seriesId||null,link};state.tasks.push(task);prev=task}
+  });
+}
 function renderMethodBlocksViewV2(t){const blocks=t.methodBlocks||[];return `<div class="method-view">${blocks.map(b=>b.type==='image'?`<div>${methodImageHtml(b)}${b.caption?`<div class="method-caption">${esc(b.caption)}</div>`:''}</div>`:`<div class="method-text">${esc(b.text||'')}</div>`).join('')||'<span class="muted">등록된 수행방법 없음</span>'}</div>`}
 function openDbDetail(id){const t=state.templates.find(x=>x.id===id);if(!t)return;modal(esc(t.name),`<div class="formgrid"><div><b>구분</b><div>${esc(t.category)}</div></div><div><b>주기</b><div>${esc(templatePeriodLabel(t))}</div></div><div class="span2"><b>주요 체크리스트</b><ul>${(t.checklist||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li class="muted">없음</li>'}</ul></div><div class="span2"><b>업무수행방법</b>${renderMethodBlocksViewV2(t)}</div></div>`,`<button class="btn" data-editdb="${id}">수정</button><button class="btn primary" data-close>닫기</button>`,'small');$('[data-editdb]').onclick=()=>openDbForm(id)}
 function openDbForm(id=null){
@@ -901,8 +995,9 @@ openTaskForm=function(id=null){
     if(!t||!repeatOn){return original?.call(btn)}
     const name=$('#tfName').value.trim();if(!name)return toast('업무명을 입력하세요.');let start=$('#tfStart').value||todayISO(),un=$('#tfUnconfirmed').checked;if(un)start=shiftWorkday(endOfMonth(Number(start.slice(0,4)),Number(start.slice(5,7))),'prev');const rule={type:$('#tfEndType').value,date:$('#tfEndDate').value,days:Number($('#tfAfterDays').value||0),includeHolidays:$('#tfIncludeHolidays').checked,shift:$('#tfHolidayShift').value};let end=calcEnd(start,rule),deadline=$('#tfDeadline').value||end;if(un){end=start;deadline=start}
     const checks=$$('[data-ci]').map(x=>({id:uid('c'),text:x.value.trim(),done:false})).filter(x=>x.text);const base={...clone(t),category:$('#tfCategory').value,name,urgent:$('#tfUrgent').checked,owner:$('#tfOwner').value,start,end,deadline,unconfirmed:un,checklist:checks,notes:$('#tfNotes').value,status:t.status||'planned',periodLabel:periodFromDate(start)};const linked=$('input[name=taskKind]:checked').value==='linked';const meta={cycle:$('#tfRepeatCycle').value,from:$('#tfStart').value||start,until:$('#tfRepeatUntil').value||start,holidayShift:$('#tfRepeatHoliday').value,weekdays:$$('[data-rwd]:checked').map(x=>Number(x.dataset.rwd))};
-    // Rebuild linked-step definitions from existing group where possible. New text in the DOM is captured by createLinkedStepsV2 via data-s* controls.
-    let stepDefs=[];if(t.groupId)stepDefs=state.tasks.filter(x=>x.groupId===t.groupId&&x.id!==t.id).sort((a,b)=>(a.step||0)-(b.step||0)).map(x=>clone(x));else stepDefs=$$('[data-sname]').map((x,i)=>({name:x.value,link:{dynamic:$(`[data-sdyn="${i}"]`)?.value!=='false',basis:$(`[data-sbasis="${i}"]`)?.value||'actualEnd',offset:Number($(`[data-soffset="${i}"]`)?.value||0),mode:$(`[data-smode="${i}"]`)?.value||'business',holidayShift:$(`[data-sshift="${i}"]`)?.value||'next'}}));
+    // 반복업무를 다시 만들 때도 현재 폼의 단계별 담당자·일정·체크리스트를 빠짐없이 사용한다.
+    const existingSteps=t.groupId?state.tasks.filter(x=>x.groupId===t.groupId&&x.id!==t.id).sort((a,b)=>(a.step||0)-(b.step||0)).map(x=>clone(x)):[];
+    const stepDefs=taskStepDefsFromDomV11(existingSteps);
     const n=rebuildRepeatSeriesV3(t,base,meta,linked,stepDefs);if(!n)return toast('반복 기간과 반복 요일을 확인하세요.');recalcLinks();await saveState();closeModal();renderTaskTable();renderHome();toast(`${n}개의 반복 일정을 생성·갱신했습니다.`)
   };
 }
@@ -912,7 +1007,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260905-5').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260906-6').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
