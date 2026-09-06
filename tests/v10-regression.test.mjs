@@ -142,6 +142,7 @@ const functions = [
   "createManualDbChainV10",
   "isCanonicalDbKeyV9",
   "dedupeGeneratedKeysV9",
+  "taskStepChecksV11",
 ];
 for (const name of functions) vm.runInContext(extractLastFunction(name), context);
 
@@ -306,6 +307,28 @@ autoRoots[0].actualComplete = "2026-09-16";
 assert.equal(context.dedupeGeneratedKeysV9(), 1, "중복 generatedKey 복구가 중복 한 건을 제거해야 합니다.");
 assert.equal(context.state.tasks.find((task) => task.id === autoId)?.status, "done", "중복 복구 시 완료 이력을 우선 보존해야 합니다.");
 
+const preservedStepChecks = context.taskStepChecksV11(
+  {
+    checklist: [
+      { id: "draft-check-1", text: " 2단계 확인 ", done: false },
+      "새 확인 항목",
+      "   ",
+    ],
+  },
+  {
+    checklist: [{ id: "draft-check-1", text: "2단계 확인", done: true }],
+  },
+);
+assert.equal(preservedStepChecks.length, 2, "연계 단계의 빈 체크항목만 제거해야 합니다.");
+assert.equal(preservedStepChecks[0].done, true, "기존 연계 단계 체크리스트의 완료 상태를 보존해야 합니다.");
+assert.equal(preservedStepChecks[1].done, false, "새 연계 단계 체크항목은 미완료로 시작해야 합니다.");
+
+for (const marker of ["data-scategory", "data-sowner", "data-sworktype", "data-slimit", "data-scheck", "data-scheckadd"]) {
+  assert.ok(html.includes(marker), `업무목록 연계 단계 폼에 ${marker} 입력 항목이 있어야 합니다.`);
+}
+assert.ok(html.includes("s.name=name.value"), "단계 추가 전 현재 업무명을 즉시 임시 상태에 보존해야 합니다.");
+assert.ok(html.includes("steps[i].checklist[j].text=el.value"), "단계 추가 전 현재 체크리스트 입력값을 즉시 임시 상태에 보존해야 합니다.");
+
 assert.match(
   html,
   /next==='done'&&t\.checklist\?\.length&&!t\.checklist\.every\(c=>c\.done\)/,
@@ -322,4 +345,4 @@ assert.match(
   "1단계 인라인 날짜 변경 후 연계 재계산 경로가 있어야 합니다.",
 );
 
-console.log("PASS v10 business regression: 17 assertions");
+console.log("PASS v10 business regression: 28 assertions");
