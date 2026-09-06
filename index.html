@@ -815,7 +815,7 @@ function openTaskForm(id=null){
       <div class="db-step-grid-v6">
         <div class="field wide"><label>업무 DB 검색 또는 직접 작성</label><input data-sname="${i}" value="${esc(s.name||'')}" placeholder="업무명을 입력하면 DB에서 즉시 검색"><div class="db-step-search-results hidden" data-sres="${i}"></div></div>
         <div class="field"><label>구분</label><select data-scategory="${i}">${state.categories.map(c=>`<option ${c===s.category?'selected':''}>${esc(c)}</option>`).join('')}</select></div>
-        <div class="field"><label>담당자</label><select data-sowner="${i}">${state.owners.map(o=>`<option ${o===s.owner?'selected':''}>${esc(o)}</option>`).join('')}</select></div>
+        <div class="field"><label>담당자</label><select data-sowner="${i}">${ownerOptionHtmlV8(s.owner,true)}</select></div>
         <div class="field"><label>상위 일정 따라가기</label><select data-sdyn="${i}"><option value="true">예</option><option value="false">아니오</option></select></div>
         <div class="field"><label>시작 기준</label><select data-sbasis="${i}"><option value="actualEnd">상위 실제완료/종료일</option><option value="end">상위 종료일</option><option value="start">상위 시작일</option></select></div>
         <div class="db-step-schedule span2"><b>시작일 계산</b><div class="inline" style="margin-top:7px"><span>상위 기준일 후</span><input type="number" min="0" data-soffset="${i}" value="${Number(s.link.startOffset)}" style="width:78px"><span>일 후</span><select data-smode="${i}"><option value="business">근무일</option><option value="calendar">달력일</option></select><span>휴일이면</span><select data-sshift="${i}"><option value="prev">전 근무일</option><option value="next">다음 근무일</option><option value="keep">그대로</option></select></div><div class="hint">0일이면 상위 기준일과 같은 날 시작합니다. 바로 다음 근무일은 1일 + 근무일로 설정합니다.</div></div>
@@ -877,7 +877,7 @@ function taskStepLinkV11(step,index,parentId){
 function taskStepDefsFromDomV11(existing=[]){
   return $$('[data-sname]').map((el,i)=>{
     const old=clone(existing[i]||{}),checkInputs=$$('[data-scheck]').filter(input=>Number(input.dataset.scheck.split('|')[0])===i).sort((a,b)=>Number(a.dataset.scheck.split('|')[1])-Number(b.dataset.scheck.split('|')[1]));
-    const checklist=checkInputs.map((input,j)=>{const before=old.checklist?.[j],item=typeof before==='string'?{text:before}:before||{};return{id:item.id||uid('c'),text:input.value,done:!!item.done}});
+    const checklist=checkInputs.map(input=>{const text=input.value,match=(old.checklist||[]).find(item=>String(typeof item==='string'?item:item.text||'').trim()===text.trim()),before=typeof match==='string'?{text:match}:match||{};return{id:before.id||uid('c'),text,done:!!before.done}});
     const step={...old,name:el.value.trim(),category:$(`[data-scategory="${i}"]`)?.value||old.category||'',owner:$(`[data-sowner="${i}"]`)?.value||old.owner||'',checklist};
     step.link=taskStepLinkV11(step,i,old.link?.parentId||'');return step;
   }).filter(step=>step.name);
@@ -897,7 +897,7 @@ function createLinkedStepsV2(parent,steps){
 }
 function syncLinkedStepsForEditedV2(parent,steps){
   if(!parent.groupId)return;
-  const old=state.tasks.filter(x=>x.groupId===parent.groupId&&x.id!==parent.id);
+  const old=state.tasks.filter(x=>x.groupId===parent.groupId&&(x.step||1)>(parent.step||1));
   old.forEach(x=>{if(!steps.some(s=>s.id===x.id))state.tasks=state.tasks.filter(y=>y.id!==x.id)});
   let prev=parent;
   steps.forEach((s,i)=>{
@@ -1007,7 +1007,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260906-6').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260906-7').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
