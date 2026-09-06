@@ -29,6 +29,8 @@ assert.match(cloud, /persistentLocalCache/, "Firestore 영속 오프라인 캐�
 assert.match(cloud, /persistentMultipleTabManager/, "여러 탭이 같은 오프라인 캐시를 안전하게 공유해야 합니다.");
 assert.match(cloud, /https:\/\/www\.googleapis\.com\/auth\/drive\.file/, "Drive 권한은 앱이 만든/연 파일로 제한해야 합니다.");
 assert.doesNotMatch(cloud, /auth\/drive(?:["'])/, "전체 Google Drive 권한을 요청하면 안 됩니다.");
+assert.match(cloud, /hasDriveAccess\(\)/, "사진 선택 전에 Drive 권한 준비 여부를 확인할 수 있어야 합니다.");
+assert.match(cloud, /popup-blocked/, "팝업 차단 오류를 사용자가 해결할 수 있는 안내로 변환해야 합니다.");
 assert.match(cloud, /generatedKeys/, "생성 키 잠금 컬렉션이 있어야 합니다.");
 assert.match(cloud, /changeLogs/, "문서 단위 변경이력 컬렉션이 있어야 합니다.");
 assert.match(cloud, /id="cloudOwnerUid"/, "최초 로그인에서 소유자 UID를 확인할 수 있어야 합니다.");
@@ -52,4 +54,4 @@ for (const moduleName of ["firebase-app.js", "firebase-auth.js", "firebase-fires
 }
 assert.match(serviceWorker, /cache\.addAll\(FIREBASE_MODULES\)\.catch/, "Firebase CDN 장애가 앱 셸 설치를 막으면 안 됩니다.");
 
-console.log("PASS cloud/PWA contract: 30 assertions");
+console.log("PASS cloud/PWA contract: 32 assertions");
