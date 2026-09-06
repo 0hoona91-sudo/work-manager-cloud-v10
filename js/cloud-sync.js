@@ -437,6 +437,8 @@ function friendlyError(error) {
   if (code.includes("unauthorized-domain")) return "이 주소가 Firebase 승인 도메인에 아직 등록되지 않았습니다.";
   if (code.includes("network")) return "인터넷 연결을 확인해 주세요.";
   if (code.includes("permission-denied")) return "이 계정에는 데이터 접근 권한이 없습니다.";
+  if (code.includes("popup-blocked")) return "브라우저가 Google 권한 창을 막았습니다. 주소창의 팝업 차단 표시에서 이 사이트의 팝업을 허용한 뒤 다시 눌러 주세요.";
+  if (code.includes("popup-closed-by-user")) return "Google 권한 창이 닫혔습니다. 다시 눌러 권한 승인을 완료해 주세요.";
   return error?.message || "잠시 후 다시 시도해 주세요.";
 }
 
@@ -553,6 +555,7 @@ function controller() {
   return {
     get user() { return currentUser; },
     get mode() { return localOnly ? "local" : "cloud"; },
+    hasDriveAccess() { return localOnly || Boolean(driveAccessToken); },
     stableTaskId: stableKeyId,
     activate,
     save,
@@ -876,7 +879,12 @@ function mergeById(current, incoming) {
 async function ensureDriveAccess() {
   if (driveAccessToken) return driveAccessToken;
   if (!currentUser) throw new Error("Google 로그인이 필요합니다.");
-  const result = await reauthenticateWithPopup(currentUser, makeGoogleProvider());
+  let result;
+  try {
+    result = await reauthenticateWithPopup(currentUser, makeGoogleProvider());
+  } catch (error) {
+    throw new Error(friendlyError(error), { cause: error });
+  }
   const credential = GoogleAuthProvider.credentialFromResult(result);
   driveAccessToken = credential?.accessToken || "";
   if (!driveAccessToken) throw new Error("Google Drive 권한을 확인하지 못했습니다.");
