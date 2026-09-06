@@ -2910,8 +2910,19 @@ function bindDrivePhotoAuthorizationV12(){
     finally{trigger.classList.remove('is-connecting')}
   });
 }
+function bindDbSingleDeleteV12(id){
+  const button=$('#deleteDb');if(!button||!id)return;
+  button.onclick=async()=>{
+    const item=state.templates.find(t=>t.id===id);if(!item)return;
+    if(!confirm(`업무 DB “${item.name}”을 삭제할까요?\n\n연결된 미완료 수행업무도 함께 삭제되고, 완료된 과거 이력은 보존됩니다.`))return;
+    const result=removeDbTemplatesV12([id]);
+    selectedDbRefsV10.delete(`root|${id}`);for(const ref of [...selectedDbRefsV10])if(ref.startsWith(`step|${id}|`))selectedDbRefsV10.delete(ref);
+    await saveState();closeModal();renderDbTable();renderTaskTable();renderHome();renderSettings();
+    toast(`DB 삭제 · 수행업무 ${result.removed}건 삭제 · 완료이력 ${result.preserved}건 보존`);
+  };
+}
 const openDbFormV12Base=openDbForm;
-openDbForm=function(id=null){openDbFormV12Base(id);bindDrivePhotoAuthorizationV12()};
+openDbForm=function(id=null){openDbFormV12Base(id);bindDrivePhotoAuthorizationV12();bindDbSingleDeleteV12(id)};
 
 const WEATHER_CACHE_KEY_V12='workManagerWeatherV12';
 const WEATHER_API_KEY_STORAGE_V12='workManagerWeatherApiKeyV12';
