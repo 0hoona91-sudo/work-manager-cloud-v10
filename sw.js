@@ -1,9 +1,9 @@
-const CACHE_NAME = "work-manager-v10-shell-2026-09-06-7";
+const CACHE_NAME = "work-manager-v10-shell-2026-09-06-8";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./js/cloud-sync.js?v=20260905-4",
+  "./js/cloud-sync.js?v=20260906-5",
   "./js/firebase-config.js?v=20260905-1",
   "./icons/app-icon-192.png",
   "./icons/app-icon-512.png",
