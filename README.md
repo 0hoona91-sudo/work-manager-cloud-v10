@@ -15,6 +15,7 @@
 - Cloud Firestore: 문서별 실시간 동기화와 오프라인 캐시
 - Google Drive API (`drive.file`): 앱이 만든 업무 매뉴얼 사진만 접근
 - Service Worker + Web App Manifest: PWA 설치와 앱 셸 오프라인 캐시
+- HOME 간트 필터: 오늘 기준 앞뒤 1~12개월 범위와 주간·월간·분기·반기 반복업무 표시를 조합
 
 실제 Firebase 공개 설정은 `js/firebase-config.js`, 접근 제어는 `firestore.rules`에 있다. Firestore 규칙은 지정한 Firebase Authentication UID 한 명만 허용한다.
 

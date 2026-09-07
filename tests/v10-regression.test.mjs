@@ -77,6 +77,7 @@ const sandbox = {
   String,
   Array,
   JSON,
+  GANTT_FILTER_CYCLES_V13: ["weekly", "monthly", "quarterly", "half"],
   state: {},
   window: {
     cloudSync: {
@@ -124,6 +125,7 @@ const functions = [
   "periodFromDate",
   "monthsForTemplate",
   "templateDateForMonth",
+  "v5AddMonths",
   "v5MonthStart",
   "v5MaxDate",
   "v5MinDate",
@@ -147,6 +149,10 @@ const functions = [
   "createLinkedStepsV2",
   "detachDeletedDbHistoryV12",
   "removeDbTemplatesV12",
+  "ensureGanttFilterSettingsV13",
+  "ganttFilterBoundsV13",
+  "ganttRepeatCycleV13",
+  "ganttCycleVisibleV13",
 ];
 for (const name of functions) vm.runInContext(extractLastFunction(name), context);
 
@@ -378,6 +384,26 @@ assert.equal(context.state.templates.length, 0, "선택한 업무 DB 문서가 �
 assert.equal(context.state.tasks.length, 1, "완료 이력만 수행업무에 남아야 합니다.");
 assert.equal(context.state.tasks[0].archivedSourceDeleted, true, "보존 이력은 삭제된 DB와 분리해 표시해야 합니다.");
 
+context.state = {
+  settings: { ganttMonthRangeV13: 3, ganttVisibleCyclesV13: ["monthly", "quarterly", "half"] },
+  tasks: [
+    { id: "weekly-root", groupId: "weekly-group", step: 1, repeat: { cycle: "weekly" } },
+    { id: "weekly-child", groupId: "weekly-group", step: 2, parentSeriesId: "weekly-series", repeat: null },
+    { id: "weekly-series-root", groupId: "weekly-group", step: 1, seriesId: "weekly-series", repeat: { cycle: "weekly" } },
+    { id: "monthly-root", step: 1, repeat: { cycle: "monthly" } },
+    { id: "yearly-root", step: 1, repeat: { cycle: "yearly" } },
+    { id: "plain-task", step: 1, repeat: null },
+  ],
+};
+assert.deepEqual(Array.from(context.ganttFilterBoundsV13("2026-09-07")), ["2026-06-07", "2026-12-07"], "간트 범위는 오늘 기준 앞뒤 선택 개월을 함께 적용해야 합니다.");
+assert.equal(context.ganttCycleVisibleV13(context.state.tasks[0]), false, "끈 주간 반복업무는 간트에서 제외해야 합니다.");
+assert.equal(context.ganttCycleVisibleV13(context.state.tasks[1]), false, "주간 반복업무의 연계 단계도 함께 제외해야 합니다.");
+assert.equal(context.ganttCycleVisibleV13(context.state.tasks[3]), true, "켜진 월간 반복업무는 간트에 표시해야 합니다.");
+assert.equal(context.ganttCycleVisibleV13(context.state.tasks[4]), true, "필터 대상이 아닌 연간 반복업무는 계속 표시해야 합니다.");
+assert.equal(context.ganttCycleVisibleV13(context.state.tasks[5]), true, "비반복 업무는 계속 표시해야 합니다.");
+context.state.settings.ganttVisibleCyclesV13.push("weekly");
+assert.equal(context.ganttCycleVisibleV13(context.state.tasks[1]), true, "주간 토글을 다시 켜면 연계 단계까지 복원해야 합니다.");
+
 for (const marker of ["data-scategory", "data-sowner", "data-sworktype", "data-slimit", "data-scheck", "data-scheckadd"]) {
   assert.ok(html.includes(marker), `업무목록 연계 단계 폼에 ${marker} 입력 항목이 있어야 합니다.`);
 }
@@ -392,6 +418,12 @@ assert.ok(!html.includes("api.weatherapi.com"), "외부 날씨 API 호출이 남
 assert.ok(!html.includes('id="weatherApiKeyV12"'), "날씨 API 키 입력 화면이 남아 있으면 안 됩니다.");
 assert.ok(!html.includes("navigator.geolocation"), "앱이 위치 권한을 요청하면 안 됩니다.");
 assert.ok(html.includes("bindDrivePhotoAuthorizationV12"), "사진 선택 전에 Drive 권한을 사용자 클릭으로 요청해야 합니다.");
+assert.ok(html.includes('id="ganttMonthRangeV13"'), "HOME에 1~12개월 간트 범위 선택기가 있어야 합니다.");
+for (const cycle of ["weekly", "monthly", "quarterly", "half"]) {
+  assert.ok(html.includes(`data-gantt-cycle-v13="${cycle}"`), `${cycle} 반복업무 간트 토글이 있어야 합니다.`);
+}
+assert.ok(html.includes("ganttWindowV4=function(){return ganttFilterBoundsV13()}"), "간트 축도 선택한 오늘 전후 범위를 사용해야 합니다.");
+assert.ok(html.includes("ganttTasksV13Base(a,b).filter(task=>ganttCycleVisibleV13(task))"), "기간과 반복주기 필터를 한 목록에 함께 적용해야 합니다.");
 
 assert.match(
   html,

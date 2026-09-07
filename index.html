@@ -481,6 +481,16 @@ body[data-v7-theme] .home-layout-control button.active{color:var(--accent-deep)!
 .install-help{font-size:12px;color:#6c756f;line-height:1.55;margin-top:9px}
 @media(max-width:1100px){.cloud-account{grid-column:1/-1}.side{grid-template-columns:repeat(6,1fr)!important}}
 @media(max-width:720px){.cloud-gate-card{padding:28px 21px}.cloud-tools-status{grid-template-columns:1fr}.history-table th:nth-child(3),.history-table td:nth-child(3){display:none}.side{grid-template-columns:repeat(2,1fr)!important}}
+
+/* APP V13: HOME 간트 표시범위와 반복주기 필터 */
+.gantt-month-field-v13 select{min-width:128px}
+.gantt-cycle-field-v13{min-width:270px}
+.gantt-cycle-toggles-v13{display:flex;align-items:center;gap:3px;min-height:42px;padding:4px;border:1px solid rgba(60,60,67,.14);border-radius:13px;background:#eef3ef}
+.gantt-cycle-toggle-v13{min-width:58px;border:0;border-radius:10px;padding:7px 9px;background:transparent;color:#6d7770;font-size:12px;font-weight:800;white-space:nowrap}
+.gantt-cycle-toggle-v13:hover{background:rgba(255,255,255,.58)}
+.gantt-cycle-toggle-v13.active{background:#fff;color:#315a45;box-shadow:0 1px 5px rgba(35,62,45,.12)}
+.gantt-cycle-toggle-v13:not(.active){text-decoration:line-through;text-decoration-thickness:1px}
+@media(max-width:720px){.gantt-month-field-v13{flex:1;min-width:132px}.gantt-month-field-v13 select{width:100%}.gantt-cycle-field-v13{order:10;width:100%;min-width:0}.gantt-cycle-toggles-v13{width:100%}.gantt-cycle-toggle-v13{flex:1;min-width:0}.home-toolbar-v3>#refreshHome{order:11}}
 </style>
 
 </head>
@@ -500,6 +510,8 @@ body[data-v7-theme] .home-layout-control button.active{color:var(--accent-deep)!
         <div class="field"><label>간트 기간</label><select id="homePeriod"></select></div>
         <div class="field"><label>대분류</label><div class="multi"><button class="multi-btn" id="catMultiBtn">전체</button><div id="catMultiMenu" class="multi-menu hidden"></div></div></div>
         <div class="field"><label>완료</label><select id="homeDone"><option value="hide">완료 숨김</option><option value="show">완료 포함</option></select></div>
+        <div class="field gantt-month-field-v13"><label for="ganttMonthRangeV13">오늘 기준 간트 범위</label><select id="ganttMonthRangeV13" aria-label="오늘 전후 간트 표시 개월 수"><option value="1">± 1개월</option><option value="2">± 2개월</option><option value="3">± 3개월</option><option value="4">± 4개월</option><option value="5">± 5개월</option><option value="6">± 6개월</option><option value="7">± 7개월</option><option value="8">± 8개월</option><option value="9">± 9개월</option><option value="10">± 10개월</option><option value="11">± 11개월</option><option value="12" selected>± 12개월</option></select></div>
+        <div class="field gantt-cycle-field-v13"><label id="ganttCycleLabelV13">간트 반복업무 표시</label><div class="gantt-cycle-toggles-v13" role="group" aria-labelledby="ganttCycleLabelV13" title="연간 반복업무와 비반복 업무는 항상 표시됩니다."><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="weekly" aria-pressed="true">주간</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="monthly" aria-pressed="true">월간</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="quarterly" aria-pressed="true">분기</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="half" aria-pressed="true">반기</button></div></div>
         <button class="btn" id="refreshHome">새로고침</button>
       </div>
       <div id="kpis" class="kpis"></div>
@@ -614,7 +626,7 @@ const DBNAME='TaskManagerLocalDB_v1';
 function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DBNAME,1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('data'))e.target.result.createObjectStore('data')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function readLocalState(){try{const db=await openDb();const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get('state');const saved=await new Promise((res,rej)=>{req.onsuccess=()=>res(req.result||null);req.onerror=()=>rej(req.error)});db.close();return saved}catch(e){console.warn('로컬 데이터 확인 실패',e);return null}}
 async function writeLocalState(snapshot){try{const db=await openDb();const tx=db.transaction('data','readwrite');tx.objectStore('data').put(clone(snapshot),'state');await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){console.warn('기기 캐시 저장 실패',e)}}
-async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260906-11');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
+async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260907-12');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
 async function saveState(meta={}){const snapshot=clone(state);await writeLocalState(snapshot);if(window.cloudSync)await window.cloudSync.save(snapshot,meta)}
 function seed(){state.categories=['소방','시설','행정','교육','회계','인사','복지','기타'];state.owners=['나영훈','관리소장','시설담당','경리담당'];state.holidays=clone(holidaySeed);state.templates=clone(sampleTemplates);state.tasks=clone(sampleTasks);state.selectedCategories=[]}
 
@@ -1039,7 +1051,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260906-11').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260907-12').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2929,6 +2941,59 @@ const renderHomeV12Base=renderHome;
 renderHome=function(){const result=renderHomeV12Base();renderTodayV12();return result};
 
 setTimeout(()=>{ensureDbRegisterUiV10();renderDbTable();},140);
+
+// ========================= APP V13 — combined Gantt range/repeat filters =========================
+const GANTT_FILTER_CYCLES_V13=['weekly','monthly','quarterly','half'];
+function ensureGanttFilterSettingsV13(){
+  state.settings=state.settings||{};
+  const months=Number(state.settings.ganttMonthRangeV13);
+  state.settings.ganttMonthRangeV13=Number.isInteger(months)&&months>=1&&months<=12?months:12;
+  if(!Array.isArray(state.settings.ganttVisibleCyclesV13))state.settings.ganttVisibleCyclesV13=[...GANTT_FILTER_CYCLES_V13];
+  else state.settings.ganttVisibleCyclesV13=[...new Set(state.settings.ganttVisibleCyclesV13.filter(cycle=>GANTT_FILTER_CYCLES_V13.includes(cycle)))];
+}
+function ganttFilterBoundsV13(anchor=todayISO()){
+  ensureGanttFilterSettingsV13();
+  const months=state.settings.ganttMonthRangeV13;
+  return[v5AddMonths(anchor,-months),v5AddMonths(anchor,months)];
+}
+function ganttRepeatCycleV13(task){
+  if(task?.repeat?.cycle)return task.repeat.cycle;
+  if(task?.parentAutoRootId){
+    const root=state.tasks.find(item=>item.id===task.parentAutoRootId);
+    if(root?.repeat?.cycle)return root.repeat.cycle;
+  }
+  if(task?.parentSeriesId){
+    const root=state.tasks.find(item=>item.seriesId===task.parentSeriesId&&!item.parentSeriesId&&(!task.groupId||item.groupId===task.groupId))||state.tasks.find(item=>item.seriesId===task.parentSeriesId&&!item.parentSeriesId);
+    if(root?.repeat?.cycle)return root.repeat.cycle;
+  }
+  if(task?.groupId){
+    const root=state.tasks.find(item=>item.groupId===task.groupId&&(item.step||1)===1);
+    if(root?.repeat?.cycle)return root.repeat.cycle;
+  }
+  return'none';
+}
+function ganttCycleVisibleV13(task,visibleCycles=state.settings?.ganttVisibleCyclesV13){
+  const cycle=ganttRepeatCycleV13(task);
+  return!GANTT_FILTER_CYCLES_V13.includes(cycle)||(visibleCycles||[]).includes(cycle);
+}
+function syncGanttControlsV13(){
+  ensureGanttFilterSettingsV13();
+  const monthSelect=$('#ganttMonthRangeV13');if(monthSelect)monthSelect.value=String(state.settings.ganttMonthRangeV13);
+  $$('[data-gantt-cycle-v13]').forEach(button=>{const active=state.settings.ganttVisibleCyclesV13.includes(button.dataset.ganttCycleV13);button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});
+}
+function bindGanttControlsV13(){
+  const monthSelect=$('#ganttMonthRangeV13');
+  if(monthSelect)monthSelect.onchange=()=>{state.settings.ganttMonthRangeV13=Math.max(1,Math.min(12,Number(monthSelect.value)||12));renderHome()};
+  $$('[data-gantt-cycle-v13]').forEach(button=>button.onclick=()=>{ensureGanttFilterSettingsV13();const cycle=button.dataset.ganttCycleV13,current=new Set(state.settings.ganttVisibleCyclesV13);if(current.has(cycle))current.delete(cycle);else current.add(cycle);state.settings.ganttVisibleCyclesV13=GANTT_FILTER_CYCLES_V13.filter(item=>current.has(item));renderHome()});
+  syncGanttControlsV13();
+}
+const ganttTasksV13Base=ganttTasksV4;
+ganttTasksV4=function(a,b){ensureGanttFilterSettingsV13();return ganttTasksV13Base(a,b).filter(task=>ganttCycleVisibleV13(task))};
+ganttWindowV4=function(){return ganttFilterBoundsV13()};
+const bindV13Base=bind;
+bind=function(){bindV13Base();bindGanttControlsV13()};
+const renderHomeV13Base=renderHome;
+renderHome=function(){ensureGanttFilterSettingsV13();syncGanttControlsV13();const result=renderHomeV13Base();syncGanttControlsV13();return result};
 
 </script>
 </body></html>
