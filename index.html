@@ -493,6 +493,25 @@ body[data-v7-theme] .home-layout-control button.active{color:var(--accent-deep)!
 @media(max-width:720px){.gantt-month-field-v13{flex:1;min-width:132px}.gantt-month-field-v13 select{width:100%}.gantt-cycle-field-v13{order:10;width:100%;min-width:0}.gantt-cycle-toggles-v13{width:100%}.gantt-cycle-toggle-v13{flex:1;min-width:0}.home-toolbar-v3>#refreshHome{order:11}}
 </style>
 
+<style id="app-v14-style">
+/* APP V14: 업무목록 대분류 메뉴가 고정 표 머리글 뒤로 숨지 않도록 층 순서를 분리한다. */
+#taskListPage{isolation:isolate}
+#taskListPage>.toolbar{
+  position:relative;
+  z-index:120;
+  overflow:visible;
+}
+#taskListPage>.tablewrap{
+  position:relative;
+  z-index:1;
+}
+#taskListPage .task-category-filter .multi-menu{
+  left:auto;
+  right:0;
+  z-index:130;
+}
+</style>
+
 </head>
 <body>
 <div class="app">
