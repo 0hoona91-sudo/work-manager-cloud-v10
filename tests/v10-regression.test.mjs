@@ -122,6 +122,8 @@ const functions = [
   "shiftWorkday",
   "addBusinessDays",
   "effectiveStatus",
+  "cloneOccurrenceV2",
+  "preserveOccurrenceV3",
   "periodFromDate",
   "monthsForTemplate",
   "templateDateForMonth",
@@ -404,6 +406,20 @@ assert.equal(context.ganttCycleVisibleV13(context.state.tasks[5]), true, "비반
 context.state.settings.ganttVisibleCyclesV13.push("weekly");
 assert.equal(context.ganttCycleVisibleV13(context.state.tasks[1]), true, "주간 토글을 다시 켜면 연계 단계까지 복원해야 합니다.");
 
+const repeatWithDocument = {
+  id: "document-repeat-root",
+  name: "반복 공문 업무",
+  start: "2026-09-07",
+  end: "2026-09-07",
+  deadline: "2026-09-07",
+  relatedDocumentTitle: "9월 공문",
+  checklist: [],
+};
+const freshDocumentOccurrence = context.cloneOccurrenceV2(repeatWithDocument, "2026-10-07", "document-series", 2, { cycle: "monthly", holidayShift: "keep" });
+assert.equal(freshDocumentOccurrence.relatedDocumentTitle, "", "새 반복 회차에는 이전 회차의 공문 제목을 복사하면 안 됩니다.");
+const preservedDocumentOccurrence = context.preserveOccurrenceV3(freshDocumentOccurrence, repeatWithDocument);
+assert.equal(preservedDocumentOccurrence.relatedDocumentTitle, "9월 공문", "기존 회차를 다시 계산할 때 입력한 공문 제목은 보존해야 합니다.");
+
 for (const marker of ["data-scategory", "data-sowner", "data-sworktype", "data-slimit", "data-scheck", "data-scheckadd"]) {
   assert.ok(html.includes(marker), `업무목록 연계 단계 폼에 ${marker} 입력 항목이 있어야 합니다.`);
 }
@@ -424,6 +440,12 @@ for (const cycle of ["weekly", "monthly", "quarterly", "half"]) {
 }
 assert.ok(html.includes("ganttWindowV4=function(){return ganttFilterBoundsV13()}"), "간트 축도 선택한 오늘 전후 범위를 사용해야 합니다.");
 assert.ok(html.includes("ganttTasksV13Base(a,b).filter(task=>ganttCycleVisibleV13(task))"), "기간과 반복주기 필터를 한 목록에 함께 적용해야 합니다.");
+assert.ok(html.includes('id="relatedDocumentTitleV15"'), "체크리스트 팝업에 선택 입력 가능한 관련 공문 제목 칸이 있어야 합니다.");
+assert.ok(html.includes("t.relatedDocumentTitle"), "관련 공문 제목을 업무목록 검색 대상으로 포함해야 합니다.");
+assert.ok(html.includes("gantt-menu-fixed-v15"), "모바일 간트 대분류 메뉴를 다른 카드 위에 고정 표시해야 합니다.");
+assert.ok(html.includes("touch-action:pan-y"), "모바일 대분류 메뉴가 세로 손가락 스크롤을 허용해야 합니다.");
+assert.ok(html.includes("height:calc(100dvh - 16px)"), "모바일 업무 폼 높이는 실제 브라우저 표시영역을 따라야 합니다.");
+assert.ok(html.includes("task-form-modal-v15"), "업무 신규작성·수정 모달에 전용 모바일 스크롤 클래스를 적용해야 합니다.");
 
 assert.match(
   html,

@@ -122,6 +122,7 @@ const state = {
     start: "2026-09-08",
     end: "2026-09-08",
     deadline: "2026-09-08",
+    relatedDocumentTitle: "시설점검 결과 제출 요청",
     generatedKey: "dbauto:tpl-1:M:2026-09",
     checklist: [{ id: "check-1", text: "현장 확인", done: false }],
     link: { parentId: "task-0", dynamic: true, basis: "end", startOffset: 1, startMode: "business" },
@@ -179,6 +180,7 @@ assert.equal(maps.generatedKeys.size, 2, "현재 자동생성 키와 과거 잠�
 const taskDoc = maps.tasks.get("task-1");
 assert.ok(!Object.hasOwn(taskDoc, "checklist"), "업무 문서에 체크리스트 배열을 중복 저장하면 안 됩니다.");
 assert.ok(!Object.hasOwn(taskDoc, "link"), "업무 문서에 연계규칙을 중복 저장하면 안 됩니다.");
+assert.equal(taskDoc.relatedDocumentTitle, "시설점검 결과 제출 요청", "관련 공문 제목은 해당 업무 문서에 저장해야 합니다.");
 for (const block of maps.manualBlocks.values()) {
   assert.ok(!Object.hasOwn(block, "data"), "base64/blob 사진 데이터를 Firestore에 저장하면 안 됩니다.");
   assert.ok(!Object.hasOwn(block, "objectUrl"), "로컬 object URL을 Firestore에 저장하면 안 됩니다.");
@@ -193,6 +195,7 @@ assert.equal(maps.meta.get("schema").schemaVersion, 11);
 const roundTrip = context.deserializeState(maps, { holidayApiKey: "device-only" });
 assert.equal(roundTrip.tasks[0].checklist[0].text, "현장 확인");
 assert.equal(roundTrip.tasks[0].link.parentId, "task-0");
+assert.equal(roundTrip.tasks[0].relatedDocumentTitle, "시설점검 결과 제출 요청", "관련 공문 제목이 새로고침 후에도 유지되어야 합니다.");
 assert.equal(roundTrip.templates[0].linkedSteps[0].name, "결과 보고");
 assert.equal(roundTrip.templates[0].linkedSteps[0].checklist[0], "보고 확인");
 assert.equal(roundTrip.templates[0].methodBlocks[0].driveFileId, "drive-root");
@@ -211,4 +214,10 @@ assert.deepEqual(Array.from(diffs.find((item) => item.collection === "tasks").fi
 assert.deepEqual(Array.from(diffs.find((item) => item.collection === "checklistItems").fields), ["done"]);
 assert.equal(context.cloudHasData(maps), true);
 
-console.log("PASS cloud state round-trip: 36 assertions");
+const documentChanged = JSON.parse(JSON.stringify(state));
+documentChanged.tasks[0].relatedDocumentTitle = "시설점검 결과 제출 완료";
+const documentDiffs = context.diffMaps(maps, context.serializeState(documentChanged));
+assert.equal(documentDiffs.length, 1, "공문 제목 변경은 해당 업무 문서 한 건만 갱신해야 합니다.");
+assert.deepEqual(Array.from(documentDiffs[0].fields), ["relatedDocumentTitle"]);
+
+console.log("PASS cloud state round-trip: related document field included");

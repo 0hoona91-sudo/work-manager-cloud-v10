@@ -512,6 +512,62 @@ body[data-v7-theme] .home-layout-control button.active{color:var(--accent-deep)!
 }
 </style>
 
+<style id="app-v15-style">
+/* APP V15: 관련 공문 기록 + 모바일 메뉴/업무 폼 스크롤 보강 */
+.related-document-v15{
+  margin-top:14px;padding:12px 13px;border:1px solid rgba(50,75,58,.10);
+  border-radius:14px;background:#f8fbf9
+}
+.related-document-v15 label{display:block;margin-bottom:7px;color:#35473c;font-size:12px;font-weight:800}
+.related-document-v15 input{
+  width:100%;min-height:44px;padding:10px 12px;border:1px solid rgba(50,75,58,.16);
+  border-radius:12px;background:#fff;color:#202421
+}
+.related-document-v15 input:focus{outline:none;border-color:#77a58a;box-shadow:0 0 0 4px rgba(95,146,117,.14)}
+.related-document-v15 .muted{display:block;margin-top:6px;line-height:1.45}
+
+/* 아래 카드가 열린 간트 대분류 메뉴를 덮지 않게 하고, 메뉴 자체도 손가락으로 스크롤되게 한다. */
+.gantt-card-v3{position:relative;z-index:3;overflow:visible!important}
+.home-bottom-grid-v3{position:relative;z-index:1}
+.gantt-category-menu{
+  overflow-x:hidden!important;overflow-y:auto!important;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;touch-action:pan-y;scrollbar-gutter:stable
+}
+.gantt-category-menu label{min-height:44px;cursor:pointer}
+.gantt-category-menu.gantt-menu-fixed-v15{
+  position:fixed!important;right:auto!important;bottom:auto!important;z-index:1600!important;
+  max-width:calc(100vw - 20px);background:#fff
+}
+
+/* 모바일 주소창이 보이는 상태에서도 업무 폼의 본문만 스크롤되고 하단 버튼은 항상 남는다. */
+.task-form-wrap-v15{overflow:hidden!important}
+.task-form-modal-v15{min-height:0!important}
+.task-form-modal-v15 .modal-body{
+  min-height:0!important;overflow-x:hidden!important;overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain
+}
+.task-form-modal-v15 .modal-foot{flex:0 0 auto!important}
+@media(max-width:720px){
+  .modal-wrap{
+    height:100vh;height:100dvh;max-height:100dvh;padding:8px!important;
+    overflow:hidden!important
+  }
+  .modal{max-height:calc(100vh - 16px)!important;max-height:calc(100dvh - 16px)!important}
+  .task-form-wrap-v15{align-items:stretch!important}
+  .task-form-modal-v15{
+    width:100%!important;height:calc(100vh - 16px)!important;height:calc(100dvh - 16px)!important;
+    max-height:calc(100vh - 16px)!important;max-height:calc(100dvh - 16px)!important;
+    border-radius:20px!important
+  }
+  .task-form-modal-v15 .modal-body{padding-bottom:28px!important}
+  .task-form-modal-v15 .modal-foot{
+    flex-wrap:wrap;padding-bottom:max(13px,env(safe-area-inset-bottom))!important;
+    box-shadow:0 -8px 22px rgba(35,50,40,.07)!important
+  }
+  .task-form-modal-v15 .modal-foot .btn{min-height:44px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -764,12 +820,12 @@ function createFromTemplate(t,date,key){if(state.tasks.some(x=>x.generatedKey===
 function generateRepeats(year){year=Number(year);let count=0;for(const t of state.templates){if(!t.cycle||t.cycle==='none')continue;if(t.cycle==='weekly'){const wd=Number(t.weekday??1);let d=new Date(year,0,1,12),end=new Date(year,11,31,12);while(d<=end){if(d.getDay()===wd){let ds=iso(d);if(t.holidayShift!=='keep')ds=shiftWorkday(ds,t.holidayShift||'prev');count+=createFromTemplate(t,ds,`${t.id}:${iso(d)}`)}d.setDate(d.getDate()+1)}}else{for(const m of monthsForTemplate(t)){const ds=templateDateForMonth(t,year,m);count+=createFromTemplate(t,ds,`${t.id}:${year}-${String(m).padStart(2,'0')}`)}}}
  // Also expand manually-created repeating tasks using their original start date as anchor.
  const bases=state.tasks.filter(x=>x.repeat&&!x.generatedFromManual&&!x.generatedKey).slice();
- for(const b of bases){const cyc=b.repeat.cycle;if(!cyc)continue;const anchor=dateOf(b.start);if(!anchor)continue;const addCopy=(ds,key)=>{if(ds===b.start||state.tasks.some(x=>x.generatedKey===key))return;let dur=Math.max(0,Math.round((dateOf(b.end||b.start)-anchor)/86400000));state.tasks.push({...clone(b),id:uid('task'),generatedKey:key,generatedFromManual:b.id,start:ds,end:addDays(ds,dur),deadline:addDays(ds,Math.max(0,Math.round((dateOf(b.deadline||b.end||b.start)-anchor)/86400000))),actualComplete:null,status:'planned',checklist:(b.checklist||[]).map(c=>({...c,id:uid('c'),done:false})),groupId:null,link:null});count++};if(cyc==='weekly'){let d=new Date(year,0,1,12),e=new Date(year,11,31,12);while(d<=e){if(d.getDay()===anchor.getDay()){let ds=iso(d);if(b.repeat.holidayShift!=='keep')ds=shiftWorkday(ds,b.repeat.holidayShift||'prev');addCopy(ds,`${b.id}:${iso(d)}`)}d.setDate(d.getDate()+1)}}else{let months=cyc==='monthly'?Array.from({length:12},(_,i)=>i+1):cyc==='quarterly'?[3,6,9,12]:cyc==='half'?[6,12]:[anchor.getMonth()+1];for(const m of months){let last=Number(endOfMonth(year,m).slice(-2)),day=Math.min(anchor.getDate(),last);let ds=`${year}-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`;if(b.repeat.holidayShift!=='keep')ds=shiftWorkday(ds,b.repeat.holidayShift||'prev');addCopy(ds,`${b.id}:${year}-${m}`)}}}
+ for(const b of bases){const cyc=b.repeat.cycle;if(!cyc)continue;const anchor=dateOf(b.start);if(!anchor)continue;const addCopy=(ds,key)=>{if(ds===b.start||state.tasks.some(x=>x.generatedKey===key))return;let dur=Math.max(0,Math.round((dateOf(b.end||b.start)-anchor)/86400000));state.tasks.push({...clone(b),id:uid('task'),generatedKey:key,generatedFromManual:b.id,start:ds,end:addDays(ds,dur),deadline:addDays(ds,Math.max(0,Math.round((dateOf(b.deadline||b.end||b.start)-anchor)/86400000))),actualComplete:null,status:'planned',relatedDocumentTitle:'',checklist:(b.checklist||[]).map(c=>({...c,id:uid('c'),done:false})),groupId:null,link:null});count++};if(cyc==='weekly'){let d=new Date(year,0,1,12),e=new Date(year,11,31,12);while(d<=e){if(d.getDay()===anchor.getDay()){let ds=iso(d);if(b.repeat.holidayShift!=='keep')ds=shiftWorkday(ds,b.repeat.holidayShift||'prev');addCopy(ds,`${b.id}:${iso(d)}`)}d.setDate(d.getDate()+1)}}else{let months=cyc==='monthly'?Array.from({length:12},(_,i)=>i+1):cyc==='quarterly'?[3,6,9,12]:cyc==='half'?[6,12]:[anchor.getMonth()+1];for(const m of months){let last=Number(endOfMonth(year,m).slice(-2)),day=Math.min(anchor.getDate(),last);let ds=`${year}-${String(m).padStart(2,'0')}-${String(day).padStart(2,'0')}`;if(b.repeat.holidayShift!=='keep')ds=shiftWorkday(ds,b.repeat.holidayShift||'prev');addCopy(ds,`${b.id}:${year}-${m}`)}}}
  recalcLinks();saveState();renderHome();renderTaskTable();return count}
 function exportJson(){const backup=clone(state);for(const t of backup.templates||[]){for(const b of t.methodBlocks||[])if(b.driveFileId)delete b.data;for(const s of t.linkedSteps||[])for(const b of s.methodBlocks||[])if(b.driveFileId)delete b.data}backup.backupMeta={app:'업무관리시스템 Cloud v10',schemaVersion:11,exportedAt:new Date().toISOString()};const blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});download(blob,`업무관리_백업_${todayISO()}.json`)}
 function download(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
 function csvValue(v){const s=String(v??'');return `"${s.replaceAll('"','""')}"`}
-function exportCsv(kind){let rows;if(kind==='task')rows=[['업무ID','구분','업무명','긴급','상태','시작일','종료일','마감일','완료일','담당자','비고'],...state.tasks.map(t=>[t.id,t.category,t.name,t.urgent?'Y':'N',statusLabel(effectiveStatus(t)),t.start,t.end,t.deadline,t.actualComplete||'',t.owner,t.notes||''])];else rows=[['DBID','구분','업무명','수행주기','체크리스트','키워드','비고'],...state.templates.map(t=>[t.id,t.category,t.name,templatePeriodLabel(t),(t.checklist||[]).join(' | '),t.keywords||'',t.notes||''])];const csv='\ufeff'+rows.map(r=>r.map(csvValue).join(',')).join('\r\n');download(new Blob([csv],{type:'text/csv;charset=utf-8'}),`${kind==='task'?'수행업무':'업무DB'}_${todayISO()}.csv`)}
+function exportCsv(kind){let rows;if(kind==='task')rows=[['업무ID','구분','업무명','긴급','상태','시작일','종료일','마감일','완료일','담당자','관련 공문 제목','비고'],...state.tasks.map(t=>[t.id,t.category,t.name,t.urgent?'Y':'N',statusLabel(effectiveStatus(t)),t.start,t.end,t.deadline,t.actualComplete||'',t.owner,t.relatedDocumentTitle||'',t.notes||''])];else rows=[['DBID','구분','업무명','수행주기','체크리스트','키워드','비고'],...state.templates.map(t=>[t.id,t.category,t.name,templatePeriodLabel(t),(t.checklist||[]).join(' | '),t.keywords||'',t.notes||''])];const csv='\ufeff'+rows.map(r=>r.map(csvValue).join(',')).join('\r\n');download(new Blob([csv],{type:'text/csv;charset=utf-8'}),`${kind==='task'?'수행업무':'업무DB'}_${todayISO()}.csv`)}
 
 function bind(){$$('.navbtn').forEach(x=>x.onclick=()=>showPage(x.dataset.page));$$('[data-homeview]').forEach(x=>x.onclick=()=>{state.settings.homeView=x.dataset.homeview;renderHome()});$('#catMultiBtn').onclick=()=>$('#catMultiMenu').classList.toggle('hidden');document.addEventListener('click',e=>{if(!e.target.closest('.multi'))$('#catMultiMenu').classList.add('hidden')});['homeYear','homePeriod','homeDone'].forEach(id=>$('#'+id).onchange=renderHome);$('#generateRepeats').onclick=()=>{const n=generateRepeats($('#homeYear').value);toast(`${n}건의 반복일정을 생성했습니다.`)};$('#refreshHome').onclick=renderHome;$('#newTaskBtn').onclick=()=>openTaskForm();$('#newDbBtn').onclick=()=>openDbForm();$('#taskSearch').oninput=renderTaskTable;$('#taskStatusFilter').onchange=renderTaskTable;$('#dbSearch').oninput=renderDbTable;$('#addHoliday').onclick=()=>{state.holidays.push({id:uid('hol'),date:todayISO(),reason:'회사휴무',type:'회사휴무',builtin:false});saveState();renderHolidays()};$('#addCategory').onclick=()=>{const v=$('#newCategory').value.trim();if(v&&!state.categories.includes(v)){state.categories.push(v);$('#newCategory').value='';saveState();renderSettings();renderCategoryMulti()}};$('#addOwner').onclick=()=>{const v=$('#newOwner').value.trim();if(v&&!state.owners.includes(v)){state.owners.push(v);$('#newOwner').value='';saveState();renderSettings()}};$('#exportBackup').onclick=exportJson;$('#importBackup').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d.tasks||!d.templates)throw 0;Object.assign(state,d);await saveState();initSelectors();renderHome();toast('백업을 복원했습니다.')}catch{alert('올바른 백업 파일이 아닙니다.')}};$('#exportTaskCsv').onclick=()=>exportCsv('task');$('#exportDbCsv').onclick=()=>exportCsv('db')}
 
@@ -848,7 +904,7 @@ function taskFormHtml(t){const current=t||{category:state.categories[0]||'',urge
 <fieldset class="subbox span2 repeat-panel"><legend>반복 일정</legend><div class="checks"><label><input type="checkbox" id="tfRepeat" ${current.seriesId||current.repeat?'checked':''}> 반복업무</label><label>주기 <select id="tfRepeatCycle"><option value="weekly">매주</option><option value="monthly">매월</option><option value="quarterly">분기</option><option value="half">반기</option><option value="yearly">연간</option></select></label><label>반복 적용 종료일 <input type="date" id="tfRepeatUntil" value="${rep.until||current.repeatUntil||current.start||todayISO()}"></label><label>휴일이면 <select id="tfRepeatHoliday"><option value="prev">전 근무일</option><option value="next">다음 근무일</option><option value="keep">그대로</option></select></label></div><div id="tfRepeatExtra" style="margin-top:10px"></div>${current.seriesId?'<div class="series-note" style="margin-top:10px">이 업무는 반복 묶음에 속합니다. 반복을 켠 채 저장하면 선택한 시작일~반복 종료일 기준으로 반복 회차 전체를 다시 생성·정리합니다. 완료된 회차는 같은 날짜가 있으면 최대한 유지합니다.</div>':''}</fieldset>
 <fieldset class="subbox span2" id="tfLinkBox"><legend>연계업무 단계</legend><div class="muted">+ 다음 업무로 2단계, 3단계… 계속 추가할 수 있습니다. 상위 일정 따라가기를 켜면 상위 날짜/완료일 변경 시 자동 재계산합니다.</div><div id="tfSteps" class="step-editor" style="margin-top:8px"></div><button class="btn small" id="tfAddStep" type="button">+ 다음 업무</button></fieldset><div class="field span2"><label>비고</label><textarea id="tfNotes" rows="3">${esc(current.notes||'')}</textarea></div></div>`}
 function recurrenceDatesV2(from,until,cycle,weekdays){const a=dateOf(from),b=dateOf(until);if(!a||!b||a>b)return[];const out=[];if(cycle==='weekly'){const wds=(weekdays?.length?weekdays:[a.getDay()]).map(Number);for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1))if(wds.includes(d.getDay()))out.push(iso(d))}else{let d=new Date(a),step=cycle==='monthly'?1:cycle==='quarterly'?3:cycle==='half'?6:12;while(d<=b){out.push(iso(d));const day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+step);const last=new Date(d.getFullYear(),d.getMonth()+1,0,12).getDate();d.setDate(Math.min(day,last))}}return [...new Set(out)]}
-function cloneOccurrenceV2(base,ds,seriesId,index,repeatMeta){const dur=Math.max(0,Math.round((dateOf(base.end||base.start)-dateOf(base.start))/86400000)||0),dueOff=Math.max(0,Math.round((dateOf(base.deadline||base.end||base.start)-dateOf(base.start))/86400000)||0);const shifted=repeatMeta.holidayShift==='keep'?ds:shiftWorkday(ds,repeatMeta.holidayShift||'prev');return {...clone(base),id:uid('task'),seriesId,repeat:repeatMeta,repeatIndex:index,start:shifted,end:addDays(shifted,dur),deadline:addDays(shifted,dueOff),actualComplete:null,status:'planned',checklist:(base.checklist||[]).map(c=>({...c,id:uid('c'),done:false})),generatedKey:`${seriesId}:${ds}`}}
+function cloneOccurrenceV2(base,ds,seriesId,index,repeatMeta){const dur=Math.max(0,Math.round((dateOf(base.end||base.start)-dateOf(base.start))/86400000)||0),dueOff=Math.max(0,Math.round((dateOf(base.deadline||base.end||base.start)-dateOf(base.start))/86400000)||0);const shifted=repeatMeta.holidayShift==='keep'?ds:shiftWorkday(ds,repeatMeta.holidayShift||'prev');return {...clone(base),id:uid('task'),seriesId,repeat:repeatMeta,repeatIndex:index,start:shifted,end:addDays(shifted,dur),deadline:addDays(shifted,dueOff),actualComplete:null,status:'planned',relatedDocumentTitle:'',checklist:(base.checklist||[]).map(c=>({...c,id:uid('c'),done:false})),generatedKey:`${seriesId}:${ds}`}}
 function openTaskForm(id=null){
   const t=id?state.tasks.find(x=>x.id===id):null;modal(t?'업무 수정':'업무 작성',taskFormHtml(t),`<button class="btn" data-close>취소</button>${t?'<button class="btn danger" id="deleteTask">삭제</button>':''}<button class="btn primary" id="saveTask">저장</button>`);const work=clone(t||{category:state.categories[0]||'',urgent:false,status:'planned',owner:state.owners[0]||'',start:todayISO(),end:todayISO(),deadline:todayISO(),unconfirmed:false,checklist:[],templateId:null,notes:'',repeat:null,groupId:null,step:1});let checks=clone(work.checklist||[]);let steps=[];if(t?.groupId){steps=state.tasks.filter(x=>x.groupId===t.groupId&&x.step>(t.step||1)).sort((a,b)=>a.step-b.step).map(x=>clone(x))}
   function renderChecks(){const root=$('#tfChecks');root.innerHTML=checks.map((c,i)=>`<div class="step-check-row"><span>□</span><input type="text" value="${esc(c.text)}" data-ci="${i}"><button class="btn small danger" data-rmci="${i}" type="button">×</button></div>`).join('');$$('[data-ci]').forEach(x=>x.oninput=()=>checks[+x.dataset.ci].text=x.value);$$('[data-rmci]').forEach(x=>x.onclick=()=>{checks.splice(+x.dataset.rmci,1);renderChecks()})}
@@ -1031,7 +1087,7 @@ function renderGantt(tasks,a,b){
   bindTaskLinks();
 }
 function recurrenceKeyV3(t){return t.generatedKey?.split(':').slice(1).join(':')||t.repeatRawDate||t.start}
-function preserveOccurrenceV3(occ,old){if(!old)return occ;occ.status=old.status||occ.status;occ.actualComplete=old.actualComplete||null;occ.notes=old.notes??occ.notes;const doneByText=new Map((old.checklist||[]).map(c=>[c.text,!!c.done]));occ.checklist=(occ.checklist||[]).map(c=>({...c,done:doneByText.get(c.text)||false}));return occ}
+function preserveOccurrenceV3(occ,old){if(!old)return occ;occ.status=old.status||occ.status;occ.actualComplete=old.actualComplete||null;occ.notes=old.notes??occ.notes;occ.relatedDocumentTitle=old.relatedDocumentTitle||'';const doneByText=new Map((old.checklist||[]).map(c=>[c.text,!!c.done]));occ.checklist=(occ.checklist||[]).map(c=>({...c,done:doneByText.get(c.text)||false}));return occ}
 function rebuildRepeatSeriesV3(existing,base,meta,linked,steps){
   const dates=recurrenceDatesV2(meta.from,meta.until,meta.cycle,meta.weekdays);if(!dates.length)return 0;
   const sid=existing?.seriesId||uid('series');let oldParents=[];
@@ -1456,7 +1512,7 @@ function changeTaskStartV5(t,newStart){
 function renderTaskTable(){
   const q=$('#taskSearch').value.trim().toLowerCase(),f=$('#taskStatusFilter').value;
   let arr=[...state.tasks].sort((a,b)=>(b.start||'').localeCompare(a.start||''));
-  arr=arr.filter(t=>!q||[t.name,t.category,t.notes,t.owner,t.deadline,t.templateId].join(' ').toLowerCase().includes(q));
+  arr=arr.filter(t=>!q||[t.name,t.category,t.notes,t.owner,t.deadline,t.templateId,t.relatedDocumentTitle].join(' ').toLowerCase().includes(q));
   arr=arr.filter(t=>f==='all'||(f==='pending'&&effectiveStatus(t)!=='done')||(f==='done'&&effectiveStatus(t)==='done')||(f==='overdue'&&effectiveStatus(t)==='overdue'));
   $('#taskTableBody').innerHTML=arr.map(t=>`<tr>
     <td><input type="checkbox" data-task-select="${t.id}" ${selectedTaskIdsV2.has(t.id)?'checked':''}></td>
@@ -3013,6 +3069,73 @@ const bindV13Base=bind;
 bind=function(){bindV13Base();bindGanttControlsV13()};
 const renderHomeV13Base=renderHome;
 renderHome=function(){ensureGanttFilterSettingsV13();syncGanttControlsV13();const result=renderHomeV13Base();syncGanttControlsV13();return result};
+
+// ========================= APP V15 — 관련 공문 기록 / 모바일 조작 안정화 =========================
+let relatedDocumentSaveTimerV15=null;
+function scheduleRelatedDocumentSaveV15(){
+  clearTimeout(relatedDocumentSaveTimerV15);
+  relatedDocumentSaveTimerV15=setTimeout(()=>{relatedDocumentSaveTimerV15=null;saveState()},550);
+}
+function captureRelatedDocumentV15(task){
+  const input=$('#relatedDocumentTitleV15');
+  if(input)task.relatedDocumentTitle=String(input.value||'').trim();
+}
+openChecklist=function(id){
+  const t=state.tasks.find(x=>x.id===id);if(!t)return;
+  const checks=t.checklist||[],allDone=checks.length?checks.every(c=>c.done):true;
+  const body=`<div class="completion-note ${allDone?'complete-ready':''}">${checks.length?`체크리스트 ${checks.filter(c=>c.done).length}/${checks.length} 완료`:'체크리스트 없음'} · ${allDone?'완료 처리 가능':'전부 체크해야 완료됩니다.'}</div>
+    <div class="checklist-modal">${checks.length?checks.map(c=>`<label class="checkitem"><input type="checkbox" data-check="${c.id}" ${c.done?'checked':''}><span class="text">${esc(c.text)}</span></label>`).join(''):'<div class="muted">체크리스트가 없는 업무입니다.</div>'}</div>
+    <div class="related-document-v15"><label for="relatedDocumentTitleV15">관련 공문 제목 <span class="muted" style="display:inline">(선택)</span></label><input id="relatedDocumentTitleV15" maxlength="300" autocomplete="off" value="${esc(t.relatedDocumentTitle||'')}" placeholder="예: 정기감사 자료 제출 요청"><span class="muted">입력 내용은 자동 저장되며, 업무목록 검색에서 공문 제목으로 찾을 수 있습니다.</span></div>
+    <div style="margin-top:14px" class="muted">일정: ${fmtDate(t.start)} ~ ${fmtDate(t.end)} / 마감 ${fmtDate(t.deadline)}</div>`;
+  modal(`${t.urgent?'● ':''}${esc(t.name)}`,body,`<button class="btn" data-edit-task="${id}">업무 수정</button><button class="btn primary" id="completeTask" ${allDone?'':'disabled'}>완료 처리</button>`,'small');
+  const docInput=$('#relatedDocumentTitleV15');
+  if(docInput){
+    docInput.oninput=()=>{t.relatedDocumentTitle=docInput.value;scheduleRelatedDocumentSaveV15()};
+    docInput.onchange=()=>{captureRelatedDocumentV15(t);clearTimeout(relatedDocumentSaveTimerV15);relatedDocumentSaveTimerV15=null;saveState()};
+  }
+  $$('[data-check]').forEach(x=>x.onchange=async()=>{
+    captureRelatedDocumentV15(t);clearTimeout(relatedDocumentSaveTimerV15);relatedDocumentSaveTimerV15=null;
+    const c=t.checklist.find(v=>v.id===x.dataset.check);if(c)c.done=x.checked;
+    await saveState();openChecklist(id);
+  });
+  $('[data-edit-task]').onclick=()=>{captureRelatedDocumentV15(t);scheduleRelatedDocumentSaveV15();openTaskForm(id)};
+  $('#completeTask').onclick=async()=>{
+    captureRelatedDocumentV15(t);clearTimeout(relatedDocumentSaveTimerV15);relatedDocumentSaveTimerV15=null;
+    if(t.checklist?.length&&!t.checklist.every(c=>c.done))return;
+    t.status='done';t.actualComplete=t.actualComplete||todayISO();recalcLinks();
+    await saveState();closeModal();renderTaskTable();renderHome();toast('완료 처리했습니다.');
+  };
+}
+
+function positionGanttCategoryMenuV15(btn,menu){
+  if(!btn||!menu||!window.matchMedia('(max-width:900px)').matches)return;
+  const rect=btn.getBoundingClientRect(),viewport=window.visualViewport;
+  const viewportTop=viewport?.offsetTop||0,viewportHeight=viewport?.height||window.innerHeight;
+  const viewportBottom=viewportTop+viewportHeight,margin=10;
+  const width=Math.min(Math.max(rect.width,210),Math.max(210,window.innerWidth-margin*2));
+  const below=Math.max(0,viewportBottom-rect.bottom-margin),above=Math.max(0,rect.top-viewportTop-margin);
+  const openBelow=below>=Math.min(240,menu.scrollHeight)||below>=above;
+  const available=Math.max(120,Math.min(340,openBelow?below:above));
+  const left=Math.max(margin,Math.min(rect.left,window.innerWidth-width-margin));
+  menu.classList.add('gantt-menu-fixed-v15');
+  Object.assign(menu.style,{left:`${left}px`,width:`${width}px`,maxHeight:`${available}px`,top:openBelow?`${rect.bottom+8}px`:`${Math.max(viewportTop+margin,rect.top-available-8)}px`});
+  menu.scrollTop=0;
+}
+const bindGanttCategoryFilterV15Base=bindGanttCategoryFilterV5;
+bindGanttCategoryFilterV5=function(){
+  bindGanttCategoryFilterV15Base();
+  const btn=$('#ganttCatBtn'),menu=$('#ganttCatMenu');if(!btn||!menu)return;
+  const toggle=btn.onclick;
+  btn.onclick=e=>{toggle(e);btn.setAttribute('aria-expanded',String(!menu.classList.contains('hidden')));if(!menu.classList.contains('hidden'))requestAnimationFrame(()=>positionGanttCategoryMenuV15(btn,menu))};
+};
+
+const openTaskFormV15Base=openTaskForm;
+openTaskForm=function(id=null){
+  const result=openTaskFormV15Base(id),dialog=$('#modalRoot .modal'),wrap=dialog?.closest('.modal-wrap');
+  dialog?.classList.add('task-form-modal-v15');wrap?.classList.add('task-form-wrap-v15');
+  const body=dialog?.querySelector('.modal-body');if(body)requestAnimationFrame(()=>{body.scrollTop=0});
+  return result;
+};
 
 </script>
 </body></html>
