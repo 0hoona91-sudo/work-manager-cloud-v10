@@ -644,6 +644,243 @@ html.task-form-open-v16,body.task-form-open-v16{
 }
 </style>
 
+<style id="app-v17-mobile-style">
+/* APP V17: 모바일에서는 데스크톱 표를 카드와 고정 하단 내비게이션으로 바꾼다. */
+html.mobile-ui-v17,html.mobile-ui-v17 body{max-width:100%;overflow-x:hidden!important}
+.mobile-ui-v17 body{padding-bottom:calc(72px + env(safe-area-inset-bottom))!important}
+.mobile-ui-v17 .app{display:block!important;width:100%!important;min-width:0!important;min-height:100dvh!important}
+.mobile-ui-v17 .main{
+  width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;
+  padding:14px 12px calc(92px + env(safe-area-inset-bottom))!important
+}
+.mobile-ui-v17 .sectionpage,.mobile-ui-v17 .card,.mobile-ui-v17 .toolbar{min-width:0!important;max-width:100%!important}
+
+/* 6개 주요 화면을 언제든 이동할 수 있는 모바일 하단 메뉴. */
+.mobile-ui-v17 .side{
+  position:fixed!important;left:0!important;right:0!important;top:auto!important;bottom:0!important;
+  width:100%!important;height:auto!important;min-height:66px!important;
+  display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  gap:2px!important;padding:5px max(4px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left))!important;
+  overflow:visible!important;background:rgba(250,252,250,.96)!important;border:0!important;border-top:1px solid rgba(50,75,58,.12)!important;
+  box-shadow:0 -8px 26px rgba(38,63,47,.10)!important;backdrop-filter:blur(22px) saturate(170%)!important;z-index:1400!important
+}
+.mobile-ui-v17 .navbtn,
+.mobile-ui-v17 .navbtn[data-page="settingsPage"]{
+  min-width:0!important;min-height:56px!important;height:56px!important;margin:0!important;padding:4px 1px!important;
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:2px!important;
+  border:0!important;border-radius:12px!important;font-size:10px!important;line-height:1.1!important;text-align:center!important;white-space:nowrap!important
+}
+.mobile-ui-v17 .navbtn .nav-icon{width:24px!important;height:24px!important;flex-basis:24px!important;border-radius:8px!important;font-size:14px!important}
+.mobile-ui-v17 .navbtn>span:last-child{display:block!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important}
+.mobile-ui-v17 .cloud-account{display:none!important}
+
+/* 공통 제목·검색·조작 영역. */
+.mobile-ui-v17 .pagehead{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:10px!important;align-items:start!important;margin-bottom:12px!important}
+.mobile-ui-v17 .pagehead h2{font-size:23px!important;line-height:1.25!important;word-break:keep-all!important}
+.mobile-ui-v17 .pagehead .muted{line-height:1.45!important;margin-top:4px!important}
+.mobile-ui-v17 .pagehead>.btn{min-height:44px!important;white-space:nowrap!important}
+.mobile-ui-v17 .toolbar{padding:12px!important;gap:10px!important}
+.mobile-ui-v17 .field,.mobile-ui-v17 .grow{min-width:0!important;width:100%!important}
+.mobile-ui-v17 .field input,.mobile-ui-v17 .field select,.mobile-ui-v17 .field textarea{width:100%!important;min-width:0!important}
+
+/* 체크리스트·업무DB·휴일 등 모든 팝업도 모바일 표시영역 안에서 동작한다. */
+.mobile-ui-v17 .modal-wrap{
+  width:100%!important;height:100dvh!important;max-height:100dvh!important;padding:8px!important;
+  align-items:stretch!important;overflow:hidden!important
+}
+.mobile-ui-v17 .modal,.mobile-ui-v17 .modal.small,.mobile-ui-v17 .modal.db-form-modal{
+  width:100%!important;max-width:none!important;height:calc(100dvh - 16px)!important;max-height:calc(100dvh - 16px)!important;
+  margin:0!important;display:flex!important;flex-direction:column!important;overflow:hidden!important;border-radius:20px!important
+}
+.mobile-ui-v17 .modal .modal-body,.mobile-ui-v17 .modal.db-form-modal .modal-body{
+  flex:1 1 auto!important;min-height:0!important;max-height:none!important;overflow-x:hidden!important;overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;overscroll-behavior:contain!important
+}
+.mobile-ui-v17 .modal .modal-foot{
+  position:relative!important;bottom:auto!important;flex:0 0 auto!important;flex-wrap:wrap!important;
+  padding-bottom:max(12px,env(safe-area-inset-bottom))!important
+}
+.mobile-ui-v17 .modal .modal-foot .btn{flex:1 1 88px!important;min-height:44px!important}
+.mobile-ui-v17 .modal .formgrid,.mobile-ui-v17 .modal .db-step-grid-v6{grid-template-columns:minmax(0,1fr)!important}
+.mobile-ui-v17 .modal .span2,.mobile-ui-v17 .modal .wide,.mobile-ui-v17 .modal .db-step-grid-v6 .span2,.mobile-ui-v17 .modal .db-step-grid-v6 .wide{grid-column:1!important;min-width:0!important}
+.mobile-ui-v17 .modal fieldset,.mobile-ui-v17 .modal .field,.mobile-ui-v17 .modal .db-linked-step{min-width:0!important;max-width:100%!important}
+
+/* HOME */
+.mobile-ui-v17 .home-heading-v12{display:grid!important;grid-template-columns:1fr!important;gap:10px!important;margin-bottom:12px!important}
+.mobile-ui-v17 .home-date-card-v12{width:100%!important;min-width:0!important;max-width:none!important}
+.mobile-ui-v17 .brand{font-size:28px!important;line-height:1.18!important}
+.mobile-ui-v17 .sub{font-size:12px!important;line-height:1.5!important;margin:5px 0 0!important}
+.mobile-ui-v17 .home-toolbar-v3{
+  position:relative!important;display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;align-items:end!important
+}
+.mobile-ui-v17 .home-toolbar-v3 .multi,.mobile-ui-v17 .home-toolbar-v3 .multi-btn{width:100%!important;min-width:0!important}
+.mobile-ui-v17 .home-toolbar-v3 .gantt-month-field-v13,
+.mobile-ui-v17 .home-toolbar-v3 .gantt-cycle-field-v13,
+.mobile-ui-v17 .home-toolbar-v3>#refreshHome{grid-column:1/-1!important;width:100%!important;order:initial!important}
+.mobile-ui-v17 .gantt-cycle-toggles-v13{width:100%!important;min-width:0!important}
+.mobile-ui-v17 .gantt-cycle-toggle-v13{flex:1!important;min-width:0!important;padding:8px 3px!important}
+.mobile-ui-v17 .kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;margin:10px 0!important}
+.mobile-ui-v17 .kpi{min-width:0!important;padding:12px!important}.mobile-ui-v17 .kpi b{font-size:23px!important}
+.mobile-ui-v17 .home-top-grid-v3,.mobile-ui-v17 .home-bottom-grid-v3{grid-template-columns:minmax(0,1fr)!important;gap:12px!important;margin-top:12px!important}
+.mobile-ui-v17 .panel-title{height:auto!important;min-height:52px!important;flex-wrap:wrap!important;gap:7px!important}
+.mobile-ui-v17 .panel-actions{max-width:100%!important;flex-wrap:wrap!important}
+.mobile-ui-v17 .gantt-tools{align-items:flex-start!important}
+.mobile-ui-v17 .gantt-scroll{max-width:100%!important;max-height:440px!important}
+.mobile-ui-v17 .gantt-v2-head,.mobile-ui-v17 .gantt-v2-row{grid-template-columns:170px auto!important}
+.mobile-ui-v17 .gantt-sticky-name{font-size:12px!important;padding:9px 8px!important}
+.mobile-ui-v17 .calendar-card-v3 .panel-body{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}
+.mobile-ui-v17 .calendar-card-v3 .calendar{min-width:700px!important}
+.mobile-ui-v17 .home-bottom-list{max-height:360px!important}.mobile-ui-v17 .mini-list{table-layout:auto!important}
+.mobile-ui-v17 .mini-list .task-link{white-space:normal!important;word-break:keep-all!important;overflow-wrap:anywhere!important;line-height:1.4!important}
+
+/* 업무목록의 검색/필터는 2열, 삭제 조작은 한 줄 전체를 사용한다. */
+.mobile-ui-v17 #taskListPage>.toolbar{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;overflow:visible!important}
+.mobile-ui-v17 #taskListPage>.toolbar>.grow{grid-column:1/-1!important}
+.mobile-ui-v17 #taskListPage .task-category-filter{min-width:0!important;width:100%!important}
+.mobile-ui-v17 #taskListPage .task-category-filter .multi-btn{min-width:0!important;width:100%!important}
+.mobile-ui-v17 #taskListPage .bulk-actions{
+  grid-column:1/-1!important;width:100%!important;margin:0!important;
+  display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important
+}
+.mobile-ui-v17 #taskListPage .bulk-actions #selectedTaskCount{grid-column:1/-1!important;text-align:right!important}
+
+/* 데스크톱 업무 표를 읽기 쉬운 모바일 카드로 전환한다. */
+.mobile-ui-v17 #taskListPage>.tablewrap,
+.mobile-ui-v17 #dbPage>.tablewrap,
+.mobile-ui-v17 #historyPage>.tablewrap{
+  max-height:none!important;overflow:visible!important;border:0!important;border-radius:0!important;background:transparent!important
+}
+.mobile-ui-v17 #taskListPage .datatable,
+.mobile-ui-v17 #dbPage .datatable,
+.mobile-ui-v17 #historyPage .datatable,
+.mobile-ui-v17 #taskListPage .datatable tbody,
+.mobile-ui-v17 #dbPage .datatable tbody,
+.mobile-ui-v17 #historyPage .datatable tbody{display:block!important;width:100%!important;background:transparent!important}
+.mobile-ui-v17 #taskListPage .datatable thead,
+.mobile-ui-v17 #dbPage .datatable thead,
+.mobile-ui-v17 #historyPage .datatable thead{display:none!important}
+.mobile-ui-v17 #taskListPage .datatable tbody,
+.mobile-ui-v17 #dbPage .datatable tbody,
+.mobile-ui-v17 #historyPage .datatable tbody{display:grid!important;gap:10px!important}
+.mobile-ui-v17 #taskTableBody tr,
+.mobile-ui-v17 #dbTableBody tr,
+.mobile-ui-v17 #historyTableBody tr{
+  position:relative!important;width:100%!important;min-width:0!important;
+  background:#fff!important;border:1px solid rgba(50,75,58,.11)!important;border-radius:18px!important;
+  box-shadow:0 5px 18px rgba(45,70,54,.045)!important
+}
+.mobile-ui-v17 #taskTableBody td,
+.mobile-ui-v17 #dbTableBody td,
+.mobile-ui-v17 #historyTableBody td{
+  min-width:0!important;background:transparent!important;border:0!important;font-size:13px!important
+}
+.mobile-ui-v17 .mobile-field-v17::before{
+  content:attr(data-mobile-label);display:block;margin-bottom:5px;color:#7a837d;font-size:10px;font-weight:800;line-height:1.1
+}
+.mobile-ui-v17 .mobile-card-title-v17::before{content:"업무명"}
+.mobile-ui-v17 .mobile-card-title-v17 .task-link{
+  display:block!important;width:100%!important;max-width:100%!important;padding:0!important;
+  color:#202421!important;font-size:16px!important;font-weight:850!important;line-height:1.45!important;text-align:left!important;
+  white-space:normal!important;word-break:keep-all!important;overflow-wrap:anywhere!important
+}
+.mobile-ui-v17 .mobile-empty-field-v17{display:none!important}
+.mobile-urgent-badge-v17{display:none}
+.mobile-ui-v17 .mobile-urgent-badge-v17{
+  display:inline-flex!important;margin:0 0 7px 7px;padding:3px 7px;border-radius:999px;background:#fff0ef;color:#c83e37;font-size:10px;font-weight:850;vertical-align:middle
+}
+
+.mobile-ui-v17 #taskTableBody tr{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-areas:"title title" "category owner" "period repeat" "schedule schedule" "status status" "notes notes";
+  gap:11px 12px!important;padding:16px!important
+}
+.mobile-ui-v17 #taskTableBody td:nth-child(1){position:absolute!important;right:14px!important;top:14px!important;z-index:2!important;padding:0!important}
+.mobile-ui-v17 #taskTableBody td:nth-child(1)::before,.mobile-ui-v17 #taskTableBody td:nth-child(2){display:none!important}
+.mobile-ui-v17 #taskTableBody td:nth-child(3){grid-area:category!important}
+.mobile-ui-v17 #taskTableBody td:nth-child(4){grid-area:title!important;padding:0 38px 3px 0!important}
+.mobile-ui-v17 #taskTableBody td:nth-child(5){grid-area:owner!important}
+.mobile-ui-v17 #taskTableBody td:nth-child(6){grid-area:period!important}
+.mobile-ui-v17 #taskTableBody td:nth-child(7){grid-area:schedule!important}
+.mobile-ui-v17 #taskTableBody td:nth-child(8){grid-area:repeat!important}
+.mobile-ui-v17 #taskTableBody td:nth-child(9){grid-area:status!important}
+.mobile-ui-v17 #taskTableBody td:nth-child(10){grid-area:notes!important}
+.mobile-ui-v17 #taskTableBody .task-owner-cell{min-width:0!important}
+.mobile-ui-v17 #taskTableBody .status-select{width:100%!important;min-height:44px!important}
+.mobile-ui-v17 #taskTableBody .inline-date-wrap{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important}
+.mobile-ui-v17 #taskTableBody .task-date-input{width:100%!important;min-width:0!important;min-height:44px!important}
+
+/* 업무 DB 카드 */
+.mobile-ui-v17 #dbPage .pagehead{grid-template-columns:1fr!important}
+.mobile-ui-v17 #dbPage .db-register-tools{
+  width:100%!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;margin-top:2px!important
+}
+.mobile-ui-v17 #dbPage .db-register-tools #dbSelectedCount{grid-column:1/-1!important;text-align:right!important}
+.mobile-ui-v17 #dbPage .db-register-tools #newDbBtn{grid-column:1/-1!important;width:100%!important}
+.mobile-ui-v17 #dbPage>.toolbar{display:block!important}.mobile-ui-v17 #dbPage>.toolbar .grow{width:100%!important}
+.mobile-ui-v17 #dbTableBody tr{
+  display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;
+  grid-template-areas:"title title" "category owner" "cycle auto" "relation relation" "notes notes" "edit edit";
+  gap:11px 12px!important;padding:16px!important
+}
+.mobile-ui-v17 #dbTableBody td:nth-child(1){position:absolute!important;right:14px!important;top:14px!important;z-index:2!important;padding:0!important}
+.mobile-ui-v17 #dbTableBody td:nth-child(1)::before,.mobile-ui-v17 #dbTableBody td:nth-child(2){display:none!important}
+.mobile-ui-v17 #dbTableBody td:nth-child(3){grid-area:category!important}
+.mobile-ui-v17 #dbTableBody td:nth-child(4){grid-area:title!important;padding:0 38px 3px 0!important}
+.mobile-ui-v17 #dbTableBody td:nth-child(5){grid-area:owner!important}
+.mobile-ui-v17 #dbTableBody td:nth-child(6){grid-area:cycle!important}
+.mobile-ui-v17 #dbTableBody td:nth-child(7){grid-area:auto!important}
+.mobile-ui-v17 #dbTableBody td:nth-child(8){grid-area:relation!important}
+.mobile-ui-v17 #dbTableBody td:nth-child(9){grid-area:notes!important}
+.mobile-ui-v17 #dbTableBody td:nth-child(10){grid-area:edit!important}
+.mobile-ui-v17 #dbTableBody td:nth-child(10) .btn{width:100%!important;min-height:44px!important}
+.mobile-ui-v17 #dbTableBody .db-chain-indent{width:12px!important;flex-basis:12px!important}
+.mobile-ui-v17 #dbTableBody .chain-label{white-space:normal!important;word-break:keep-all!important;line-height:1.35!important}
+
+/* 변경이력·휴일·설정 */
+.mobile-ui-v17 #historyTableBody tr{display:block!important;padding:15px!important}
+.mobile-ui-v17 #historyTableBody td{display:block!important;padding:7px 0!important;word-break:keep-all!important;overflow-wrap:anywhere!important}
+.mobile-ui-v17 #historyTableBody td:nth-child(2){font-size:14px!important}
+.mobile-ui-v17 #historyTableBody td:nth-child(3){display:none!important}
+.mobile-ui-v17 #historyTableBody .mobile-empty-row-v17{padding:18px!important;text-align:center!important}
+.mobile-ui-v17 .holiday-import{width:100%!important;display:grid!important;grid-template-columns:1fr!important;align-items:stretch!important}
+.mobile-ui-v17 .holiday-import .btn{width:100%!important}.mobile-ui-v17 .holiday-import .field{width:100%!important}
+.mobile-ui-v17 .holiday-table{width:100%!important;max-width:none!important}
+.mobile-ui-v17 .holiday-row{grid-template-columns:minmax(0,1fr) auto!important;gap:8px!important;padding:10px 0!important}
+.mobile-ui-v17 .holiday-row input[type="date"]{grid-column:1/-1!important}
+.mobile-ui-v17 .holiday-row input:not([type="date"]){grid-column:1!important}
+.mobile-ui-v17 .holiday-row .holiday-source{grid-column:1!important}
+.mobile-ui-v17 .holiday-row .btn{grid-column:2!important;grid-row:2/4!important;min-width:70px!important}
+.mobile-ui-v17 .settings-grid{grid-template-columns:minmax(0,1fr)!important}
+.mobile-ui-v17 .settings-grid .card{min-width:0!important;padding:15px!important}
+.mobile-ui-v17 .settings-tools{grid-template-columns:1fr!important}
+.mobile-ui-v17 .theme-options{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.mobile-ui-v17 .color-setting-row{grid-template-columns:1fr!important}
+.mobile-ui-v17 .owner-row{grid-template-columns:minmax(0,1fr) auto!important}
+.mobile-account-card-v17 .mobile-account-line-v17{display:flex;align-items:center;gap:7px;margin:10px 0 5px}
+.mobile-account-card-v17 .mobile-signout-v17{width:100%;margin-top:10px}
+
+/* HOME/업무목록 대분류 팝업은 화면 밖으로 나가지 않고 손가락으로 스크롤된다. */
+.mobile-ui-v17 .mobile-filter-menu-v17{
+  position:fixed!important;right:auto!important;bottom:auto!important;z-index:1700!important;
+  max-width:calc(100vw - 20px)!important;overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important;background:#fff!important
+}
+.mobile-ui-v17 .mobile-filter-menu-v17 label{min-height:44px!important}
+
+@media(max-width:390px){
+  .mobile-ui-v17 .main{padding-left:9px!important;padding-right:9px!important}
+  .mobile-ui-v17 .navbtn,.mobile-ui-v17 .navbtn[data-page="settingsPage"]{font-size:9px!important}
+  .mobile-ui-v17 .home-toolbar-v3{grid-template-columns:1fr!important}
+  .mobile-ui-v17 .home-toolbar-v3>*{grid-column:1!important}
+  .mobile-ui-v17 #taskListPage>.toolbar{grid-template-columns:1fr!important}
+  .mobile-ui-v17 #taskListPage>.toolbar>*{grid-column:1!important}
+  .mobile-ui-v17 #taskListPage .bulk-actions{grid-template-columns:1fr!important}
+  .mobile-ui-v17 #dbPage .db-register-tools{grid-template-columns:1fr!important}
+  .mobile-ui-v17 #dbPage .db-register-tools>*{grid-column:1!important}
+  .mobile-ui-v17 .theme-options{grid-template-columns:1fr!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -3263,6 +3500,99 @@ openTaskForm=function(id=null){
   const result=openTaskFormV16Base(id),dialog=$('#modalRoot .modal'),wrap=dialog?.closest('.modal-wrap');
   applyTaskFormViewportV16(wrap,dialog);return result;
 };
+
+// ========================= APP V17 — 앱 전체 모바일 전용 화면 =========================
+function isMobileUiV17(){return isTaskFormMobileV16()}
+const MOBILE_NAV_LABELS_V17={homePage:'HOME',taskListPage:'업무',dbPage:'업무DB',holidayPage:'휴일',historyPage:'이력',settingsPage:'설정'};
+const FULL_NAV_LABELS_V17={homePage:'HOME',taskListPage:'업무목록',dbPage:'업무 DB',holidayPage:'휴일 DB',historyPage:'변경이력',settingsPage:'설정 / 백업'};
+function syncMobileNavigationV17(){
+  const mobile=document.documentElement.classList.contains('mobile-ui-v17');
+  $$('.navbtn').forEach(button=>{
+    const page=button.dataset.page,label=(mobile?MOBILE_NAV_LABELS_V17:FULL_NAV_LABELS_V17)[page];if(!label)return;
+    button.setAttribute('aria-label',FULL_NAV_LABELS_V17[page]);
+    const text=button.querySelector('span:last-child');if(text)text.textContent=label;
+  });
+}
+function clearMobileFilterPositionV17(menu){
+  if(!menu)return;menu.classList.remove('mobile-filter-menu-v17');
+  ['left','top','width','maxHeight'].forEach(name=>menu.style.removeProperty(name));
+}
+function applyMobileUiV17(){
+  const mobile=isMobileUiV17();
+  document.documentElement.classList.toggle('mobile-ui-v17',mobile);
+  document.body.classList.toggle('mobile-ui-v17',mobile);
+  syncMobileNavigationV17();
+  if(!mobile){clearMobileFilterPositionV17($('#catMultiMenu'));clearMobileFilterPositionV17($('#taskCatFilterMenu'))}
+}
+function positionMobileFilterV17(button,menu){
+  if(!button||!menu||!isMobileUiV17())return clearMobileFilterPositionV17(menu);
+  const rect=button.getBoundingClientRect(),viewport=window.visualViewport;
+  const top=Number(viewport?.offsetTop||0),height=Number(viewport?.height||window.innerHeight),bottom=top+height,margin=10;
+  const width=Math.min(Math.max(rect.width,230),Math.max(230,window.innerWidth-margin*2));
+  const below=Math.max(0,bottom-rect.bottom-margin),above=Math.max(0,rect.top-top-margin);
+  const openBelow=below>=Math.min(260,menu.scrollHeight)||below>=above,available=Math.max(132,Math.min(360,openBelow?below:above));
+  const left=Math.max(margin,Math.min(rect.left,window.innerWidth-width-margin));
+  menu.classList.add('mobile-filter-menu-v17');
+  Object.assign(menu.style,{left:`${left}px`,width:`${width}px`,maxHeight:`${available}px`,top:openBelow?`${rect.bottom+7}px`:`${Math.max(top+margin,rect.top-available-7)}px`});
+}
+function bindMobileFilterV17(buttonId,menuId){
+  const button=$(`#${buttonId}`),menu=$(`#${menuId}`);if(!button||!menu)return;
+  const original=button.onclick;if(original?.mobileV17)return;
+  const wrapped=function(event){const result=original?.call(this,event);if(!menu.classList.contains('hidden'))requestAnimationFrame(()=>positionMobileFilterV17(button,menu));return result};
+  wrapped.mobileV17=true;button.onclick=wrapped;
+}
+function decorateMobileRowV17(row,labels,titleIndex){
+  const cells=[...row.cells];cells.forEach((cell,index)=>{
+    cell.classList.add('mobile-field-v17');cell.dataset.mobileLabel=labels[index]||'';
+    if(index===titleIndex)cell.classList.add('mobile-card-title-v17');
+  });
+  const title=cells[titleIndex],urgent=cells[1];
+  if(title&&urgent?.querySelector('.dot')&&!title.querySelector('.mobile-urgent-badge-v17'))title.insertAdjacentHTML('afterbegin','<span class="mobile-urgent-badge-v17">긴급</span>');
+  cells.forEach((cell,index)=>{if(index!==0&&index!==titleIndex&&['','-'].includes(cell.textContent.trim()))cell.classList.add('mobile-empty-field-v17')});
+}
+function decorateTaskCardsV17(){
+  const labels=['선택','긴급','대분류','업무명','담당자','진행 시기','시작일 / 마감일','반복','상태','비고'];
+  $$('#taskTableBody tr').forEach(row=>decorateMobileRowV17(row,labels,3));
+}
+function decorateDbCardsV17(){
+  const labels=['선택','연번','대분류','업무명','담당자','진행 주기','자동등록','연계 관계','비고','수정'];
+  $$('#dbTableBody tr').forEach(row=>decorateMobileRowV17(row,labels,3));
+}
+function decorateHistoryCardsV17(){
+  const labels=['시각','변경 내용','계정','상세'];
+  $$('#historyTableBody tr').forEach(row=>{
+    if(row.cells.length===1){row.classList.add('mobile-empty-row-v17');return}
+    [...row.cells].forEach((cell,index)=>{cell.classList.add('mobile-field-v17');cell.dataset.mobileLabel=labels[index]||''});
+  });
+}
+function ensureMobileAccountCardV17(){
+  const grid=$('#settingsPage .settings-grid');if(!grid)return;
+  let card=$('#mobileAccountCardV17');
+  if(!isMobileUiV17()){card?.remove();return}
+  if(!card){card=document.createElement('div');card.id='mobileAccountCardV17';card.className='card panel-body mobile-account-card-v17';grid.appendChild(card)}
+  const status=$('#syncText')?.textContent.trim()||'연결 상태 확인 중',account=$('#cloudUser')?.textContent.trim()||'Google 계정';
+  card.innerHTML=`<h3>현재 계정</h3><div class="mobile-account-line-v17"><span class="sync-dot" data-state="${esc($('#syncDot')?.dataset.state||'offline')}"></span><b>${esc(status)}</b></div><div class="muted">${esc(account)}</div><button class="btn mobile-signout-v17" id="mobileSignOutV17" type="button">로그아웃</button>`;
+  $('#mobileSignOutV17').onclick=()=>$('#cloudSignOut')?.click();
+}
+
+const ensureV7UiV17Base=ensureV7Ui;
+ensureV7Ui=function(){const result=ensureV7UiV17Base();syncMobileNavigationV17();return result};
+const renderTaskTableV17Base=renderTaskTable;
+renderTaskTable=function(){const result=renderTaskTableV17Base();decorateTaskCardsV17();bindMobileFilterV17('taskCatFilterBtn','taskCatFilterMenu');return result};
+const renderDbTableV17Base=renderDbTable;
+renderDbTable=function(){const result=renderDbTableV17Base();decorateDbCardsV17();return result};
+const renderHistoryV17Base=renderHistory;
+renderHistory=function(){const result=renderHistoryV17Base();decorateHistoryCardsV17();return result};
+const renderSettingsV17Base=renderSettings;
+renderSettings=function(){const result=renderSettingsV17Base();ensureMobileAccountCardV17();return result};
+const showPageV17Base=showPage;
+showPage=function(id){const result=showPageV17Base(id);if(isMobileUiV17())window.scrollTo({top:0,left:0,behavior:'auto'});requestAnimationFrame(()=>{syncMobileNavigationV17();if(id==='settingsPage')ensureMobileAccountCardV17()});return result};
+const bindV17Base=bind;
+bind=function(){const result=bindV17Base();bindMobileFilterV17('catMultiBtn','catMultiMenu');bindMobileFilterV17('taskCatFilterBtn','taskCatFilterMenu');syncMobileNavigationV17();return result};
+
+applyMobileUiV17();
+window.addEventListener('resize',applyMobileUiV17);
+window.addEventListener('orientationchange',()=>requestAnimationFrame(applyMobileUiV17));
 
 </script>
 </body></html>

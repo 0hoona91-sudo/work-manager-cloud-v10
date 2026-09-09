@@ -453,6 +453,15 @@ assert.ok(html.includes("/Macintosh/i.test(ua)&&touchPoints>1"), "데스크톱 U
 assert.ok(html.includes("task-form-wrap-v16.task-form-mobile-v16"), "모바일 업무 폼은 시각 뷰포트 전체를 사용해야 합니다.");
 assert.ok(html.includes("grid-template-rows:auto minmax(0,1fr) auto"), "모바일 업무 폼의 머리글·본문·하단 버튼을 분리해야 합니다.");
 assert.ok(html.includes("visualViewport?.addEventListener('resize',sync"), "주소창과 키보드 변화 시 폼 크기를 다시 계산해야 합니다.");
+assert.ok(html.includes('id="app-v17-mobile-style"'), "앱 전체 모바일 전용 스타일이 있어야 합니다.");
+assert.ok(html.includes("grid-template-columns:repeat(6,minmax(0,1fr))"), "모바일 하단 메뉴에 전체 화면 이동 버튼을 표시해야 합니다.");
+assert.ok(html.includes("function decorateTaskCardsV17()"), "수행업무 표를 모바일 카드 목록으로 바꿔야 합니다.");
+assert.ok(html.includes("function decorateDbCardsV17()"), "업무 DB 표를 모바일 카드 목록으로 바꿔야 합니다.");
+assert.ok(html.includes("word-break:keep-all"), "모바일 업무명이 한 글자씩 쪼개지지 않아야 합니다.");
+assert.ok(html.includes('grid-template-areas:"title title" "category owner"'), "모바일 카드에서 업무명이 전체 너비를 사용해야 합니다.");
+assert.ok(html.includes("function decorateHistoryCardsV17()"), "변경이력도 모바일 카드로 표시해야 합니다.");
+assert.ok(html.includes("ensureMobileAccountCardV17"), "모바일 설정 화면에 계정과 로그아웃 조작을 제공해야 합니다.");
+assert.ok(html.includes(".mobile-ui-v17 .calendar-card-v3 .calendar{min-width:700px"), "모바일 달력은 글자가 찌그러지지 않도록 가로 스크롤해야 합니다.");
 
 assert.match(
   html,
