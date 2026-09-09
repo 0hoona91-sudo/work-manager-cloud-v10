@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
 <meta name="theme-color" content="#5f9275" />
 <meta name="description" content="반복업무, 연계업무, 체크리스트, 간트와 달력을 실시간 동기화하는 업무관리 웹앱" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
@@ -565,6 +565,82 @@ body[data-v7-theme] .home-layout-control button.active{color:var(--accent-deep)!
     box-shadow:0 -8px 22px rgba(35,50,40,.07)!important
   }
   .task-form-modal-v15 .modal-foot .btn{min-height:44px!important}
+}
+
+/* APP V16: 화면 폭뿐 아니라 터치 휴대기기/iPad도 감지해 업무 폼을 앱형 전체화면으로 전환한다. */
+html.task-form-open-v16,body.task-form-open-v16{
+  overflow:hidden!important;overscroll-behavior:none!important
+}
+.task-form-wrap-v16.task-form-mobile-v16{
+  inset:auto!important;
+  top:var(--task-vv-top,0px)!important;left:var(--task-vv-left,0px)!important;
+  width:var(--task-vv-width,100vw)!important;height:var(--task-vv-height,100dvh)!important;
+  max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;
+  display:block!important;overflow:hidden!important;z-index:3000!important
+}
+.task-form-modal-v16.task-form-mobile-v16{
+  position:absolute!important;inset:0!important;
+  width:100%!important;max-width:none!important;height:100%!important;max-height:none!important;
+  margin:0!important;border:0!important;border-radius:0!important;
+  display:grid!important;grid-template-rows:auto minmax(0,1fr) auto!important;overflow:hidden!important
+}
+.task-form-modal-v16.task-form-mobile-v16 .modal-head{
+  position:relative!important;top:auto!important;min-width:0!important;
+  padding:max(14px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 14px max(16px,env(safe-area-inset-left))!important
+}
+.task-form-modal-v16.task-form-mobile-v16 .modal-body{
+  width:100%!important;min-width:0!important;min-height:0!important;max-height:none!important;
+  overflow-x:hidden!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;
+  overscroll-behavior-y:contain!important;padding:14px max(12px,env(safe-area-inset-right)) 28px max(12px,env(safe-area-inset-left))!important
+}
+.task-form-modal-v16.task-form-mobile-v16 .modal-foot{
+  position:relative!important;inset:auto!important;width:100%!important;min-width:0!important;
+  display:flex!important;flex-wrap:wrap!important;justify-content:flex-end!important;gap:8px!important;
+  padding:11px max(12px,env(safe-area-inset-right)) max(11px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))!important;
+  box-shadow:0 -8px 24px rgba(35,50,40,.09)!important
+}
+.task-form-modal-v16.task-form-mobile-v16 .modal-foot .btn{
+  flex:1 1 88px!important;min-height:46px!important;margin:0!important
+}
+.task-form-modal-v16.task-form-mobile-v16 .formgrid,
+.task-form-modal-v16.task-form-mobile-v16 .db-step-grid-v6{
+  grid-template-columns:minmax(0,1fr)!important;width:100%!important;min-width:0!important
+}
+.task-form-modal-v16.task-form-mobile-v16 .span2,
+.task-form-modal-v16.task-form-mobile-v16 .wide,
+.task-form-modal-v16.task-form-mobile-v16 .db-step-grid-v6 .span2,
+.task-form-modal-v16.task-form-mobile-v16 .db-step-grid-v6 .wide{
+  grid-column:1!important;min-width:0!important
+}
+.task-form-modal-v16.task-form-mobile-v16 fieldset,
+.task-form-modal-v16.task-form-mobile-v16 .field,
+.task-form-modal-v16.task-form-mobile-v16 .db-linked-step,
+.task-form-modal-v16.task-form-mobile-v16 .db-step-schedule{
+  min-width:0!important;max-width:100%!important
+}
+.task-form-modal-v16.task-form-mobile-v16 input,
+.task-form-modal-v16.task-form-mobile-v16 select,
+.task-form-modal-v16.task-form-mobile-v16 textarea{
+  max-width:100%!important
+}
+.task-form-modal-v16.task-form-mobile-v16 .radios,
+.task-form-modal-v16.task-form-mobile-v16 .checks{
+  align-items:stretch!important;gap:8px!important
+}
+.task-form-modal-v16.task-form-mobile-v16 .radios>label,
+.task-form-modal-v16.task-form-mobile-v16 .checks>label{
+  min-height:44px!important;max-width:100%!important;flex-wrap:wrap!important
+}
+.task-form-modal-v16.task-form-mobile-v16 .step-check-row{
+  grid-template-columns:18px minmax(0,1fr) auto!important;min-width:0!important
+}
+.task-form-modal-v16.task-form-mobile-v16 .inline{
+  min-width:0!important;max-width:100%!important;align-items:center!important
+}
+@media(max-width:480px){
+  .task-form-modal-v16.task-form-mobile-v16 .modal-head h3{font-size:19px!important}
+  .task-form-modal-v16.task-form-mobile-v16 .subbox{padding:12px!important}
+  .task-form-modal-v16.task-form-mobile-v16 .modal-foot .btn{font-size:14px!important;padding:10px 8px!important}
 }
 </style>
 
@@ -3135,6 +3211,57 @@ openTaskForm=function(id=null){
   dialog?.classList.add('task-form-modal-v15');wrap?.classList.add('task-form-wrap-v15');
   const body=dialog?.querySelector('.modal-body');if(body)requestAnimationFrame(()=>{body.scrollTop=0});
   return result;
+};
+
+// ========================= APP V16 — 모바일/태블릿 업무 폼 =========================
+let taskFormViewportAbortV16=null;
+function isTaskFormMobileV16(){
+  const ua=String(navigator.userAgent||''),touchPoints=Number(navigator.maxTouchPoints||0);
+  const forced=new URLSearchParams(location.search).has('mobile-preview');
+  const phone=/Android|iPhone|iPod|Mobile/i.test(ua)||navigator.userAgentData?.mobile===true;
+  const ipad=/iPad/i.test(ua)||(/Macintosh/i.test(ua)&&touchPoints>1);
+  const narrow=window.matchMedia?.('(max-width:1100px)').matches;
+  const coarse=window.matchMedia?.('(pointer:coarse)').matches;
+  const shortSide=Math.min(Number(screen.width||innerWidth),Number(screen.height||innerHeight));
+  return !!(forced||phone||ipad||narrow||(coarse&&touchPoints>0&&shortSide<=1366));
+}
+function clearTaskFormViewportV16(){
+  taskFormViewportAbortV16?.abort();taskFormViewportAbortV16=null;
+  document.documentElement.classList.remove('task-form-open-v16');
+  document.body.classList.remove('task-form-open-v16');
+}
+const closeModalV16Base=closeModal;
+closeModal=function(){clearTaskFormViewportV16();return closeModalV16Base()};
+function applyTaskFormViewportV16(wrap,dialog){
+  clearTaskFormViewportV16();
+  wrap?.classList.add('task-form-wrap-v16');dialog?.classList.add('task-form-modal-v16');
+  if(!wrap||!dialog||!isTaskFormMobileV16())return;
+  wrap.classList.add('task-form-mobile-v16');dialog.classList.add('task-form-mobile-v16');
+  document.documentElement.classList.add('task-form-open-v16');
+  document.body.classList.add('task-form-open-v16');
+  const controller=new AbortController();taskFormViewportAbortV16=controller;
+  const sync=()=>{
+    if(!wrap.isConnected)return;
+    const viewport=window.visualViewport;
+    const top=Math.max(0,Number(viewport?.offsetTop||0)),left=Math.max(0,Number(viewport?.offsetLeft||0));
+    const width=Math.max(280,Number(viewport?.width||window.innerWidth));
+    const height=Math.max(320,Number(viewport?.height||window.innerHeight));
+    wrap.style.setProperty('--task-vv-top',`${top}px`);
+    wrap.style.setProperty('--task-vv-left',`${left}px`);
+    wrap.style.setProperty('--task-vv-width',`${width}px`);
+    wrap.style.setProperty('--task-vv-height',`${height}px`);
+  };
+  sync();requestAnimationFrame(sync);setTimeout(sync,180);
+  window.addEventListener('resize',sync,{signal:controller.signal});
+  window.addEventListener('orientationchange',sync,{signal:controller.signal});
+  window.visualViewport?.addEventListener('resize',sync,{signal:controller.signal});
+  window.visualViewport?.addEventListener('scroll',sync,{signal:controller.signal});
+  const body=dialog.querySelector('.modal-body');if(body)body.scrollTop=0;
+}
+const openTaskFormV16Base=openTaskForm;
+openTaskForm=function(id=null){
+  const result=openTaskFormV16Base(id),dialog=$('#modalRoot .modal'),wrap=dialog?.closest('.modal-wrap');
+  applyTaskFormViewportV16(wrap,dialog);return result;
 };
 
 </script>

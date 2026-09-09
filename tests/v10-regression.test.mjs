@@ -446,6 +446,13 @@ assert.ok(html.includes("gantt-menu-fixed-v15"), "모바일 간트 대분류 메
 assert.ok(html.includes("touch-action:pan-y"), "모바일 대분류 메뉴가 세로 손가락 스크롤을 허용해야 합니다.");
 assert.ok(html.includes("height:calc(100dvh - 16px)"), "모바일 업무 폼 높이는 실제 브라우저 표시영역을 따라야 합니다.");
 assert.ok(html.includes("task-form-modal-v15"), "업무 신규작성·수정 모달에 전용 모바일 스크롤 클래스를 적용해야 합니다.");
+assert.ok(html.includes("viewport-fit=cover, interactive-widget=resizes-content"), "모바일 안전영역과 키보드 리사이즈를 지원해야 합니다.");
+assert.ok(html.includes("function isTaskFormMobileV16()"), "휴대폰과 iPad를 별도로 감지해야 합니다.");
+assert.ok(html.includes("navigator.userAgentData?.mobile===true"), "화면 폭 외에 모바일 브라우저 신호를 사용해야 합니다.");
+assert.ok(html.includes("/Macintosh/i.test(ua)&&touchPoints>1"), "데스크톱 UA를 쓰는 iPad도 감지해야 합니다.");
+assert.ok(html.includes("task-form-wrap-v16.task-form-mobile-v16"), "모바일 업무 폼은 시각 뷰포트 전체를 사용해야 합니다.");
+assert.ok(html.includes("grid-template-rows:auto minmax(0,1fr) auto"), "모바일 업무 폼의 머리글·본문·하단 버튼을 분리해야 합니다.");
+assert.ok(html.includes("visualViewport?.addEventListener('resize',sync"), "주소창과 키보드 변화 시 폼 크기를 다시 계산해야 합니다.");
 
 assert.match(
   html,
