@@ -827,8 +827,9 @@ async function commitTransaction(changes, nextMaps, metadata) {
     for (const lockChange of generatedCreates) {
       const snap = snapshots.get(`generatedKeys/${lockChange.id}`);
       if (snap.exists()) {
-        const remoteTaskId = snap.data().taskId;
-        if (remoteTaskId && remoteTaskId !== lockChange.after.taskId) skippedTaskIds.add(lockChange.after.taskId);
+        // 다른 탭/기기가 같은 회차를 먼저 확보했다면 문서 ID가 같더라도 다시 쓰지 않는다.
+        // 안정적 taskId와 함께 사용해 중복뿐 아니라 완료·수정 상태의 경합 덮어쓰기도 막는다.
+        skippedTaskIds.add(lockChange.after.taskId);
       }
     }
     for (const change of writeChanges) {
