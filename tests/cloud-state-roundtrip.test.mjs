@@ -220,4 +220,14 @@ const documentDiffs = context.diffMaps(maps, context.serializeState(documentChan
 assert.equal(documentDiffs.length, 1, "공문 제목 변경은 해당 업무 문서 한 건만 갱신해야 합니다.");
 assert.deepEqual(Array.from(documentDiffs[0].fields), ["relatedDocumentTitle"]);
 
+const completed = JSON.parse(JSON.stringify(state));
+completed.tasks[0].status = "done";
+completed.tasks[0].actualComplete = "2026-09-09";
+const completionDiffs = context.diffMaps(maps, context.serializeState(completed));
+assert.equal(completionDiffs.length, 1, "업무 완료는 해당 업무 문서 한 건만 갱신해야 합니다.");
+assert.deepEqual(Array.from(completionDiffs[0].fields), ["status", "actualComplete"]);
+const completedRoundTrip = context.deserializeState(context.serializeState(completed), {});
+assert.equal(completedRoundTrip.tasks[0].status, "done", "완료 상태가 새로고침 후 유지되어야 합니다.");
+assert.equal(completedRoundTrip.tasks[0].actualComplete, "2026-09-09", "실제 완료일이 새로고침 후 유지되어야 합니다.");
+
 console.log("PASS cloud state round-trip: related document field included");
