@@ -155,6 +155,8 @@ const state = {
   changeLogs: [],
   settings: {
     homeView: "gantt",
+    uiTheme: "navy",
+    designV21Applied: true,
     categoryColors: { 시설: "#75B798", 행정: "#F1B77A" },
     ownerProfiles: {
       홍길동: { mark: "🔧", color: "#CDEFD8" },
@@ -202,6 +204,8 @@ assert.equal(roundTrip.templates[0].linkedSteps[0].name, "결과 보고");
 assert.equal(roundTrip.templates[0].linkedSteps[0].checklist[0], "보고 확인");
 assert.equal(roundTrip.templates[0].methodBlocks[0].driveFileId, "drive-root");
 assert.equal(roundTrip.settings.holidayApiKey, "device-only");
+assert.equal(roundTrip.settings.uiTheme, "navy", "선택한 V21 네이비 테마가 새로고침 후에도 유지되어야 합니다.");
+assert.equal(roundTrip.settings.designV21Applied, true, "V21 최초 적용 표식이 클라우드 상태에 유지되어야 합니다.");
 assert.equal(roundTrip.settings.categoryColors.시설, "#75B798");
 assert.equal(roundTrip.settings.ownerProfiles.홍길동.mark, "🔧");
 assert.deepEqual(Array.from(roundTrip.selectedCategories), ["시설"]);
