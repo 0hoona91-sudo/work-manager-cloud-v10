@@ -568,10 +568,12 @@ assert.ok(html.includes("const renderTaskTableV18Base=renderTaskTable"), "업무
 assert.ok(html.includes('id="app-v21-navy-dashboard-style"'), "A 구조와 B 네이비 색상의 V21 디자인 계층이 있어야 합니다.");
 assert.ok(html.includes('body[data-v7-theme="navy"]'), "네이비 프로 팔레트를 전역 테마로 제공해야 합니다.");
 assert.ok(html.includes('grid-template-columns:220px minmax(0,1fr)'), "PC에서는 왼쪽 업무 내비게이션과 본문 구조를 사용해야 합니다.");
-assert.ok(html.includes('id="v21SideBrand"'), "왼쪽 내비게이션에 제품 식별 영역이 있어야 합니다.");
+assert.ok(html.includes('<button type="button" class="v21-side-brand" id="v21SideBrand"'), "왼쪽 제품 식별 영역은 HOME 이동 버튼이어야 합니다.");
+assert.ok(html.includes("sideBrand.onclick=()=>showPage('homePage')"), "업무관리 로고를 누르면 HOME으로 이동해야 합니다.");
 assert.ok(html.includes('id="homeHeroV21"'), "HOME에 오늘 업무와 월간 진행률을 묶은 요약 영역이 있어야 합니다.");
 assert.ok(html.includes('id="homeHeroAddTaskV21"'), "대시보드 요약에서 업무 작성으로 바로 이동할 수 있어야 합니다.");
 assert.ok(html.includes("body.app-v21 .cloud-gate"), "로그인 화면도 네이비 제품 톤과 일치해야 합니다.");
+assert.ok(html.includes("body.app-v21 .home-hero-v21{"), "요약 카드는 공통 흰색 카드보다 높은 우선순위로 네이비 배경을 유지해야 합니다.");
 assert.ok(html.includes("state.settings.designV21Applied=true"), "기존 사용자에게 네이비 디자인을 한 번만 기본 적용해야 합니다.");
 assert.ok(html.includes("body.app-v21.mobile-ui-v17 .home-hero-v21"), "모바일에서 요약 영역을 한 열 구조로 재배치해야 합니다.");
 assert.ok(html.includes("body.app-v21.mobile-ui-v17 .side"), "V21에서도 모바일 고정 하단 메뉴 스타일을 유지해야 합니다.");
