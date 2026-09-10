@@ -1066,7 +1066,12 @@ body.app-v21:not(.mobile-ui-v17)[data-v7-theme] .side{
   background:linear-gradient(180deg,#172d51 0%,#1c3b66 56%,#142a49 100%)!important;
   box-shadow:10px 0 34px rgba(19,42,74,.10)!important;color:#fff!important
 }
-.v21-side-brand{display:flex;align-items:center;gap:11px;margin:0 4px 20px;padding:5px 4px;color:#fff}
+.v21-side-brand{
+  width:calc(100% - 8px);display:flex;align-items:center;gap:11px;margin:0 4px 20px;padding:5px 4px;
+  border:0;border-radius:12px;background:transparent;color:#fff;text-align:left;font:inherit;cursor:pointer
+}
+.v21-side-brand:hover{background:rgba(255,255,255,.07)}
+.v21-side-brand:focus-visible{outline:2px solid #91bdf0;outline-offset:3px}
 .v21-side-brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#4b84cd;color:#fff;font-size:20px;font-weight:900;box-shadow:0 8px 18px rgba(5,22,48,.24)}
 .v21-side-brand strong{display:block;font-size:16px;line-height:1.25;letter-spacing:-.025em}.v21-side-brand small{display:block;margin-top:2px;color:#9eb4d2;font-size:9px;font-weight:800;letter-spacing:.14em}
 .v21-side-section{margin:0 10px 5px;color:#819abb;font-size:10px;font-weight:850;letter-spacing:.13em}
@@ -1122,21 +1127,21 @@ body.app-v21 .home-date-card-v12{
 }
 body.app-v21 .home-date-icon-v12{width:44px!important;height:44px!important;border-radius:12px!important;background:#e2ecf9!important;font-size:23px!important}
 body.app-v21 .home-date-value-v12{color:#263b57!important}
-.home-hero-v21{
+body.app-v21 .home-hero-v21{
   position:relative;display:grid;grid-template-columns:minmax(0,1fr) 184px;gap:24px;align-items:center;min-height:206px;
   margin-bottom:14px;padding:25px 28px!important;overflow:hidden;color:#fff!important;
   border:0!important;background:linear-gradient(122deg,#172d51 0%,#244f82 58%,#376fb7 100%)!important;
   box-shadow:0 18px 40px rgba(23,45,81,.18)!important
 }
-.home-hero-v21::before{content:"";position:absolute;right:110px;top:-105px;width:280px;height:280px;border-radius:50%;border:52px solid rgba(255,255,255,.045);pointer-events:none}
-.home-hero-copy-v21{position:relative;z-index:1;min-width:0}.home-hero-eyebrow-v21{display:block;margin-bottom:7px;color:#a9c8ed;font-size:10px;font-weight:850;letter-spacing:.14em}
-.home-hero-v21 h2{margin:0;color:#fff;font-size:25px;line-height:1.32;letter-spacing:-.04em;word-break:keep-all}
-.home-hero-v21 p{margin:8px 0 15px;color:#c5d6ea;font-size:13px;line-height:1.55}
+body.app-v21 .home-hero-v21::before{content:"";position:absolute;right:110px;top:-105px;width:280px;height:280px;border-radius:50%;border:52px solid rgba(255,255,255,.045);pointer-events:none}
+.home-hero-copy-v21{position:relative;z-index:1;min-width:0}body.app-v21 .home-hero-eyebrow-v21{display:block;margin-bottom:7px;color:#b8d5f6!important;font-size:10px;font-weight:850;letter-spacing:.14em}
+body.app-v21 .home-hero-v21 h2{margin:0;color:#fff!important;font-size:25px;line-height:1.32;letter-spacing:-.04em;word-break:keep-all;text-shadow:0 1px 1px rgba(8,25,48,.18)}
+body.app-v21 .home-hero-v21 p{margin:8px 0 15px;color:#d4e3f3!important;font-size:13px;line-height:1.55}
 .home-hero-actions-v21{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 .home-hero-v21 .home-hero-add-v21{min-height:40px!important;padding:9px 15px!important;background:#fff!important;color:#244e7c!important;border:0!important}
 .home-deadlines-v21{display:flex;gap:7px;min-width:0;flex-wrap:wrap}
-.home-deadline-v21{max-width:250px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(255,255,255,.09);color:#eaf2fc;padding:7px 10px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.home-deadline-v21 b{margin-right:5px;color:#9fc4f0}
+.home-deadline-v21{max-width:250px;border:1px solid rgba(255,255,255,.22);border-radius:999px;background:rgba(255,255,255,.14);color:#fff!important;padding:7px 10px;font-size:11px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.home-deadline-v21:hover{background:rgba(255,255,255,.22)}.home-deadline-v21 b{margin-right:5px;color:#b9d9ff!important}
 .home-progress-v21{position:relative;z-index:1;display:grid;place-items:center;text-align:center}
 .home-progress-ring-v21{--progress:0;position:relative;width:132px;height:132px;display:grid;place-items:center;border-radius:50%;background:conic-gradient(#8fc0f4 calc(var(--progress)*1%),rgba(255,255,255,.14) 0)}
 .home-progress-ring-v21::before{content:"";position:absolute;inset:10px;border-radius:50%;background:#204672}
@@ -1829,7 +1834,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-21').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-22').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -4231,11 +4236,12 @@ function ensureV21Ui(){
 
   const side=$('.side');
   if(side&&!$('#v21SideBrand')){
-    side.insertAdjacentHTML('afterbegin',`<div class="v21-side-brand" id="v21SideBrand" aria-label="업무관리시스템">
+    side.insertAdjacentHTML('afterbegin',`<button type="button" class="v21-side-brand" id="v21SideBrand" aria-label="HOME으로 이동" title="HOME으로 이동">
       <span class="v21-side-brand-mark" aria-hidden="true">✓</span>
       <span><strong>업무관리</strong><small>WORKSPACE</small></span>
-    </div><div class="v21-side-section">MAIN MENU</div>`);
+    </button><div class="v21-side-section">MAIN MENU</div>`);
   }
+  const sideBrand=$('#v21SideBrand');if(sideBrand)sideBrand.onclick=()=>showPage('homePage');
 
   const homeTitle=$('#homePage .home-heading-copy-v12 .brand');
   if(homeTitle)homeTitle.textContent='업무 대시보드';
