@@ -1223,6 +1223,44 @@ body.app-v21.mobile-ui-v17 .modal-head{padding:15px 16px!important}
 }
 </style>
 
+<style id="app-v23-theme-drive-style">
+/* APP V23: 선택한 디자인 톤을 배경뿐 아니라 주요 업무 UI 전체에 연결한다. */
+body.app-v21[data-v7-theme="navy"]{--v23-side-start:#172d51;--v23-side-mid:#1c3b66;--v23-side-end:#142a49;--v23-hero-start:#172d51;--v23-hero-mid:#244f82;--v23-hero-end:#376fb7;--v23-ring:#8fc0f4;--v23-ring-core:#204672;--v23-on-dark:#fff;--v23-on-dark-soft:#d4e3f3;--v23-on-dark-muted:#b8d5f6}
+body.app-v21[data-v7-theme="mint"]{--v23-side-start:#294c39;--v23-side-mid:#35634a;--v23-side-end:#203e2f;--v23-hero-start:#315a45;--v23-hero-mid:#56856a;--v23-hero-end:#78ad8d;--v23-ring:#b8e1c8;--v23-ring-core:#3f6f54;--v23-on-dark:#fff;--v23-on-dark-soft:#e6f4eb;--v23-on-dark-muted:#c9e6d4}
+body.app-v21[data-v7-theme="peach"]{--v23-side-start:#65412e;--v23-side-mid:#80543b;--v23-side-end:#4c3023;--v23-hero-start:#8b5638;--v23-hero-mid:#bb7955;--v23-hero-end:#e7aa83;--v23-ring:#ffd5b9;--v23-ring-core:#995f40;--v23-on-dark:#fff;--v23-on-dark-soft:#fff0e6;--v23-on-dark-muted:#ffd9c1}
+body.app-v21[data-v7-theme="lavender"]{--v23-side-start:#443b64;--v23-side-mid:#584d7c;--v23-side-end:#332c4d;--v23-hero-start:#574a7b;--v23-hero-mid:#77669e;--v23-hero-end:#a594c8;--v23-ring:#d8cef0;--v23-ring-core:#665589;--v23-on-dark:#fff;--v23-on-dark-soft:#f0ebfb;--v23-on-dark-muted:#dcd2f2}
+body.app-v21[data-v7-theme="sky"]{--v23-side-start:#31516a;--v23-side-mid:#3f6887;--v23-side-end:#253e51;--v23-hero-start:#416783;--v23-hero-mid:#6290b1;--v23-hero-end:#84afd1;--v23-ring:#c3e1f4;--v23-ring-core:#4b7696;--v23-on-dark:#fff;--v23-on-dark-soft:#e8f4fb;--v23-on-dark-muted:#cce5f4}
+body.app-v21[data-v7-theme="cream"]{--v23-side-start:#574a31;--v23-side-mid:#70613f;--v23-side-end:#41371f;--v23-hero-start:#71603d;--v23-hero-mid:#9a8350;--v23-hero-end:#c3a96d;--v23-ring:#f2dfac;--v23-ring-core:#806d43;--v23-on-dark:#fff;--v23-on-dark-soft:#fff7df;--v23-on-dark-muted:#f5e6b9}
+body.app-v21 .btn.primary,body.app-v21 .pagehead>.btn,body.app-v21 .db-register-tools #newDbBtn{background:var(--accent)!important;border-color:var(--accent)!important;color:#fff!important}
+body.app-v21 .btn.primary:hover,body.app-v21 .pagehead>.btn:hover,body.app-v21 .db-register-tools #newDbBtn:hover{background:var(--accent-deep)!important;border-color:var(--accent-deep)!important}
+body.app-v21 .field input:focus,body.app-v21 .field select:focus,body.app-v21 .field textarea:focus,body.app-v21 .multi-btn:focus{border-color:var(--accent)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)!important}
+body.app-v21:not(.mobile-ui-v17)[data-v7-theme] .side{background:linear-gradient(180deg,var(--v23-side-start) 0%,var(--v23-side-mid) 56%,var(--v23-side-end) 100%)!important;box-shadow:10px 0 34px color-mix(in srgb,var(--v23-side-start) 24%,transparent)!important}
+body.app-v21 .v21-side-brand-mark{background:var(--accent)!important}
+body.app-v21:not(.mobile-ui-v17) .navbtn.active{background:color-mix(in srgb,var(--accent) 34%,transparent)!important;box-shadow:inset 3px 0 color-mix(in srgb,var(--accent) 62%,white)!important}
+body.app-v21:not(.mobile-ui-v17) .navbtn.active .nav-icon{color:var(--accent-deep)!important}
+body.app-v21 .task-link{color:var(--accent-deep)!important}
+body.app-v21 .badge.progress{background:var(--accent-soft)!important;color:var(--accent-deep)!important}
+body.app-v21 .datatable th,body.app-v21 .gantt-v2-head .gantt-sticky-name,body.app-v21 .gantt-v2-head .gantt-track,body.app-v21 .calendar-card-v3 .cal-h{background:var(--accent-softer)!important}
+body.app-v21 .home-date-icon-v12,body.app-v21 .kpi::before{background:var(--accent-soft)!important;color:var(--accent-deep)!important}
+body.app-v21 .home-hero-v21{background:linear-gradient(122deg,var(--v23-hero-start) 0%,var(--v23-hero-mid) 58%,var(--v23-hero-end) 100%)!important;box-shadow:0 18px 40px color-mix(in srgb,var(--v23-hero-start) 30%,transparent)!important}
+body.app-v21 .home-hero-eyebrow-v21{color:var(--v23-on-dark-muted)!important}
+body.app-v21 .home-hero-v21 p{color:var(--v23-on-dark-soft)!important}
+body.app-v21 .home-hero-v21 h2,body.app-v21 .home-deadline-v21{color:var(--v23-on-dark)!important}
+body.app-v21 .home-deadline-v21 b{color:var(--v23-on-dark-muted)!important}
+body.app-v21 .home-progress-ring-v21{background:conic-gradient(var(--v23-ring) calc(var(--progress)*1%),rgba(255,255,255,.14) 0)!important}
+body.app-v21 .home-progress-ring-v21::before{background:var(--v23-ring-core)!important}
+body.app-v21 .home-progress-label-v21{color:var(--v23-on-dark-muted)!important}
+body.app-v21 .home-hero-v21 .home-hero-add-v21{color:var(--accent-deep)!important}
+body.app-v21 .modal-head{background:linear-gradient(105deg,var(--v23-side-start),var(--v23-hero-mid))!important}
+body.app-v21 .cloud-gate-mark{background:linear-gradient(145deg,var(--accent),var(--accent-deep))!important}
+body.app-v21 .cloud-google-btn{background:var(--accent-deep)!important}.app-v21 .cloud-google-btn span{color:var(--accent-deep)!important}.app-v21 .cloud-secondary-btn{background:var(--accent-soft)!important;color:var(--accent-deep)!important}
+body.app-v21.mobile-ui-v17 .navbtn.active{background:var(--accent-soft)!important;color:var(--accent-deep)!important}.app-v21.mobile-ui-v17 .navbtn.active .nav-icon{color:var(--accent-deep)!important}
+.method-add-actions-v23{align-items:center!important}.method-add-actions-v23>.muted{font-size:11px}
+.method-file-card-v23{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:11px;align-items:center;width:100%;padding:12px;border:1px solid color-mix(in srgb,var(--accent) 22%,#d7e0ec);border-radius:13px;background:var(--accent-softer)}
+.method-file-icon-v23{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;background:var(--accent-soft);font-size:19px}.method-file-copy-v23{display:flex;min-width:0;flex-direction:column;gap:2px}.method-file-copy-v23 b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.method-file-copy-v23 small,.method-file-copy-v23 span{color:var(--muted);font-size:11px;line-height:1.4}
+@media(max-width:620px){.method-add-actions-v23{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}.method-add-actions-v23>.btn{justify-content:center!important}.method-add-actions-v23>.muted,.method-add-actions-v23>.drive-photo-help-v12{grid-column:1/-1}.method-file-card-v23{grid-template-columns:auto minmax(0,1fr)}.method-file-download-v23{grid-column:1/-1;width:100%}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1360,7 +1398,7 @@ const DBNAME='TaskManagerLocalDB_v1';
 function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DBNAME,1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('data'))e.target.result.createObjectStore('data')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function readLocalState(){try{const db=await openDb();const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get('state');const saved=await new Promise((res,rej)=>{req.onsuccess=()=>res(req.result||null);req.onerror=()=>rej(req.error)});db.close();return saved}catch(e){console.warn('로컬 데이터 확인 실패',e);return null}}
 async function writeLocalState(snapshot){try{const db=await openDb();const tx=db.transaction('data','readwrite');tx.objectStore('data').put(clone(snapshot),'state');await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){console.warn('기기 캐시 저장 실패',e)}}
-async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260907-12');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
+async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260910-23');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
 async function saveState(meta={}){const snapshot=clone(state);await writeLocalState(snapshot);if(window.cloudSync)await window.cloudSync.save(snapshot,meta)}
 function seed(){state.categories=['소방','시설','행정','교육','회계','인사','복지','기타'];state.owners=['나영훈','관리소장','시설담당','경리담당'];state.holidays=clone(holidaySeed);state.templates=clone(sampleTemplates);state.tasks=clone(sampleTasks);state.selectedCategories=[]}
 
@@ -1470,6 +1508,9 @@ function methodImageHtml(block,cls='method-image'){
   return `<img class="${cls}${block?.driveFileId&&!block?.data?' drive-image-pending':''}" src="${esc(src)}"${drive}>`;
 }
 async function makeMethodImageBlock(file){const id=uid('mb');if(window.cloudSync?.mode==='cloud')return window.cloudSync.createImageBlock(file,id);return{id,type:'image',data:await fileData(file),caption:''}}
+async function makeMethodFileBlock(file){const id=uid('mb');if(window.cloudSync?.mode==='cloud')return window.cloudSync.createFileBlock(file,id);throw new Error('첨부파일은 클라우드 연결 상태에서 Google Drive에 저장할 수 있습니다.')}
+function fileSizeLabelV23(size){const n=Number(size||0);if(!n)return'';if(n<1024)return`${n} B`;if(n<1024*1024)return`${(n/1024).toFixed(n<10240?1:0)} KB`;return`${(n/1024/1024).toFixed(n<10*1024*1024?1:0)} MB`}
+function methodFileHtmlV23(block){const name=block?.name||'첨부파일',meta=[block?.mimeType,fileSizeLabelV23(block?.size)].filter(Boolean).join(' · ');return `<div class="method-file-card-v23"><span class="method-file-icon-v23" aria-hidden="true">📎</span><div class="method-file-copy-v23"><b>${esc(name)}</b>${meta?`<small>${esc(meta)}</small>`:''}${block?.caption?`<span>${esc(block.caption)}</span>`:''}</div>${block?.driveFileId?`<button type="button" class="btn small method-file-download-v23" data-drive-download="${esc(block.driveFileId)}" data-drive-name="${esc(name)}">다운로드</button>`:'<span class="muted">저장 대기</span>'}</div>`}
 function stableGeneratedTaskId(key){return window.cloudSync?.stableTaskId?.(key)||uid('task')}
 function stableGeneratedCheckId(taskId,index){return `${taskId}-c${index+1}`}
 
@@ -1734,7 +1775,7 @@ function syncLinkedStepsForEditedV2(parent,steps){
   });
   return synced;
 }
-function renderMethodBlocksViewV2(t){const blocks=t.methodBlocks||[];return `<div class="method-view">${blocks.map(b=>b.type==='image'?`<div>${methodImageHtml(b)}${b.caption?`<div class="method-caption">${esc(b.caption)}</div>`:''}</div>`:`<div class="method-text">${esc(b.text||'')}</div>`).join('')||'<span class="muted">등록된 수행방법 없음</span>'}</div>`}
+function renderMethodBlocksViewV2(t){const blocks=t.methodBlocks||[];return `<div class="method-view">${blocks.map(b=>b.type==='image'?`<div>${methodImageHtml(b)}${b.caption?`<div class="method-caption">${esc(b.caption)}</div>`:''}</div>`:b.type==='file'?methodFileHtmlV23(b):`<div class="method-text">${esc(b.text||'')}</div>`).join('')||'<span class="muted">등록된 수행방법·첨부파일 없음</span>'}</div>`}
 function openDbDetail(id){const t=state.templates.find(x=>x.id===id);if(!t)return;modal(esc(t.name),`<div class="formgrid"><div><b>구분</b><div>${esc(t.category)}</div></div><div><b>주기</b><div>${esc(templatePeriodLabel(t))}</div></div><div class="span2"><b>주요 체크리스트</b><ul>${(t.checklist||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li class="muted">없음</li>'}</ul></div><div class="span2"><b>업무수행방법</b>${renderMethodBlocksViewV2(t)}</div></div>`,`<button class="btn" data-editdb="${id}">수정</button><button class="btn primary" data-close>닫기</button>`,'small');$('[data-editdb]').onclick=()=>openDbForm(id)}
 function openDbForm(id=null){
   const orig=id?state.templates.find(x=>x.id===id):null;const t=clone(orig||{category:state.categories[0]||'',name:'',cycle:'monthly',cycleMonths:[],quarter:1,half:'first',dayRule:'unknown',exactDay:null,holidayShift:'prev',checklist:[],methodBlocks:[],keywords:'',notes:''});let blocks=clone(t.methodBlocks||[]),checks=[...(t.checklist||[])];
@@ -1834,7 +1875,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-22').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-23').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2496,13 +2537,13 @@ function renderCalendar(tasks,a,b){
 function calcByModeV6(base,n,mode){
   return mode==='business'?addBusinessDays(base,Number(n||0)):addDays(base,Number(n||0));
 }
-function effectiveStepSourceV6(step){
+function effectiveStepSourceV6(step,root=null){
   const ref=step.templateId?state.templates.find(x=>x.id===step.templateId):null;
   return{
-    category:step.category||ref?.category||state.categories[0]||'',
+    category:step.category||ref?.category||root?.category||state.categories[0]||'',
     name:step.name||ref?.name||'연계업무',
     urgent:step.urgent??ref?.urgent??false,
-    owner:step.owner||ref?.owner||'',
+    owner:step.owner||ref?.owner||root?.owner||'',
     checklist:(step.checklist?.length?step.checklist:ref?.checklist)||[],
     notes:step.notes||ref?.notes||'',
     methodBlocks:step.methodBlocks?.length?step.methodBlocks:(ref?.methodBlocks||[])
@@ -2513,7 +2554,7 @@ function ensureDbLinkedChildrenV5(root,tpl,policy='pending'){
   let prev=root;
   steps.forEach((s,i)=>{
     const key=`dbchain:${root.generatedKey}:${i+2}`;valid.add(key);
-    let child=state.tasks.find(x=>x.generatedKey===key),src=effectiveStepSourceV6(s);
+    let child=state.tasks.find(x=>x.generatedKey===key),src=effectiveStepSourceV6(s,tpl);
     const linkDef={parentId:prev.id,dynamic:s.dynamic!==false,basis:s.basis||'actualEnd',startOffset:Number(s.startOffset??s.offset??0),startMode:s.startMode||s.mode||'business',startHolidayShift:s.startHolidayShift||s.holidayShift||'next',workType:s.workType||'single',limitDays:Number(s.limitDays||0),limitMode:s.limitMode||'calendar',limitHolidayShift:s.limitHolidayShift||s.holidayShift||'next'};
     if(!child){
       const childId=stableGeneratedTaskId(key);
@@ -2608,20 +2649,39 @@ function openDbForm(id=null){
     </fieldset>
     <fieldset class="subbox span2"><legend>1단계 주요 체크리스트</legend><div id="dfChecks" class="check-editor"></div><button class="btn small" id="dfAddCheck">＋ 항목</button></fieldset>
     <fieldset class="subbox span2"><legend>연계되는 업무</legend><div class="muted">각 단계별로 시작 시점, 마감/수행기간, 체크리스트를 따로 정합니다. DB에 저장하면 DB 목록에서도 각 단계가 한 줄씩 표시됩니다.</div><div id="dfLinkedSteps" class="db-step-list" style="margin-top:10px"></div><button class="btn small" id="dfAddLinked">＋ 다음 연계업무</button></fieldset>
-    <fieldset class="subbox span2"><legend>업무수행방법 — 글 / 사진 / 글 / 사진 자유 배치</legend><div class="inline" style="margin-bottom:10px"><button class="btn small" id="addMethodText">＋ 글</button><label class="btn small">＋ 사진<input type="file" id="addMethodImage" accept="image/*" multiple hidden></label></div><div id="methodBlockEditor" class="method-block-editor"></div></fieldset>
+    <fieldset class="subbox span2"><legend>업무수행방법·첨부자료 — 원하는 순서로 배치</legend><div class="inline method-add-actions-v23" style="margin-bottom:10px"><button class="btn small" id="addMethodText">＋ 글</button><label class="btn small">＋ 사진<input type="file" id="addMethodImage" accept="image/*" multiple hidden></label><label class="btn small">＋ 파일<input type="file" id="addMethodFile" multiple hidden></label><span class="muted">파일당 최대 50MB · Google Drive 저장</span></div><div id="methodBlockEditor" class="method-block-editor"></div></fieldset>
     <div class="field"><label>검색키워드</label><input id="dfKeywords" value="${esc(t.keywords||'')}"></div>
     <div class="field"><label>비고</label><input id="dfNotes" value="${esc(t.notes||'')}"></div>
   </div>`,`<button class="btn" data-close>취소</button>${id?'<button class="btn danger" id="deleteDb">삭제</button>':''}<button class="btn primary" id="saveDb">저장</button>`,'db-form-modal locked-modal');
   $('#dfShift').value=t.holidayShift||'prev';$('#dfApplyPolicy').value=t.applyPolicy||'pending';
   function rchecks(){const root=$('#dfChecks');root.innerHTML=checks.map((x,i)=>`<div class="editrow"><span>□</span><input data-dci="${i}" value="${esc(x)}"><button class="btn small danger" data-dcr="${i}">×</button></div>`).join('');$$('[data-dci]').forEach(x=>x.oninput=()=>checks[+x.dataset.dci]=x.value);$$('[data-dcr]').forEach(x=>x.onclick=()=>{checks.splice(+x.dataset.dcr,1);rchecks()})}
-  function rblocks(){const root=$('#methodBlockEditor');root.innerHTML=blocks.map((b,i)=>`<div class="method-block"><div class="method-block-head"><b>${b.type==='image'?'사진':'글'} ${i+1}</b><div class="method-block-actions"><button class="btn small" data-mup="${i}" ${i===0?'disabled':''}>↑</button><button class="btn small" data-mdn="${i}" ${i===blocks.length-1?'disabled':''}>↓</button><button class="btn small danger" data-mdel="${i}">삭제</button></div></div>${b.type==='image'?`${methodImageHtml(b)}<div class="field" style="margin-top:8px"><label>사진 설명</label><input data-mcap="${i}" value="${esc(b.caption||'')}"></div>`:`<textarea rows="5" data-mtext="${i}" style="width:100%;border:1px solid rgba(50,75,58,.14);border-radius:12px;padding:10px">${esc(b.text||'')}</textarea>`}</div>`).join('')||'<div class="muted">＋ 글 또는 ＋ 사진으로 수행방법을 구성하세요.</div>';$$('[data-mtext]').forEach(x=>x.oninput=()=>blocks[+x.dataset.mtext].text=x.value);$$('[data-mcap]').forEach(x=>x.oninput=()=>blocks[+x.dataset.mcap].caption=x.value);$$('[data-mdel]').forEach(x=>x.onclick=()=>{blocks.splice(+x.dataset.mdel,1);rblocks()});$$('[data-mup]').forEach(x=>x.onclick=()=>{const i=+x.dataset.mup;[blocks[i-1],blocks[i]]=[blocks[i],blocks[i-1]];rblocks()});$$('[data-mdn]').forEach(x=>x.onclick=()=>{const i=+x.dataset.mdn;[blocks[i+1],blocks[i]]=[blocks[i],blocks[i+1]];rblocks()});queueMicrotask(()=>window.cloudSync?.hydrateImages(root))}
+  function rblocks(){
+    const root=$('#methodBlockEditor');
+    root.innerHTML=blocks.map((b,i)=>{
+      const label=b.type==='image'?'사진':b.type==='file'?'첨부파일':'글';
+      const content=b.type==='image'
+        ?`${methodImageHtml(b)}<div class="field" style="margin-top:8px"><label>사진 설명</label><input data-mcap="${i}" value="${esc(b.caption||'')}"></div>`
+        :b.type==='file'
+          ?`${methodFileHtmlV23(b)}<div class="field" style="margin-top:8px"><label>파일 설명 (선택)</label><input data-mcap="${i}" value="${esc(b.caption||'')}"></div>`
+          :`<textarea rows="5" data-mtext="${i}" style="width:100%;border:1px solid rgba(50,75,58,.14);border-radius:12px;padding:10px">${esc(b.text||'')}</textarea>`;
+      return `<div class="method-block"><div class="method-block-head"><b>${label} ${i+1}</b><div class="method-block-actions"><button class="btn small" data-mup="${i}" ${i===0?'disabled':''}>↑</button><button class="btn small" data-mdn="${i}" ${i===blocks.length-1?'disabled':''}>↓</button><button class="btn small danger" data-mdel="${i}">삭제</button></div></div>${content}</div>`;
+    }).join('')||'<div class="muted">＋ 글·사진·파일로 수행방법과 양식을 구성하세요.</div>';
+    $$('[data-mtext]').forEach(x=>x.oninput=()=>blocks[+x.dataset.mtext].text=x.value);
+    $$('[data-mcap]').forEach(x=>x.oninput=()=>blocks[+x.dataset.mcap].caption=x.value);
+    $$('[data-mdel]').forEach(x=>x.onclick=()=>{blocks.splice(+x.dataset.mdel,1);rblocks()});
+    $$('[data-mup]').forEach(x=>x.onclick=()=>{const i=+x.dataset.mup;[blocks[i-1],blocks[i]]=[blocks[i],blocks[i-1]];rblocks()});
+    $$('[data-mdn]').forEach(x=>x.onclick=()=>{const i=+x.dataset.mdn;[blocks[i+1],blocks[i]]=[blocks[i],blocks[i+1]];rblocks()});
+    queueMicrotask(()=>window.cloudSync?.hydrateImages(root));
+  }
   function rcycle(){const v=$('input[name=dfCycle]:checked').value;let h='';if(v==='weekly'){const days=t.weekdays?.length?t.weekdays:[Number(t.weekday??3)];h=`<div class="field"><label>반복 요일 (복수선택 가능)</label><div class="weekday-picks">${[['1','월'],['2','화'],['3','수'],['4','목'],['5','금'],['6','토'],['0','일']].map(([v,l])=>`<label><input type="checkbox" data-dfwd="${v}" ${days.map(Number).includes(Number(v))?'checked':''}>${l}</label>`).join('')}</div></div>`}else if(v==='quarterly')h=`<div class="inline"><label>기준 분기 <select id="dfQuarter"><option>1</option><option>2</option><option>3</option><option>4</option></select></label><label>실시월 <input id="dfMonths" placeholder="예: 3,6,9,12" value="${(t.cycleMonths||[]).join(',')}"></label></div>`;else if(v==='half')h=`<div class="inline"><label>구분 <select id="dfHalf"><option value="first">상반기</option><option value="second">하반기</option></select></label><label>실시월 <input id="dfMonths" placeholder="예: 6,12" value="${(t.cycleMonths||[]).join(',')}"></label></div>`;else if(v==='monthly'||v==='yearly')h=`<div class="inline"><label>실시월(비우면 ${v==='monthly'?'매월':'12월'}) <input id="dfMonths" placeholder="예: 1,4,7,10" value="${(t.cycleMonths||[]).join(',')}"></label></div>`;$('#dfCycleExtra').innerHTML=h;if($('#dfQuarter'))$('#dfQuarter').value=t.quarter||1;if($('#dfHalf'))$('#dfHalf').value=t.half||'first'}
   function bindStepControls(){
     steps.forEach((s,i)=>{
       const map=[['dyn','dynamic',v=>v!=='false'],['basis','basis',v=>v],['startoff','startOffset',Number],['startmode','startMode',v=>v],['startshift','startHolidayShift',v=>v],['worktype','workType',v=>v],['limit','limitDays',Number],['limitmode','limitMode',v=>v],['limitshift','limitHolidayShift',v=>v],['cat','category',v=>v]];
       map.forEach(([attr,key,conv])=>{const el=$(`[data-v6${attr}="${i}"]`);if(el){if(['dyn','basis','startmode','startshift','worktype','limitmode','limitshift'].includes(attr))el.value=String(s[key]??({dynamic:true,basis:'actualEnd',startMode:'business',startHolidayShift:'next',workType:'single',limitMode:'calendar',limitHolidayShift:'next'}[key]));el.onchange=()=>s[key]=conv(el.value);if(el.type==='number')el.oninput=()=>s[key]=conv(el.value)}});
+      const category=$(`[data-v6cat="${i}"]`);if(category)category.onchange=()=>{s.category=category.value;s.inheritRootCategory=false};
+      const owner=$(`[data-v8stepowner="${i}"]`);if(owner)owner.onchange=()=>{s.owner=owner.value;s.inheritRootOwner=false};
       const q=$(`[data-v6q="${i}"]`),res=$(`[data-v6res="${i}"]`);
-      if(q)q.oninput=()=>{s.name=q.value;s.templateId=null;const term=q.value.trim().toLowerCase();const hits=state.templates.filter(x=>x.id!==t.id&&term&&[x.name,x.category,x.keywords].join(' ').toLowerCase().includes(term)).slice(0,8);res.classList.toggle('hidden',!term);res.innerHTML=hits.map(x=>`<div class="db-step-search-hit" data-v6pick="${i}|${x.id}"><b>${esc(x.name)}</b><div class="muted">${esc(x.category)} · ${esc(templatePeriodLabel(x))}</div></div>`).join('')||'<div class="db-step-search-hit muted">DB 검색 결과 없음 · 그대로 직접 작성 가능</div>';$$(`[data-v6pick^="${i}|"]`).forEach(el=>el.onclick=()=>{const [,tid]=el.dataset.v6pick.split('|'),tp=state.templates.find(x=>x.id===tid);s.templateId=tp.id;s.name=tp.name;s.category=tp.category;s.checklist=clone(tp.checklist||[]);s.notes=tp.notes||'';q.value=tp.name;$(`[data-v6cat="${i}"]`).value=tp.category;res.classList.add('hidden');rsteps()})};
+      if(q)q.oninput=()=>{s.name=q.value;s.templateId=null;const term=q.value.trim().toLowerCase();const hits=state.templates.filter(x=>x.id!==t.id&&term&&[x.name,x.category,x.keywords].join(' ').toLowerCase().includes(term)).slice(0,8);res.classList.toggle('hidden',!term);res.innerHTML=hits.map(x=>`<div class="db-step-search-hit" data-v6pick="${i}|${x.id}"><b>${esc(x.name)}</b><div class="muted">${esc(x.category)} · ${esc(templatePeriodLabel(x))}</div></div>`).join('')||'<div class="db-step-search-hit muted">DB 검색 결과 없음 · 그대로 직접 작성 가능</div>';$$(`[data-v6pick^="${i}|"]`).forEach(el=>el.onclick=()=>{const [,tid]=el.dataset.v6pick.split('|'),tp=state.templates.find(x=>x.id===tid);s.templateId=tp.id;s.name=tp.name;s.category=tp.category;s.owner=tp.owner||s.owner||t.owner||'';s.inheritRootCategory=false;s.inheritRootOwner=false;s.checklist=clone(tp.checklist||[]);s.notes=tp.notes||'';q.value=tp.name;$(`[data-v6cat="${i}"]`).value=tp.category;res.classList.add('hidden');rsteps()})};
     });
     $$('[data-v6scheck]').forEach(x=>x.oninput=()=>{const [i,j]=x.dataset.v6scheck.split('|').map(Number);steps[i].checklist[j]=x.value});
     $$('[data-v6scheckrm]').forEach(x=>x.onclick=()=>{const [i,j]=x.dataset.v6scheckrm.split('|').map(Number);steps[i].checklist.splice(j,1);rsteps()});
@@ -2630,13 +2690,16 @@ function openDbForm(id=null){
   }
   function rsteps(){const root=$('#dfLinkedSteps');root.innerHTML=steps.map(stepEditorHtmlV6).join('')||'<div class="muted">연계업무가 없으면 비워두면 됩니다.</div>';bindStepControls()}
   rchecks();rblocks();rcycle();rsteps();$$('input[name=dfCycle]').forEach(x=>x.onchange=rcycle);
-  $('#dfAddCheck').onclick=()=>{checks.push('');rchecks()};$('#dfAddLinked').onclick=()=>{steps.push({name:'',category:t.category,dynamic:true,basis:'actualEnd',startOffset:0,startMode:'business',startHolidayShift:'next',workType:'single',limitDays:0,limitMode:'calendar',limitHolidayShift:'next',checklist:[]});rsteps()};
-  $('#addMethodText').onclick=()=>{blocks.push({id:uid('mb'),type:'text',text:''});rblocks()};$('#addMethodImage').onchange=async e=>{try{for(const f of e.target.files)blocks.push(await makeMethodImageBlock(f));rblocks()}catch(err){toast(err.message||'사진을 저장하지 못했습니다.')}finally{e.target.value=''}};
+  let previousRootCategory=$('#dfCat').value;
+  $('#dfCat').onchange=()=>{const next=$('#dfCat').value;steps.forEach((s,i)=>{if(s.inheritRootCategory===true||(!s.templateId&&s.category===previousRootCategory)){s.category=next;s.inheritRootCategory=true;const el=$(`[data-v6cat="${i}"]`);if(el)el.value=next}});previousRootCategory=next};
+  $('#dfAddCheck').onclick=()=>{checks.push('');rchecks()};$('#dfAddLinked').onclick=()=>{steps.push({name:'',category:$('#dfCat')?.value||t.category,owner:$('#dfOwner')?.value||t.owner||'',inheritRootCategory:true,inheritRootOwner:true,dynamic:true,basis:'actualEnd',startOffset:0,startMode:'business',startHolidayShift:'next',workType:'single',limitDays:0,limitMode:'calendar',limitHolidayShift:'next',checklist:[]});rsteps()};
+  $('#addMethodText').onclick=()=>{blocks.push({id:uid('mb'),type:'text',text:''});rblocks()};$('#addMethodImage').onchange=async e=>{try{for(const f of e.target.files)blocks.push(await makeMethodImageBlock(f));rblocks()}catch(err){toast(err.message||'사진을 저장하지 못했습니다.')}finally{e.target.value=''}};$('#addMethodFile').onchange=async e=>{try{for(const f of e.target.files)blocks.push(await makeMethodFileBlock(f));rblocks();toast('첨부파일을 Google Drive에 저장했습니다.')}catch(err){toast(err.message||'파일을 저장하지 못했습니다.')}finally{e.target.value=''}};
   $('#saveDb').onclick=async()=>{
     const name=$('#dfName').value.trim();if(!name)return toast('업무명을 입력하세요.');
     const cyc=$('input[name=dfCycle]:checked').value,months=($('#dfMonths')?.value||'').split(',').map(x=>Number(x.trim())).filter(x=>x>=1&&x<=12);
-    steps=steps.map(s=>({...s,name:String(s.name||'').trim(),category:s.category||t.category,checklist:(s.checklist||[]).map(x=>x.trim()).filter(Boolean),startOffset:Number(s.startOffset||0),limitDays:Number(s.limitDays||0)})).filter(s=>s.name);
-    Object.assign(t,{category:$('#dfCat').value,name,cycle:cyc,cycleMonths:months,quarter:Number($('#dfQuarter')?.value||0)||null,half:$('#dfHalf')?.value||null,weekdays:$$('[data-dfwd]:checked').map(x=>Number(x.dataset.dfwd)),weekday:Number($('[data-dfwd]:checked')?.dataset.dfwd??t.weekday??1),dayRule:$('input[name=dfDay]:checked').value,exactDay:Number($('#dfExactDay').value)||null,holidayShift:$('#dfShift').value,checklist:checks.map(x=>x.trim()).filter(Boolean),methodBlocks:blocks,method:'',photos:[],keywords:$('#dfKeywords').value,notes:$('#dfNotes').value,autoSchedule:$('#dfAutoSchedule').checked,activeFrom:$('#dfActiveFrom').value||todayISO(),activeUntil:$('#dfActiveUntil').value||'',applyPolicy:$('#dfApplyPolicy').value,durationDays:Number($('#dfDurationDays').value||0),linkedSteps:steps});
+    const rootCategory=$('#dfCat').value;
+    steps=steps.map(s=>({...s,name:String(s.name||'').trim(),category:s.category||rootCategory,owner:s.owner||t.owner||'',checklist:(s.checklist||[]).map(x=>x.trim()).filter(Boolean),startOffset:Number(s.startOffset||0),limitDays:Number(s.limitDays||0)})).filter(s=>s.name);
+    Object.assign(t,{category:rootCategory,name,cycle:cyc,cycleMonths:months,quarter:Number($('#dfQuarter')?.value||0)||null,half:$('#dfHalf')?.value||null,weekdays:$$('[data-dfwd]:checked').map(x=>Number(x.dataset.dfwd)),weekday:Number($('[data-dfwd]:checked')?.dataset.dfwd??t.weekday??1),dayRule:$('input[name=dfDay]:checked').value,exactDay:Number($('#dfExactDay').value)||null,holidayShift:$('#dfShift').value,checklist:checks.map(x=>x.trim()).filter(Boolean),methodBlocks:blocks,method:'',photos:[],keywords:$('#dfKeywords').value,notes:$('#dfNotes').value,autoSchedule:$('#dfAutoSchedule').checked,activeFrom:$('#dfActiveFrom').value||todayISO(),activeUntil:$('#dfActiveUntil').value||'',applyPolicy:$('#dfApplyPolicy').value,durationDays:Number($('#dfDurationDays').value||0),linkedSteps:steps});
     if(orig)Object.assign(orig,t);else{t.id=uid('tpl');state.templates.push(t)}
     const target=orig||t,[df,dt]=v5DefaultAutoRange();syncTemplateScheduleV5(target,df,dt,t.applyPolicy||'pending');recalcLinks();await saveState();closeModal();renderDbTable();renderTaskTable();renderHome();toast(t.autoSchedule?'DB 저장 · 수행업무 자동 동기화 완료':'업무 DB를 저장했습니다.');
   };
@@ -2647,7 +2710,7 @@ function flattenDbRowsV6(){
   const rows=[];
   for(const t of state.templates){
     rows.push({kind:'root',ref:`root|${t.id}`,root:t,stepIndex:0,name:t.name,category:t.category,cycle:templatePeriodLabel(t),notes:t.notes||''});
-    (t.linkedSteps||[]).forEach((s,i)=>{const src=effectiveStepSourceV6(s);rows.push({kind:'step',ref:`step|${t.id}|${i}`,root:t,step:s,stepIndex:i+1,name:src.name,category:src.category,cycle:`${i+2}단계 · 상위업무 연계`,notes:src.notes||''})});
+    (t.linkedSteps||[]).forEach((s,i)=>{const src=effectiveStepSourceV6(s,t);rows.push({kind:'step',ref:`step|${t.id}|${i}`,root:t,step:s,stepIndex:i+1,name:src.name,category:src.category,cycle:`${i+2}단계 · 상위업무 연계`,notes:src.notes||''})});
   }
   return rows;
 }
@@ -2670,7 +2733,7 @@ function stepRuleTextV6(s){
 function openDbDetailV6(ref){
   const parts=String(ref).split('|'),kind=parts[0],id=parts[1],t=state.templates.find(x=>x.id===id);if(!t)return;
   if(kind==='step'){
-    const idx=Number(parts[2]),s=t.linkedSteps?.[idx];if(!s)return;const src=effectiveStepSourceV6(s);
+    const idx=Number(parts[2]),s=t.linkedSteps?.[idx];if(!s)return;const src=effectiveStepSourceV6(s,t);
     modal(esc(src.name),`<div class="formgrid"><div><b>구분</b><div>${esc(src.category)}</div></div><div><b>연계</b><div><span class="chain-label">🔗 ${esc(t.name)} → ${idx+2}단계</span></div></div><div class="span2"><b>일정 규칙</b><div style="margin-top:7px">${esc(stepRuleTextV6(s))}</div></div><div class="span2"><b>주요 체크리스트</b>${renderChecklistListV6(src.checklist)}</div><div class="span2"><b>업무수행방법</b>${renderMethodBlocksViewV2({methodBlocks:src.methodBlocks})}</div></div>`,`<button class="btn danger" id="deleteDbDetail">삭제</button><button class="btn primary" data-close>닫기</button>`,'small');
     $('#deleteDbDetail').onclick=()=>deleteLinkedStepV6(id,idx);
   }else{
@@ -3013,6 +3076,15 @@ openDbForm=function(id=null){
   if(nameField&&!$('#dfOwner')){
     nameField.insertAdjacentHTML('afterend',`<div class="field"><label>담당자</label><select id="dfOwner">${ownerOptionHtmlV8(tpl?.owner||state.owners[0]||'',true)}</select><div class="owner-select-hint">자동 생성되는 수행업무의 기본 담당자입니다.</div></div>`);
   }
+  const rootOwnerSelect=$('#dfOwner');
+  if(rootOwnerSelect){
+    let previousRootOwner=rootOwnerSelect.value;
+    rootOwnerSelect.onchange=()=>{
+      const next=rootOwnerSelect.value;
+      $$('[data-v8stepowner]').forEach(select=>{if(!select.value||select.value===previousRootOwner){select.value=next;select.dispatchEvent(new Event('change',{bubbles:true}))}});
+      previousRootOwner=next;
+    };
+  }
   const save=$('#saveDb');
   if(save){
     const original=save.onclick;
@@ -3025,7 +3097,7 @@ openDbForm=function(id=null){
       if(!target&&!id)target=[...state.templates].reverse().find(x=>x.name===nameBefore);
       if(target){
         target.owner=rootOwner;
-        (target.linkedSteps||[]).forEach((s,i)=>s.owner=stepOwners[i]||rootOwner||'');
+        (target.linkedSteps||[]).forEach((s,i)=>{s.owner=stepOwners[i]||rootOwner||'';s.inheritRootOwner=!stepOwners[i]||s.owner===rootOwner});
         const [a,b]=v5DefaultAutoRange();
         syncTemplateScheduleV5(target,a,b,target.applyPolicy||'pending');
         recalcLinks();
@@ -3334,10 +3406,11 @@ function ensureDbRegisterUiV10(){
 }
 function dbVisibleRowsV10(){
   const q=$('#dbSearch')?.value.trim().toLowerCase()||'';
-  return flattenDbRowsV6().filter(r=>!q||[
-    r.name,r.category,r.cycle,r.notes,ownerForDbRefV8(r.ref),
-    ...((r.kind==='root'?r.root.checklist:r.step.checklist)||[])
-  ].join(' ').toLowerCase().includes(q));
+  return flattenDbRowsV6().filter(r=>{
+    if(!q)return true;
+    const source=r.kind==='root'?r.root:effectiveStepSourceV6(r.step,r.root);
+    return [r.name,r.category,r.cycle,r.notes,ownerForDbRefV8(r.ref),...(source.checklist||[]),...(source.methodBlocks||[]).flatMap(block=>[block.text,block.caption,block.name])].join(' ').toLowerCase().includes(q);
+  });
 }
 function updateDbRegisterSelectionV10(){
   const btn=$('#dbRegisterSelected'),deleteBtn=$('#dbDeleteSelected'),count=$('#dbSelectedCount');
@@ -3398,7 +3471,7 @@ function stageSourceV10(root,stage){
     name:root.name,category:root.category,urgent:!!root.urgent,owner:root.owner||'',
     checklist:clone(root.checklist||[]),notes:root.notes||'',templateId:root.id,methodBlocks:clone(root.methodBlocks||[])
   };
-  const s=root.linkedSteps?.[stage-1]||{},src=effectiveStepSourceV6(s);
+  const s=root.linkedSteps?.[stage-1]||{},src=effectiveStepSourceV6(s,root);
   return{...src,templateId:s.templateId||null,linkDef:s};
 }
 function stageLabelV10(root,stage){
@@ -3663,19 +3736,23 @@ async function deleteSelectedDbV12(){
 }
 
 function bindDrivePhotoAuthorizationV12(){
-  const input=$('#addMethodImage'),trigger=input?.closest('label');if(!input||!trigger)return;
-  trigger.classList.add('drive-photo-trigger-v12');
-  if(!trigger.parentElement.querySelector('.drive-photo-help-v12'))trigger.insertAdjacentHTML('afterend','<span class="drive-photo-help-v12">처음 한 번은 Drive 권한 승인 후 사진 버튼을 다시 누르세요.</span>');
-  trigger.addEventListener('click',async event=>{
-    if(window.cloudSync?.mode!=='cloud'||window.cloudSync?.hasDriveAccess?.())return;
-    event.preventDefault();event.stopPropagation();
-    if(trigger.classList.contains('is-connecting'))return;
-    trigger.classList.add('is-connecting');
-    try{
-      await window.cloudSync.ensureDriveAccess();
-      toast('Google Drive 연결 완료 · ＋ 사진을 다시 눌러 파일을 선택하세요.');
-    }catch(error){toast(error.message||'Drive 권한을 완료하지 못했습니다. 팝업 허용 상태를 확인해 주세요.')}
-    finally{trigger.classList.remove('is-connecting')}
+  const inputs=[$('#addMethodImage'),$('#addMethodFile')].filter(Boolean);if(!inputs.length)return;
+  const actions=inputs[0].closest('.method-add-actions-v23')||inputs[0].closest('.inline');
+  if(actions&&!actions.querySelector('.drive-photo-help-v12'))actions.insertAdjacentHTML('beforeend','<span class="drive-photo-help-v12">Drive 권한은 같은 브라우저 탭에서 재사용됩니다.</span>');
+  inputs.forEach(input=>{
+    const trigger=input.closest('label');if(!trigger)return;
+    trigger.classList.add('drive-photo-trigger-v12');
+    trigger.addEventListener('click',async event=>{
+      if(window.cloudSync?.mode!=='cloud'||window.cloudSync?.hasDriveAccess?.())return;
+      event.preventDefault();event.stopPropagation();
+      if(trigger.classList.contains('is-connecting'))return;
+      trigger.classList.add('is-connecting');
+      try{
+        await window.cloudSync.ensureDriveAccess();
+        toast(`Google Drive 연결 완료 · ${input.id==='addMethodFile'?'＋ 파일':'＋ 사진'}을 다시 눌러 선택하세요.`);
+      }catch(error){toast(error.message||'Drive 권한을 완료하지 못했습니다. 팝업 허용 상태를 확인해 주세요.')}
+      finally{trigger.classList.remove('is-connecting')}
+    });
   });
 }
 function bindDbSingleDeleteV12(id){
@@ -4231,8 +4308,9 @@ migrateStateV2=function(){migrateStateV21Base();migrateV21Data();applyThemeV7()}
 function ensureV21Ui(){
   migrateV21Data();
   document.body.classList.add('app-v21');
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content','#172d51');
   if(document.body.dataset.v7Theme!==state.settings.uiTheme)applyThemeV7();
+  const browserTone=getComputedStyle(document.body).getPropertyValue('--v23-side-start').trim()||'#172d51';
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',browserTone);
 
   const side=$('.side');
   if(side&&!$('#v21SideBrand')){
@@ -4310,6 +4388,51 @@ renderHome=function(){const result=renderHomeV21Base();renderHomeOverviewV21();r
 const renderSettingsV21Base=renderSettings;
 renderSettings=function(){const result=renderSettingsV21Base();ensureV21Ui();return result};
 setTimeout(()=>{ensureV21Ui();renderHomeOverviewV21()},0);
+
+// ========================= APP V23 — linked inheritance / Drive files / full theme =========================
+function repairLinkedInheritanceV23(){
+  state.settings=state.settings||{};
+  if(state.settings.linkedInheritanceV23Repaired)return{changed:false,count:0};
+  const firstCategory=state.categories?.[0]||'';
+  let count=0;
+  for(const template of state.templates||[]){
+    for(const step of template.linkedSteps||[]){
+      const ownerWasMissing=!String(step.owner||'').trim();
+      const likelyOldDefaultBug=!step.templateId&&ownerWasMissing&&Boolean(template.category)&&Boolean(firstCategory)&&step.category===firstCategory&&template.category!==firstCategory;
+      if(likelyOldDefaultBug){step.category=template.category;step.inheritRootCategory=true;count++}
+      if(ownerWasMissing&&template.owner){step.owner=template.owner;step.inheritRootOwner=true;count++}
+    }
+  }
+  state.settings.linkedInheritanceV23Repaired=true;
+  return{changed:true,count};
+}
+
+function bindDriveFileDownloadsV23(){
+  if(window.v23DriveDownloadBound)return;
+  window.v23DriveDownloadBound=true;
+  document.addEventListener('click',async event=>{
+    const button=event.target.closest?.('[data-drive-download]');if(!button)return;
+    event.preventDefault();event.stopPropagation();
+    if(button.disabled)return;
+    const old=button.textContent;button.disabled=true;button.textContent='받는 중…';
+    try{await window.cloudSync?.downloadDriveFile(button.dataset.driveDownload,button.dataset.driveName||'첨부파일');toast('첨부파일 다운로드를 시작했습니다.')}
+    catch(error){toast(error?.message||'첨부파일을 내려받지 못했습니다. Drive 연결 상태를 확인해 주세요.')}
+    finally{button.disabled=false;button.textContent=old}
+  });
+}
+
+const openDbDetailV23Base=openDbDetailV6;
+openDbDetailV6=function(ref){const result=openDbDetailV23Base(ref);queueMicrotask(()=>window.cloudSync?.hydrateImages($('#modalRoot')));return result};
+const renderDbTableV23Base=renderDbTable;
+renderDbTable=function(){
+  const repair=repairLinkedInheritanceV23();
+  if(repair.changed&&!window.v23InheritanceSaveQueued){
+    window.v23InheritanceSaveQueued=true;
+    queueMicrotask(async()=>{try{await saveState({reason:'연계 단계 대분류·담당자 상속 복구'});if(repair.count)console.info('V23 linked inheritance repair:',repair.count)}finally{window.v23InheritanceSaveQueued=false}});
+  }
+  return renderDbTableV23Base();
+};
+bindDriveFileDownloadsV23();
 
 </script>
 </body></html>
