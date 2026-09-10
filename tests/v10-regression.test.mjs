@@ -167,12 +167,15 @@ const functions = [
   "canCompleteTaskV18",
   "applyTaskStatusFieldsV18",
   "statusSelectV18",
+  "v21DueLabel",
 ];
 for (const name of functions) vm.runInContext(extractLastFunction(name), context);
 
 assert.equal(context.normalizeCompactDateV20("20260910"), "2026-09-10", "8자리 날짜를 ISO 날짜로 자동 변환해야 합니다.");
 assert.equal(context.normalizeCompactDateV20("2026.9.7"), "2026-09-07", "점 구분 날짜도 같은 형식으로 정리해야 합니다.");
 assert.equal(context.normalizeCompactDateV20("20260230"), "", "존재하지 않는 날짜를 정상 날짜로 받아들이면 안 됩니다.");
+assert.equal(context.v21DueLabel("2026-09-05"), "오늘", "대시보드의 오늘 마감 표시는 날짜와 일치해야 합니다.");
+assert.equal(context.v21DueLabel("2026-09-08"), "D-3", "대시보드의 가까운 마감일까지 남은 일수를 표시해야 합니다.");
 assert.deepEqual(
   Array.from(context.recurrenceDatesV2("2026-09-10", "2027-09-30", "quarterly", [], [1, 4, 7, 10])),
   ["2026-10-10", "2027-01-10", "2027-04-10", "2027-07-10"],
@@ -562,6 +565,15 @@ assert.ok(html.includes("height:auto!important;max-height:calc(100dvh - 16px)"),
 assert.ok(html.includes("아래 ‘업무 완료’를 눌러 마무리하세요"), "체크 완료와 업무 완료가 별도 단계임을 안내해야 합니다.");
 assert.ok(html.includes("await persistTaskStatusV18(t,'done',{closeAfter:true})"), "체크리스트 완료 버튼이 공통 상태 저장 경로를 사용해야 합니다.");
 assert.ok(html.includes("const renderTaskTableV18Base=renderTaskTable"), "업무목록 상태 변경도 공통 완료 저장 경로로 다시 연결해야 합니다.");
+assert.ok(html.includes('id="app-v21-navy-dashboard-style"'), "A 구조와 B 네이비 색상의 V21 디자인 계층이 있어야 합니다.");
+assert.ok(html.includes('body[data-v7-theme="navy"]'), "네이비 프로 팔레트를 전역 테마로 제공해야 합니다.");
+assert.ok(html.includes('grid-template-columns:220px minmax(0,1fr)'), "PC에서는 왼쪽 업무 내비게이션과 본문 구조를 사용해야 합니다.");
+assert.ok(html.includes('id="v21SideBrand"'), "왼쪽 내비게이션에 제품 식별 영역이 있어야 합니다.");
+assert.ok(html.includes('id="homeHeroV21"'), "HOME에 오늘 업무와 월간 진행률을 묶은 요약 영역이 있어야 합니다.");
+assert.ok(html.includes('id="homeHeroAddTaskV21"'), "대시보드 요약에서 업무 작성으로 바로 이동할 수 있어야 합니다.");
+assert.ok(html.includes("state.settings.designV21Applied=true"), "기존 사용자에게 네이비 디자인을 한 번만 기본 적용해야 합니다.");
+assert.ok(html.includes("body.app-v21.mobile-ui-v17 .home-hero-v21"), "모바일에서 요약 영역을 한 열 구조로 재배치해야 합니다.");
+assert.ok(html.includes("body.app-v21.mobile-ui-v17 .side"), "V21에서도 모바일 고정 하단 메뉴 스타일을 유지해야 합니다.");
 
 assert.match(
   html,
