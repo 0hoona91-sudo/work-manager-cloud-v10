@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
-<meta name="theme-color" content="#5f9275" />
+<meta name="theme-color" content="#172d51" />
 <meta name="description" content="반복업무, 연계업무, 체크리스트, 간트와 달력을 실시간 동기화하는 업무관리 웹앱" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
 <link rel="manifest" href="./manifest.webmanifest" />
@@ -1022,6 +1022,193 @@ body.mobile-ui-v17.app-modal-open-v18 .side{visibility:hidden!important;pointer-
 }
 </style>
 
+<style id="app-v21-navy-dashboard-style">
+/* APP V21: A안의 정보 밀도와 계층에 B안의 네이비 프로 색상을 적용한다. */
+body[data-v7-theme="navy"]{
+  --accent:#376fb7!important;--accent-deep:#244e7c!important;--accent-soft:#e2ecf9!important;--accent-softer:#f5f8fd!important;
+  --bg:#edf1f8!important;--panel:#fff!important;--navy:#172d51!important;--blue:#376fb7!important;--blue2:#4b84cd!important;
+  --line:#dce5f1!important;--text:#1d2938!important;--muted:#6f7d90!important;--shadow:0 12px 34px rgba(29,55,91,.075)!important;
+  background:linear-gradient(145deg,#f8fafd 0,#edf2f9 52%,#f4f7fb 100%)!important
+}
+body.app-v21{min-height:100dvh;color:#1d2938}
+body.app-v21 .card{
+  border:1px solid rgba(30,64,105,.10)!important;border-radius:18px!important;background:rgba(255,255,255,.97)!important;
+  box-shadow:0 10px 30px rgba(30,55,88,.065)!important;backdrop-filter:none!important
+}
+body.app-v21 .btn{
+  min-height:40px;border:1px solid rgba(40,76,119,.10)!important;border-radius:11px!important;background:#eff3f8!important;
+  color:#31445e!important;font-weight:750!important;box-shadow:none!important
+}
+body.app-v21 .btn:hover{background:#e6edf6!important}
+body.app-v21 .btn.primary{background:#376fb7!important;color:#fff!important;border-color:#376fb7!important}
+body.app-v21 .btn.primary:hover{background:#2e63a6!important}
+body.app-v21 .btn.danger{background:#fff2f2!important;color:#c43c3c!important;border-color:#f6d5d5!important}
+body.app-v21 .field input,body.app-v21 .field select,body.app-v21 .field textarea,
+body.app-v21 .multi-btn,body.app-v21 .status-select{
+  border-color:#d7e0ec!important;border-radius:11px!important;background:#fff!important;color:#26364b!important
+}
+body.app-v21 .field input:focus,body.app-v21 .field select:focus,body.app-v21 .field textarea:focus,
+body.app-v21 .multi-btn:focus{outline:none!important;border-color:#4b84cd!important;box-shadow:0 0 0 3px rgba(55,111,183,.14)!important}
+body.app-v21 .field>label{color:#718096!important;font-weight:750!important}
+
+/* 데스크톱: A안의 왼쪽 고정 업무 내비게이션. */
+body.app-v21:not(.mobile-ui-v17) .app{
+  display:grid!important;grid-template-columns:220px minmax(0,1fr)!important;min-height:100dvh!important
+}
+body.app-v21:not(.mobile-ui-v17) .main{
+  grid-column:2!important;grid-row:1!important;width:100%!important;max-width:none!important;margin:0!important;
+  padding:28px clamp(24px,2.4vw,44px) 52px!important
+}
+body.app-v21:not(.mobile-ui-v17)[data-v7-theme] .side{
+  grid-column:1!important;grid-row:1!important;position:sticky!important;left:auto!important;right:auto!important;top:0!important;
+  width:220px!important;height:100dvh!important;display:flex!important;flex-direction:column!important;gap:7px!important;
+  padding:22px 14px 18px!important;overflow-y:auto!important;border:0!important;border-right:1px solid rgba(255,255,255,.08)!important;
+  background:linear-gradient(180deg,#172d51 0%,#1c3b66 56%,#142a49 100%)!important;
+  box-shadow:10px 0 34px rgba(19,42,74,.10)!important;color:#fff!important
+}
+.v21-side-brand{display:flex;align-items:center;gap:11px;margin:0 4px 20px;padding:5px 4px;color:#fff}
+.v21-side-brand-mark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#4b84cd;color:#fff;font-size:20px;font-weight:900;box-shadow:0 8px 18px rgba(5,22,48,.24)}
+.v21-side-brand strong{display:block;font-size:16px;line-height:1.25;letter-spacing:-.025em}.v21-side-brand small{display:block;margin-top:2px;color:#9eb4d2;font-size:9px;font-weight:800;letter-spacing:.14em}
+.v21-side-section{margin:0 10px 5px;color:#819abb;font-size:10px;font-weight:850;letter-spacing:.13em}
+body.app-v21:not(.mobile-ui-v17) .navbtn,
+body.app-v21:not(.mobile-ui-v17) .navbtn[data-page="settingsPage"]{
+  min-height:48px!important;margin:0!important;padding:10px 11px!important;display:flex!important;align-items:center!important;gap:10px!important;
+  border:0!important;border-radius:12px!important;background:transparent!important;color:#c8d5e6!important;font-size:13px!important;font-weight:700!important;text-align:left!important
+}
+body.app-v21:not(.mobile-ui-v17) .navbtn:hover{background:rgba(255,255,255,.075)!important;color:#fff!important}
+body.app-v21:not(.mobile-ui-v17) .navbtn.active{background:rgba(91,151,226,.22)!important;color:#fff!important;box-shadow:inset 3px 0 #7eb1ed!important}
+body.app-v21:not(.mobile-ui-v17) .navbtn .nav-icon{
+  width:29px!important;height:29px!important;flex:0 0 29px!important;border-radius:9px!important;background:rgba(255,255,255,.075)!important;color:#aecaeb!important
+}
+body.app-v21:not(.mobile-ui-v17) .navbtn.active .nav-icon{background:#fff!important;color:#376fb7!important}
+body.app-v21:not(.mobile-ui-v17) .navbtn[data-page="settingsPage"]{margin-top:auto!important}
+body.app-v21:not(.mobile-ui-v17) .cloud-account{
+  margin-top:8px!important;padding:12px!important;border:1px solid rgba(255,255,255,.08)!important;background:rgba(7,24,48,.18)!important;color:#b6c7dd!important
+}
+body.app-v21:not(.mobile-ui-v17) .cloud-signout{color:#d4e1f1!important}
+
+/* 공통 화면 계층. */
+body.app-v21 .pagehead{min-height:54px;margin-bottom:17px!important;gap:14px}
+body.app-v21 .pagehead h2{color:#192b44!important;font-size:26px!important;letter-spacing:-.035em}
+body.app-v21 .pagehead>.btn,body.app-v21 .db-register-tools #newDbBtn{background:#376fb7!important;color:#fff!important}
+body.app-v21 .toolbar{padding:14px 16px!important;gap:12px!important;border-radius:16px!important}
+body.app-v21 .tablewrap{border:1px solid #dce5f1!important;border-radius:17px!important;background:#fff!important;box-shadow:0 9px 28px rgba(31,57,90,.05)!important}
+body.app-v21 .datatable th{background:#edf3fa!important;color:#53667e!important;border-bottom:1px solid #dce5f1!important;font-size:11px!important;font-weight:850!important}
+body.app-v21 .datatable td{border-bottom-color:#edf1f6!important}
+body.app-v21 .datatable tbody tr:hover td{background:#f7faff!important}
+body.app-v21 .task-link{color:#254f82!important}
+body.app-v21 .chip,body.app-v21 .badge{border:0!important}
+body.app-v21 .badge.progress{background:#e2ecf9!important;color:#285d9f!important}
+body.app-v21 .panel-title{min-height:54px;padding:13px 16px!important;color:#1c304b!important;border-bottom-color:#e7edf5!important;font-size:15px!important}
+body.app-v21 .panel-body{padding:14px!important}
+body.app-v21 .settings-grid{gap:16px!important}
+body.app-v21 .settings-grid>.card{padding:18px!important}
+body.app-v21 .settings-stat,body.app-v21 .cloud-tools-status>div{background:#f2f6fb!important}
+
+/* HOME: 요약 히어로 → 지표 → 조작부 → 간트/달력 순서. */
+body.app-v21 .home-heading-v12{align-items:center!important;margin-bottom:16px!important}
+body.app-v21 .home-heading-v12 .brand{margin:0!important;color:#192b44!important;font-size:30px!important;letter-spacing:-.04em}
+body.app-v21 .home-date-card-v12{
+  min-width:250px!important;padding:10px 13px!important;border:1px solid #dce5f1!important;border-radius:15px!important;background:#fff!important;box-shadow:0 7px 20px rgba(30,55,88,.045)!important
+}
+body.app-v21 .home-date-icon-v12{width:44px!important;height:44px!important;border-radius:12px!important;background:#e2ecf9!important;font-size:23px!important}
+body.app-v21 .home-date-value-v12{color:#263b57!important}
+.home-hero-v21{
+  position:relative;display:grid;grid-template-columns:minmax(0,1fr) 184px;gap:24px;align-items:center;min-height:206px;
+  margin-bottom:14px;padding:25px 28px!important;overflow:hidden;color:#fff!important;
+  border:0!important;background:linear-gradient(122deg,#172d51 0%,#244f82 58%,#376fb7 100%)!important;
+  box-shadow:0 18px 40px rgba(23,45,81,.18)!important
+}
+.home-hero-v21::before{content:"";position:absolute;right:110px;top:-105px;width:280px;height:280px;border-radius:50%;border:52px solid rgba(255,255,255,.045);pointer-events:none}
+.home-hero-copy-v21{position:relative;z-index:1;min-width:0}.home-hero-eyebrow-v21{display:block;margin-bottom:7px;color:#a9c8ed;font-size:10px;font-weight:850;letter-spacing:.14em}
+.home-hero-v21 h2{margin:0;color:#fff;font-size:25px;line-height:1.32;letter-spacing:-.04em;word-break:keep-all}
+.home-hero-v21 p{margin:8px 0 15px;color:#c5d6ea;font-size:13px;line-height:1.55}
+.home-hero-actions-v21{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.home-hero-v21 .home-hero-add-v21{min-height:40px!important;padding:9px 15px!important;background:#fff!important;color:#244e7c!important;border:0!important}
+.home-deadlines-v21{display:flex;gap:7px;min-width:0;flex-wrap:wrap}
+.home-deadline-v21{max-width:250px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(255,255,255,.09);color:#eaf2fc;padding:7px 10px;font-size:11px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.home-deadline-v21 b{margin-right:5px;color:#9fc4f0}
+.home-progress-v21{position:relative;z-index:1;display:grid;place-items:center;text-align:center}
+.home-progress-ring-v21{--progress:0;position:relative;width:132px;height:132px;display:grid;place-items:center;border-radius:50%;background:conic-gradient(#8fc0f4 calc(var(--progress)*1%),rgba(255,255,255,.14) 0)}
+.home-progress-ring-v21::before{content:"";position:absolute;inset:10px;border-radius:50%;background:#204672}
+.home-progress-value-v21{position:relative;z-index:1;font-size:29px;font-weight:900;letter-spacing:-.04em}.home-progress-value-v21 small{font-size:14px}.home-progress-label-v21{position:relative;z-index:1;margin-top:-34px;color:#bfd3ea;font-size:10px;font-weight:750}
+body.app-v21 #homePage .home-toolbar-v3{position:relative!important;top:auto!important;z-index:120!important;margin:0 0 14px!important;background:rgba(255,255,255,.96)!important}
+body.app-v21 #homePage .home-toolbar-v3::before{content:"보기 설정";align-self:center;margin-right:2px;color:#263b57;font-size:12px;font-weight:850}
+body.app-v21 .home-layout-control{background:#edf2f8!important;border-radius:11px!important}
+body.app-v21 .home-layout-control button.active{color:#285d9f!important}
+body.app-v21 .kpis{grid-template-columns:repeat(6,minmax(108px,1fr))!important;gap:10px!important;margin:0 0 14px!important}
+body.app-v21 .kpi{position:relative;min-height:92px;padding:14px 14px 13px 50px!important;border:1px solid #e1e8f1!important;border-radius:16px!important;background:#fff!important;box-shadow:0 7px 22px rgba(31,57,90,.045)!important}
+body.app-v21 .kpi::before{content:attr(data-v21-icon);position:absolute;left:14px;top:15px;display:grid;place-items:center;width:27px;height:27px;border-radius:9px;background:#e7eff9;color:#376fb7;font-size:11px;font-weight:900}
+body.app-v21 .kpi>span{display:block;color:#78869a!important;font-size:11px!important;font-weight:750!important;white-space:nowrap}
+body.app-v21 .kpi>b{margin-top:5px!important;color:#1f3552!important;font-size:25px!important}
+body.app-v21 .kpi.danger::before{background:#fff0f0;color:#d44a4a}.app-v21 .kpi.danger>b{color:#cb4444!important}
+body.app-v21 .home-top-grid-v3{gap:15px!important;margin-top:0!important}
+body.app-v21 .home-bottom-grid-v3{gap:15px!important;margin-top:15px!important}
+body.app-v21 .gantt-scroll{border-color:#e0e7f0!important;border-radius:13px!important}
+body.app-v21 .gantt-v2-head .gantt-sticky-name,body.app-v21 .gantt-v2-head .gantt-track{background:#eef3f8!important}
+body.app-v21 .gantt-sticky-name{background:#fff!important}.app-v21 .today-line{background:#e25858!important}
+body.app-v21 .calendar-card-v3 .cal-h{background:#eef3f8!important;color:#53667e!important}
+body.app-v21 .cal-task{background:var(--cat-soft,#e5eef9)!important;color:#2d4e73!important}
+
+/* 팝업은 정보 입력에 집중되는 짙은 제목 막대와 고정 하단 동작부를 쓴다. */
+body.app-v21 .modal{border:1px solid rgba(255,255,255,.28)!important;border-radius:19px!important;box-shadow:0 28px 90px rgba(14,31,53,.28)!important}
+body.app-v21 .modal-head{background:linear-gradient(105deg,#172d51,#244f82)!important;color:#fff!important;padding:15px 19px!important}
+body.app-v21 .modal-body{background:#fbfcfe!important}
+body.app-v21 .modal-foot{background:#fff!important;border-top-color:#e1e8f1!important}
+body.app-v21 .subbox,body.app-v21 .linked-step,body.app-v21 .db-linked-step{border-color:#dde5ef!important;background:#fff!important}
+body.app-v21 .repeat-panel,body.app-v21 .db-step-schedule,body.app-v21 .related-document-v15{background:#f1f5fa!important}
+
+@media(max-width:1320px){
+  body.app-v21 .kpis{grid-template-columns:repeat(3,minmax(120px,1fr))!important}
+  body.app-v21:not(.mobile-ui-v17) .app{grid-template-columns:198px minmax(0,1fr)!important}
+  body.app-v21:not(.mobile-ui-v17)[data-v7-theme] .side{width:198px!important}
+}
+
+/* 모바일: 같은 정보 계층을 한 열 카드와 고정 하단 메뉴로 재배치한다. */
+body.app-v21.mobile-ui-v17{background:linear-gradient(180deg,#f7f9fc 0,#edf2f8 100%)!important}
+body.app-v21.mobile-ui-v17 .main{padding:15px 12px calc(92px + env(safe-area-inset-bottom))!important}
+body.app-v21.mobile-ui-v17 .v21-side-brand,body.app-v21.mobile-ui-v17 .v21-side-section{display:none!important}
+body.app-v21.mobile-ui-v17 .side{
+  background:rgba(255,255,255,.97)!important;border-top:1px solid #d9e2ee!important;box-shadow:0 -10px 30px rgba(24,52,88,.13)!important
+}
+body.app-v21.mobile-ui-v17 .navbtn{color:#63748a!important}
+body.app-v21.mobile-ui-v17 .navbtn.active{background:#e2ecf9!important;color:#285d9f!important}
+body.app-v21.mobile-ui-v17 .navbtn .nav-icon{background:#edf2f7!important;color:#61738b!important}
+body.app-v21.mobile-ui-v17 .navbtn.active .nav-icon{background:#fff!important;color:#376fb7!important}
+body.app-v21.mobile-ui-v17 .home-heading-v12{grid-template-columns:minmax(0,1fr)!important;gap:9px!important;margin-bottom:11px!important}
+body.app-v21.mobile-ui-v17 .home-heading-v12 .brand{font-size:26px!important}
+body.app-v21.mobile-ui-v17 .home-date-card-v12{min-width:0!important;width:100%!important;grid-template-columns:39px minmax(0,1fr)!important;padding:8px 10px!important}
+body.app-v21.mobile-ui-v17 .home-date-icon-v12{width:39px!important;height:39px!important;font-size:20px!important}
+body.app-v21.mobile-ui-v17 .home-hero-v21{grid-template-columns:1fr!important;gap:17px;min-height:0;margin-bottom:11px;padding:21px 19px!important}
+body.app-v21.mobile-ui-v17 .home-hero-v21::before{right:-90px;top:-100px}
+body.app-v21.mobile-ui-v17 .home-hero-v21 h2{font-size:22px}
+body.app-v21.mobile-ui-v17 .home-hero-v21 p{font-size:12px}
+body.app-v21.mobile-ui-v17 .home-progress-v21{position:absolute;right:16px;top:16px;display:block}
+body.app-v21.mobile-ui-v17 .home-progress-ring-v21{width:64px;height:64px}.mobile-ui-v17 .home-progress-ring-v21::before{inset:6px}
+body.app-v21.mobile-ui-v17 .home-progress-value-v21{font-size:17px}.mobile-ui-v17 .home-progress-value-v21 small{font-size:9px}
+body.app-v21.mobile-ui-v17 .home-progress-label-v21{display:none}
+body.app-v21.mobile-ui-v17 .home-hero-copy-v21{padding-right:66px}
+body.app-v21.mobile-ui-v17 .home-hero-actions-v21{margin-right:-66px}
+body.app-v21.mobile-ui-v17 .home-deadlines-v21{width:100%}.mobile-ui-v17 .home-deadline-v21{max-width:100%;flex:1 1 100%}
+body.app-v21.mobile-ui-v17 #homePage .home-toolbar-v3{margin-bottom:11px!important;padding:12px!important}
+body.app-v21.mobile-ui-v17 #homePage .home-toolbar-v3::before{grid-column:1/-1!important}
+body.app-v21.mobile-ui-v17 .kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;margin-bottom:11px!important}
+body.app-v21.mobile-ui-v17 .kpi{min-height:78px!important;padding:11px 10px 10px 43px!important}
+body.app-v21.mobile-ui-v17 .kpi::before{left:10px;top:12px}.mobile-ui-v17 .kpi>b{font-size:22px!important}
+body.app-v21.mobile-ui-v17 .home-top-grid-v3,body.app-v21.mobile-ui-v17 .home-bottom-grid-v3{gap:11px!important}
+body.app-v21.mobile-ui-v17 .card{border-radius:16px!important}
+body.app-v21.mobile-ui-v17 .pagehead h2{font-size:23px!important}
+body.app-v21.mobile-ui-v17 #taskTableBody tr,body.app-v21.mobile-ui-v17 #dbTableBody tr,body.app-v21.mobile-ui-v17 #historyTableBody tr{border-color:#dce5f1!important;box-shadow:0 7px 20px rgba(31,57,90,.055)!important}
+body.app-v21.mobile-ui-v17 .modal-head{padding:15px 16px!important}
+}
+@media(max-width:410px){
+  body.app-v21.mobile-ui-v17 .home-hero-copy-v21{padding-right:58px}
+  body.app-v21.mobile-ui-v17 .home-hero-v21 h2{font-size:20px}
+  body.app-v21.mobile-ui-v17 .home-hero-actions-v21{margin-right:-58px}
+  body.app-v21.mobile-ui-v17 .home-hero-add-v21{width:100%}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1633,7 +1820,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-20').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-21').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2508,6 +2695,7 @@ setTimeout(()=>{migrateV6Data();ensureV6Ui();renderTaskTable();renderDbTable();r
 // ========================= APP V7 =========================
 const V7_CATEGORY_PRESETS=['#A8D5BA','#F6C7A5','#FFD8A8','#D9C5EA','#B8D9EA','#F2B8C6','#F4E5A3','#C8D4CB'];
 const V7_THEME_META={
+  navy:{label:'네이비 프로',desc:'선명한 업무용 블루',p1:'#E2ECF9',p2:'#376FB7'},
   mint:{label:'민트',desc:'산뜻한 연초록',p1:'#EAF6EE',p2:'#78AD8D'},
   peach:{label:'피치',desc:'부드러운 살구',p1:'#FFF1E8',p2:'#E7AA83'},
   lavender:{label:'라벤더',desc:'연보라',p1:'#F1EDFA',p2:'#A594C8'},
@@ -4013,6 +4201,100 @@ renderCalendar=function(tasks,a,b){
   return renderCalendarV20Base(visible,a,b);
 };
 setTimeout(()=>enhanceDateInputsV20(document),0);
+
+// ========================= APP V21 — A 구조 + B 네이비 =========================
+function migrateV21Data(){
+  state.settings=state.settings||{};
+  if(!state.settings.designV21Applied){
+    state.settings.uiTheme='navy';
+    state.settings.designV21Applied=true;
+  }
+  if(!state.settings.uiTheme)state.settings.uiTheme='navy';
+}
+const migrateStateV21Base=migrateStateV2;
+migrateStateV2=function(){migrateStateV21Base();migrateV21Data();applyThemeV7()};
+
+function ensureV21Ui(){
+  migrateV21Data();
+  document.body.classList.add('app-v21');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content','#172d51');
+  if(document.body.dataset.v7Theme!==state.settings.uiTheme)applyThemeV7();
+
+  const side=$('.side');
+  if(side&&!$('#v21SideBrand')){
+    side.insertAdjacentHTML('afterbegin',`<div class="v21-side-brand" id="v21SideBrand" aria-label="업무관리시스템">
+      <span class="v21-side-brand-mark" aria-hidden="true">✓</span>
+      <span><strong>업무관리</strong><small>WORKSPACE</small></span>
+    </div><div class="v21-side-section">MAIN MENU</div>`);
+  }
+
+  const homeTitle=$('#homePage .home-heading-copy-v12 .brand');
+  if(homeTitle)homeTitle.textContent='업무 대시보드';
+  const heading=$('#homePage .home-heading-v12');
+  if(heading&&!$('#homeHeroV21')){
+    heading.insertAdjacentHTML('afterend',`<section class="card home-hero-v21" id="homeHeroV21" aria-labelledby="homeHeroTitleV21">
+      <div class="home-hero-copy-v21">
+        <span class="home-hero-eyebrow-v21">TODAY'S WORK</span>
+        <h2 id="homeHeroTitleV21">오늘 업무를 불러오는 중입니다</h2>
+        <p id="homeHeroSummaryV21">이번 달 진행 상황과 가까운 일정을 확인합니다.</p>
+        <div class="home-hero-actions-v21">
+          <button type="button" class="btn home-hero-add-v21" id="homeHeroAddTaskV21">＋ 업무 작성</button>
+          <div class="home-deadlines-v21" id="homeDeadlinesV21"></div>
+        </div>
+      </div>
+      <div class="home-progress-v21" aria-label="이번 달 완료율">
+        <div class="home-progress-ring-v21" id="homeProgressRingV21"><span class="home-progress-value-v21"><span id="homeProgressValueV21">0</span><small>%</small></span></div>
+        <span class="home-progress-label-v21">이번 달 완료율</span>
+      </div>
+    </section>`);
+  }
+  const add=$('#homeHeroAddTaskV21');
+  if(add)add.onclick=()=>openTaskForm();
+}
+
+function v21DueLabel(date,today=todayISO()){
+  if(!date)return'일정 미정';
+  const days=Math.round((dateOf(date)-dateOf(today))/86400000);
+  if(days===0)return'오늘';
+  if(days===1)return'내일';
+  if(days>1)return`D-${days}`;
+  return`D+${Math.abs(days)}`;
+}
+function renderHomeOverviewV21(){
+  ensureV21Ui();
+  const all=state.tasks||[],today=todayISO(),monthStart=`${today.slice(0,7)}-01`;
+  const current=dateOf(today),monthEnd=endOfMonth(current.getFullYear(),current.getMonth()+1);
+  const monthTasks=all.filter(task=>task.start&&(task.start<=monthEnd&&(task.end||task.start)>=monthStart));
+  const monthDone=monthTasks.filter(task=>effectiveStatus(task)==='done').length;
+  const completion=monthTasks.length?Math.round(monthDone/monthTasks.length*100):0;
+  const activeToday=all.filter(task=>effectiveStatus(task)!=='done'&&task.start&&task.start<=today&&(task.end||task.start)>=today);
+  const overdue=all.filter(task=>effectiveStatus(task)==='overdue');
+  const upcoming=all.filter(task=>effectiveStatus(task)!=='done'&&(task.end||task.start)>=today)
+    .sort((a,b)=>String(a.end||a.start).localeCompare(String(b.end||b.start))).slice(0,2);
+
+  const title=$('#homeHeroTitleV21'),summary=$('#homeHeroSummaryV21');
+  if(title){
+    if(activeToday.length)title.textContent=`오늘 집중할 업무가 ${activeToday.length}건 있습니다`;
+    else if(overdue.length)title.textContent=`기한이 지난 업무 ${overdue.length}건을 확인해 주세요`;
+    else title.textContent='오늘 일정은 여유롭습니다';
+  }
+  if(summary)summary.textContent=`이번 달 ${monthTasks.length}건 중 ${monthDone}건 완료 · 남은 업무 ${Math.max(0,monthTasks.length-monthDone)}건`;
+  const ring=$('#homeProgressRingV21');if(ring)ring.style.setProperty('--progress',String(completion));
+  const value=$('#homeProgressValueV21');if(value)value.textContent=String(completion);
+  const deadlineRoot=$('#homeDeadlinesV21');
+  if(deadlineRoot){
+    deadlineRoot.innerHTML=upcoming.length?upcoming.map(task=>`<button type="button" class="home-deadline-v21" data-v21-task="${task.id}" title="${esc(task.name)}"><b>${v21DueLabel(task.end||task.start,today)}</b>${esc(task.name)}</button>`).join(''):'<span class="home-deadline-v21">다가오는 업무 없음</span>';
+    $$('[data-v21-task]',deadlineRoot).forEach(button=>button.onclick=()=>openChecklist(button.dataset.v21Task));
+  }
+  const icons=['!','●','7','月','?','◆'];
+  $$('#kpis .kpi').forEach((card,index)=>card.dataset.v21Icon=icons[index]||'•');
+}
+
+const renderHomeV21Base=renderHome;
+renderHome=function(){const result=renderHomeV21Base();renderHomeOverviewV21();return result};
+const renderSettingsV21Base=renderSettings;
+renderSettings=function(){const result=renderSettingsV21Base();ensureV21Ui();return result};
+setTimeout(()=>{ensureV21Ui();renderHomeOverviewV21()},0);
 
 </script>
 </body></html>
