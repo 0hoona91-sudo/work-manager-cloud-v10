@@ -1398,7 +1398,7 @@ const DBNAME='TaskManagerLocalDB_v1';
 function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DBNAME,1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('data'))e.target.result.createObjectStore('data')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function readLocalState(){try{const db=await openDb();const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get('state');const saved=await new Promise((res,rej)=>{req.onsuccess=()=>res(req.result||null);req.onerror=()=>rej(req.error)});db.close();return saved}catch(e){console.warn('로컬 데이터 확인 실패',e);return null}}
 async function writeLocalState(snapshot){try{const db=await openDb();const tx=db.transaction('data','readwrite');tx.objectStore('data').put(clone(snapshot),'state');await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){console.warn('기기 캐시 저장 실패',e)}}
-async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260910-24');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
+async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260910-25');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
 async function saveState(meta={}){const snapshot=clone(state);await writeLocalState(snapshot);if(window.cloudSync)await window.cloudSync.save(snapshot,meta)}
 function seed(){state.categories=['소방','시설','행정','교육','회계','인사','복지','기타'];state.owners=['나영훈','관리소장','시설담당','경리담당'];state.holidays=clone(holidaySeed);state.templates=clone(sampleTemplates);state.tasks=clone(sampleTasks);state.selectedCategories=[]}
 
@@ -1875,7 +1875,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-24').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-25').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2579,7 +2579,7 @@ function recalcLinks(){
   for(let pass=0;pass<20;pass++){
     let changed=false;const sorted=[...state.tasks].sort((a,b)=>(a.step||1)-(b.step||1));
     for(const t of sorted){
-      if(!t.link?.dynamic)continue;
+      if(!t.link?.dynamic||t.manualOverride||t.scheduleOverride||effectiveStatus(t)==='done')continue;
       const p=state.tasks.find(x=>x.id===t.link.parentId);if(!p)continue;
       const basis=t.link.basis==='actualEnd'?(p.actualComplete||p.deadline||p.end||p.start):(t.link.basis==='start'?p.start:(p.end||p.start));
       if(!basis)continue;
@@ -2701,7 +2701,7 @@ function openDbForm(id=null){
     const cyc=$('input[name=dfCycle]:checked').value,months=($('#dfMonths')?.value||'').split(',').map(x=>Number(x.trim())).filter(x=>x>=1&&x<=12);
     const rootCategory=$('#dfCat').value;
     steps=steps.map(s=>({...s,name:String(s.name||'').trim(),category:s.category||rootCategory,owner:s.owner||t.owner||'',checklist:(s.checklist||[]).map(x=>x.trim()).filter(Boolean),startOffset:Number(s.startOffset||0),limitDays:Number(s.limitDays||0)})).filter(s=>s.name);
-    Object.assign(t,{category:rootCategory,name,cycle:cyc,cycleMonths:months,quarter:Number($('#dfQuarter')?.value||0)||null,half:$('#dfHalf')?.value||null,weekdays:$$('[data-dfwd]:checked').map(x=>Number(x.dataset.dfwd)),weekday:Number($('[data-dfwd]:checked')?.dataset.dfwd??t.weekday??1),dayRule:$('input[name=dfDay]:checked').value,exactDay:Number($('#dfExactDay').value)||null,holidayShift:$('#dfShift').value,checklist:checks.map(x=>x.trim()).filter(Boolean),methodBlocks:blocks,method:'',photos:[],keywords:$('#dfKeywords').value,notes:$('#dfNotes').value,autoSchedule:$('#dfAutoSchedule').checked,activeFrom:$('#dfActiveFrom').value||todayISO(),activeUntil:$('#dfActiveUntil').value||'',applyPolicy:$('#dfApplyPolicy').value,durationDays:Number($('#dfDurationDays').value||0),linkedSteps:steps});
+    Object.assign(t,{category:rootCategory,owner:$('#dfOwner')?.value||t.owner||'',name,cycle:cyc,cycleMonths:months,quarter:Number($('#dfQuarter')?.value||0)||null,half:$('#dfHalf')?.value||null,weekdays:$$('[data-dfwd]:checked').map(x=>Number(x.dataset.dfwd)),weekday:Number($('[data-dfwd]:checked')?.dataset.dfwd??t.weekday??1),dayRule:$('input[name=dfDay]:checked').value,exactDay:Number($('#dfExactDay').value)||null,holidayShift:$('#dfShift').value,checklist:checks.map(x=>x.trim()).filter(Boolean),methodBlocks:blocks,method:'',photos:[],keywords:$('#dfKeywords').value,notes:$('#dfNotes').value,autoSchedule:$('#dfAutoSchedule').checked,activeFrom:$('#dfActiveFrom').value||todayISO(),activeUntil:$('#dfActiveUntil').value||'',applyPolicy:$('#dfApplyPolicy').value,durationDays:Number($('#dfDurationDays').value||0),linkedSteps:steps});
     if(orig)Object.assign(orig,t);else{t.id=uid('tpl');state.templates.push(t)}
     const target=orig||t,[df,dt]=v5DefaultAutoRange();syncTemplateScheduleV5(target,df,dt,t.applyPolicy||'pending');recalcLinks();await saveState();closeModal();renderDbTable();renderTaskTable();renderHome();toast(t.autoSchedule?'DB 저장 · 수행업무 자동 동기화 완료':'업무 DB를 저장했습니다.');
   };
@@ -3071,7 +3071,6 @@ stepEditorHtmlV6=function(s,i){
 
 const openDbFormV8Base=openDbForm;
 openDbForm=function(id=null){
-  const beforeIds=new Set(state.templates.map(x=>x.id));
   openDbFormV8Base(id);
   const tpl=id?state.templates.find(x=>x.id===id):null;
   const nameField=$('#dfName')?.closest('.field');
@@ -3085,27 +3084,6 @@ openDbForm=function(id=null){
       const next=rootOwnerSelect.value;
       $$('[data-v8stepowner]').forEach(select=>{if(!select.value||select.value===previousRootOwner){select.value=next;select.dispatchEvent(new Event('change',{bubbles:true}))}});
       previousRootOwner=next;
-    };
-  }
-  const save=$('#saveDb');
-  if(save){
-    const original=save.onclick;
-    save.onclick=async function(e){
-      const rootOwner=$('#dfOwner')?.value||'';
-      const stepOwners=$$('[data-v8stepowner]').map(x=>x.value);
-      const nameBefore=$('#dfName')?.value.trim()||'';
-      await original.call(this,e);
-      let target=id?state.templates.find(x=>x.id===id):state.templates.find(x=>!beforeIds.has(x.id)&&x.name===nameBefore);
-      if(!target&&!id)target=[...state.templates].reverse().find(x=>x.name===nameBefore);
-      if(target){
-        target.owner=rootOwner;
-        (target.linkedSteps||[]).forEach((s,i)=>{s.owner=stepOwners[i]||rootOwner||'';s.inheritRootOwner=!stepOwners[i]||s.owner===rootOwner});
-        const [a,b]=v5DefaultAutoRange();
-        syncTemplateScheduleV5(target,a,b,target.applyPolicy||'pending');
-        recalcLinks();
-        await saveState();
-        renderDbTable();renderTaskTable();renderHome();
-      }
     };
   }
 };
