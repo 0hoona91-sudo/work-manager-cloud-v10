@@ -129,6 +129,8 @@ const functions = [
   "shiftWorkday",
   "addBusinessDays",
   "effectiveStatus",
+  "normalizeCompactDateV20",
+  "recurrenceDatesV2",
   "cloneOccurrenceV2",
   "preserveOccurrenceV3",
   "periodFromDate",
@@ -168,6 +170,20 @@ const functions = [
 ];
 for (const name of functions) vm.runInContext(extractLastFunction(name), context);
 
+assert.equal(context.normalizeCompactDateV20("20260910"), "2026-09-10", "8자리 날짜를 ISO 날짜로 자동 변환해야 합니다.");
+assert.equal(context.normalizeCompactDateV20("2026.9.7"), "2026-09-07", "점 구분 날짜도 같은 형식으로 정리해야 합니다.");
+assert.equal(context.normalizeCompactDateV20("20260230"), "", "존재하지 않는 날짜를 정상 날짜로 받아들이면 안 됩니다.");
+assert.deepEqual(
+  Array.from(context.recurrenceDatesV2("2026-09-10", "2027-09-30", "quarterly", [], [1, 4, 7, 10])),
+  ["2026-10-10", "2027-01-10", "2027-04-10", "2027-07-10"],
+  "분기 반복업무는 사용자가 고른 실시 월만 생성해야 합니다.",
+);
+assert.deepEqual(
+  Array.from(context.recurrenceDatesV2("2026-09-10", "2026-09-20", "weekly", [1, 4], [])),
+  ["2026-09-10", "2026-09-14", "2026-09-17"],
+  "주간 반복업무는 선택한 요일만 생성해야 합니다.",
+);
+
 const completionSample = {
   status: "planned",
   actualComplete: null,
@@ -201,6 +217,39 @@ assert.ok(!html.includes('id="openTaskSetting"'), "설정 화면에 하단 메�
 assert.ok(!html.includes('id="openDbSetting"'), "설정 화면에 하단 메뉴와 중복되는 DB 이동 버튼이 없어야 합니다.");
 assert.ok(!html.includes("간트 숨기기") && !html.includes("달력 숨기기"), "HOME 패널에 상단 배치 선택기와 중복되는 숨기기 버튼이 없어야 합니다.");
 assert.match(extractLastFunction("ganttCategoryFilterHtmlV5"), /return\s+''/, "간트 내부의 중복 대분류 필터를 생성하면 안 됩니다.");
+
+const homeMarkup = html.slice(html.indexOf('<section id="homePage"'), html.indexOf('<section id="taskListPage"'));
+const homeToolbarMarkup = homeMarkup.slice(homeMarkup.indexOf('<div class="card toolbar home-toolbar-v3">'), homeMarkup.indexOf('<div id="kpis"'));
+const ganttTitleMarkup = homeMarkup.slice(homeMarkup.indexOf('gantt-panel-title-v20'), homeMarkup.indexOf('<div class="panel-body"><div id="ganttView"'));
+assert.ok(!homeToolbarMarkup.includes('id="ganttMonthRangeV13"'), "간트 범위 선택기가 HOME 공통 조작부에 남으면 안 됩니다.");
+assert.ok(ganttTitleMarkup.includes('id="ganttMonthRangeV13"'), "간트 범위 선택기는 간트차트 제목 영역에 있어야 합니다.");
+assert.ok(ganttTitleMarkup.includes('data-gantt-cycle-v13="weekly"'), "간트 반복업무 토글도 간트차트 제목 영역에 있어야 합니다.");
+assert.match(homeToolbarMarkup, /legacy-home-period-v20" hidden/, "기존 기간 선택값은 호환용 숨김 필드로만 남겨야 합니다.");
+assert.ok(!homeMarkup.includes("간트 + 달력 동시 HOME"), "HOME 제목 아래의 기능 나열 문구를 표시하면 안 됩니다.");
+assert.ok(html.includes("간트·달력 대분류"), "대분류가 간트와 달력 모두에 적용됨을 표시해야 합니다.");
+
+const taskFormSource = extractLastFunction("taskFormHtml");
+assert.ok(taskFormSource.includes("<label>시작일</label>"), "첫 업무 시작일은 시작일로 간결하게 표시해야 합니다.");
+assert.ok(taskFormSource.includes("<label>종료일</label><select id=\"tfEndType\""), "종료 방식 선택기의 제목은 종료일이어야 합니다.");
+assert.ok(taskFormSource.includes('id="tfEndDateField"><input type="date"'), "날짜 직접 선택 칸에 종료일 제목을 중복 표시하면 안 됩니다.");
+assert.ok(taskFormSource.includes('type="hidden" id="tfDeadline"'), "사용자가 입력하는 별도 마감일 필드는 제거해야 합니다.");
+assert.ok(taskFormSource.includes("종료일이 휴일이면"), "휴일 보정 문구는 종료일 기준으로 표시해야 합니다.");
+assert.ok(taskFormSource.includes('id="tfRepeatDetailsV20"'), "반복 세부 설정은 반복업무 체크 뒤에 조건부로 표시해야 합니다.");
+assert.ok(taskFormSource.includes("윗단계 업무 일정 연계"), "후속 단계 일정 연계 문구를 명확하게 표시해야 합니다.");
+assert.ok(html.includes('class="month-picks-v20"'), "월간 이상 반복업무에 1~12월 선택기를 제공해야 합니다.");
+assert.ok(html.includes("include.disabled=!enabled") && html.includes("shift.disabled=!enabled"), "시작 후 N일이 아니면 휴일 계산 옵션을 비활성화해야 합니다.");
+assert.ok(!extractLastFunction("modal").includes("classList.contains('modal-wrap')"), "팝업 바깥을 눌러도 작성 폼이 닫히면 안 됩니다.");
+assert.ok(!extractLastFunction("renderHome").includes("renderSettings()"), "HOME을 그릴 때 설정 화면 전체를 다시 그리면 안 됩니다.");
+assert.ok(!extractLastFunction("ensureV7Ui").includes("addEventListener('pointerup'"), "설정 버튼의 pointer 이벤트가 화면 이동마다 누적되면 안 됩니다.");
+assert.ok(html.includes("sb.onpointerup=null"), "설정 버튼은 중복 pointer 경로 없이 click 한 경로만 사용해야 합니다.");
+assert.ok(html.includes("grid-template-columns:repeat(7,minmax(44px,1fr))"), "반복 요일은 일곱 개 열로 가지런히 배치해야 합니다.");
+assert.ok(html.includes("function enhanceDateInputsV20"), "동적으로 생성되는 모든 날짜 입력도 8자리 입력 보정을 받아야 합니다.");
+
+for (const title of ["수행 업무 목록", "업무 데이터베이스", "휴일 DB", "변경이력", "설정 / 백업"]) {
+  const heading = html.indexOf(`<h2>${title}</h2>`);
+  assert.notEqual(heading, -1, `${title} 제목이 있어야 합니다.`);
+  assert.ok(!html.slice(heading, heading + 180).includes('<div class="muted">'), `${title} 바로 아래 설명 문구를 표시하면 안 됩니다.`);
+}
 
 const linkedTemplate = {
   id: "qa-template-linked-4",
