@@ -1,4 +1,4 @@
-const CACHE_NAME = "work-manager-v10-shell-2026-09-09-17";
+const CACHE_NAME = "work-manager-v10-shell-2026-09-10-19";
 const APP_SHELL = [
   "./",
   "./index.html",
