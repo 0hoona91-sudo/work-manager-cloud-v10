@@ -577,6 +577,17 @@ assert.ok(html.includes("body.app-v21 .home-hero-v21{"), "요약 카드는 공�
 assert.ok(html.includes("state.settings.designV21Applied=true"), "기존 사용자에게 네이비 디자인을 한 번만 기본 적용해야 합니다.");
 assert.ok(html.includes("body.app-v21.mobile-ui-v17 .home-hero-v21"), "모바일에서 요약 영역을 한 열 구조로 재배치해야 합니다.");
 assert.ok(html.includes("body.app-v21.mobile-ui-v17 .side"), "V21에서도 모바일 고정 하단 메뉴 스타일을 유지해야 합니다.");
+assert.ok(html.includes("category:$('#dfCat')?.value||t.category"), "새 연계 단계는 현재 1단계 대분류를 이어받아야 합니다.");
+assert.ok(html.includes("owner:$('#dfOwner')?.value||t.owner||''"), "새 연계 단계는 현재 1단계 담당자를 이어받아야 합니다.");
+assert.ok(html.includes("repairLinkedInheritanceV23"), "기존 기본 대분류·미지정 담당자 오류를 한 번 복구해야 합니다.");
+assert.ok(html.includes('id="addMethodFile"'), "업무 DB 폼에 양식 파일 첨부 입력이 있어야 합니다.");
+assert.ok(html.includes("makeMethodFileBlock"), "업무 DB 파일을 Drive 블록으로 생성해야 합니다.");
+assert.ok(html.includes("data-drive-download"), "업무 DB 상세에서 첨부파일을 내려받을 수 있어야 합니다.");
+assert.ok(html.includes('id="app-v23-theme-drive-style"'), "V23 테마·Drive 첨부 스타일이 있어야 합니다.");
+for (const theme of ["navy","mint","peach","lavender","sky","cream"]) {
+  assert.ok(html.includes(`body.app-v21[data-v7-theme="${theme}"]`), `${theme} 톤이 사이드바·요약 카드 색상까지 정의해야 합니다.`);
+}
+assert.ok(html.includes("background:linear-gradient(122deg,var(--v23-hero-start)"), "HOME 요약 카드는 선택한 디자인 톤 변수를 사용해야 합니다.");
 
 assert.match(
   html,
