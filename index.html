@@ -938,32 +938,120 @@ body.mobile-ui-v17.app-modal-open-v18 .side{visibility:hidden!important;pointer-
 }
 </style>
 
+<style id="app-v20-layout-forms-style">
+/* APP V20: HOME 조작부, 날짜 입력, 반복/연계 업무 폼을 한 구조로 정리한다. */
+.legacy-home-period-v20{display:none!important}
+#homePage .home-toolbar-v3{position:relative;top:auto;z-index:120;align-items:flex-end}
+#homePage .home-toolbar-v3 .field:first-of-type{min-width:210px;flex:1 1 250px}
+#homePage .home-toolbar-v3 .field:nth-of-type(2){flex:0 0 auto}
+.gantt-panel-title-v20{align-items:center;gap:12px;flex-wrap:wrap}
+.gantt-heading-tools-v20{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex:1 1 580px;min-width:0;flex-wrap:wrap}
+.gantt-heading-tools-v20 #visualRange{margin-right:auto;white-space:nowrap}
+.gantt-heading-tools-v20 #ganttMonthRangeV13{min-height:38px;border:1px solid rgba(50,75,58,.16);border-radius:11px;padding:7px 30px 7px 10px;background:#fff;color:#31473a;font-weight:700}
+.gantt-heading-tools-v20 .gantt-cycle-toggles-v13{min-height:38px;padding:3px}
+.gantt-heading-tools-v20 .gantt-cycle-toggle-v13{min-width:52px;padding:6px 8px}
+
+.task-kind-options-v20{display:flex!important;align-items:center!important;gap:8px!important;flex-wrap:wrap!important}
+.task-kind-options-v20>label,.task-new-field-v20>label,.repeat-switch-v20{
+  display:inline-flex!important;align-items:center!important;gap:8px!important;min-height:42px!important;
+  padding:9px 12px!important;border-radius:11px!important;background:#f1f5f2!important;color:#29382f!important;font-weight:700!important
+}
+.task-kind-options-v20 input[type="radio"],.task-new-field-v20 input[type="checkbox"],.repeat-switch-v20 input[type="checkbox"]{
+  flex:0 0 18px!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;margin:0!important;padding:0!important
+}
+.task-new-field-v20>label{width:max-content;max-width:100%}
+.schedule-grid-v20>#tfEndDateField,.schedule-grid-v20>#tfAfterField{grid-column:2}
+.end-date-only-v20{align-self:end}
+.end-date-only-v20>input{width:100%}
+#tfAfterField .inline{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.end-calculation-options-v20.is-disabled-v20{opacity:.48}
+.end-calculation-options-v20 label:has(:disabled){cursor:not-allowed}
+
+.repeat-panel{background:#f2f7f3!important}
+.repeat-switch-v20{cursor:pointer}
+.repeat-details-v20{margin-top:12px;padding-top:12px;border-top:1px solid rgba(50,75,58,.10)}
+.repeat-main-grid-v20{display:grid;grid-template-columns:minmax(120px,.8fr) minmax(190px,1.25fr) minmax(150px,1fr);gap:10px;align-items:end}
+.repeat-main-grid-v20>label{display:flex;flex-direction:column;gap:6px;color:#68746c;font-size:12px;font-weight:700}
+.repeat-main-grid-v20 select,.repeat-main-grid-v20 input{width:100%;min-height:42px;border:1px solid rgba(50,75,58,.16);border-radius:11px;padding:9px 10px;background:#fff;color:#202421}
+.repeat-extra-v20{margin-top:12px}
+.weekday-picks,.month-picks-v20{display:grid!important;gap:6px!important;align-items:stretch!important}
+.weekday-picks{grid-template-columns:repeat(7,minmax(44px,1fr))!important}
+.month-picks-v20{grid-template-columns:repeat(12,minmax(42px,1fr))!important}
+.weekday-picks>label,.month-picks-v20>label{
+  display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:5px!important;
+  min-height:58px!important;margin:0!important;padding:7px 4px!important;border-radius:11px!important;background:#eef3ef!important;
+  color:#4b5c51!important;font-size:12px!important;font-weight:700!important;cursor:pointer!important
+}
+.weekday-picks input[type="checkbox"],.month-picks-v20 input[type="checkbox"]{
+  flex:0 0 18px!important;width:18px!important;height:18px!important;min-width:18px!important;min-height:18px!important;margin:0!important;padding:0!important
+}
+#tfAddStep{margin-top:14px}
+
+.date-entry-v20{position:relative;display:block;width:100%;min-width:0}
+.date-entry-v20>.date-text-v20{width:100%!important;padding-right:44px!important}
+.date-entry-v20::after{content:"📅";position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;filter:saturate(.75)}
+.date-entry-v20>.date-picker-v20{position:absolute!important;right:0!important;top:0!important;width:44px!important;height:100%!important;min-width:44px!important;min-height:0!important;margin:0!important;padding:0!important;opacity:0!important;cursor:pointer!important;z-index:2}
+.inline-date-wrap .date-entry-v20{width:150px;max-width:100%}
+.date-entry-v20>.date-text-v20.is-invalid-v20{border-color:#db625c!important;box-shadow:0 0 0 3px rgba(219,98,92,.12)!important}
+
+@media(max-width:1100px){
+  .gantt-heading-tools-v20{flex-basis:100%;justify-content:flex-start}
+  .gantt-heading-tools-v20 #visualRange{width:100%;margin:0}
+}
+@media(max-width:720px){
+  #homePage .home-toolbar-v3{grid-template-columns:minmax(0,1fr) minmax(0,.72fr)!important}
+  #homePage .home-toolbar-v3 .field:first-of-type{min-width:0!important;grid-column:1!important}
+  #homePage .home-toolbar-v3 .field:nth-of-type(2){grid-column:2!important}
+  #homePage .home-toolbar-v3 #homeLayoutControl,#homePage .home-toolbar-v3>#refreshHome{grid-column:1/-1!important;width:100%!important}
+  .gantt-panel-title-v20{align-items:flex-start!important}
+  .gantt-heading-tools-v20{display:grid!important;grid-template-columns:1fr!important;width:100%;flex-basis:100%}
+  .gantt-heading-tools-v20 #ganttMonthRangeV13{width:100%}
+  .gantt-heading-tools-v20 .gantt-cycle-toggles-v13{width:100%}
+  .repeat-main-grid-v20{grid-template-columns:1fr}
+  .schedule-grid-v20>#tfEndDateField,.schedule-grid-v20>#tfAfterField{grid-column:1}
+  .weekday-picks{grid-template-columns:repeat(7,minmax(34px,1fr))!important}
+  .month-picks-v20{grid-template-columns:repeat(6,minmax(40px,1fr))!important}
+  .weekday-picks>label,.month-picks-v20>label{min-height:56px!important;padding:6px 2px!important}
+  .task-new-field-v20>label{width:100%}
+}
+@media(max-width:390px){
+  #homePage .home-toolbar-v3{grid-template-columns:1fr!important}
+  #homePage .home-toolbar-v3 .field:first-of-type,#homePage .home-toolbar-v3 .field:nth-of-type(2){grid-column:1!important}
+  .weekday-picks{gap:3px!important}
+  .weekday-picks>label{font-size:11px!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
   <main class="main">
     <section id="homePage" class="sectionpage active">
       <div class="home-heading-v12">
-        <div class="home-heading-copy-v12"><h1 class="brand">업무관리시스템</h1><div class="sub">간트 + 달력 동시 HOME · 반복업무 실제 회차 생성 · 단계업무 · 체크리스트 · 업무 DB · 알림/푸시 없음</div></div>
+        <div class="home-heading-copy-v12"><h1 class="brand">업무관리시스템</h1></div>
         <div class="home-date-card-v12" id="homeTodayCardV12" aria-live="polite">
           <div class="home-date-icon-v12" aria-hidden="true">📅</div>
           <div><div class="home-date-caption-v12">오늘</div><div class="home-date-value-v12" id="homeTodayV12"></div></div>
         </div>
       </div>
       <div class="card toolbar home-toolbar-v3">
-        <div class="field"><label>간트 기준 연도</label><select id="homeYear"></select></div>
-        <div class="field"><label>간트 기간</label><select id="homePeriod"></select></div>
-        <div class="field"><label>대분류</label><div class="multi"><button class="multi-btn" id="catMultiBtn">전체</button><div id="catMultiMenu" class="multi-menu hidden"></div></div></div>
+        <div class="legacy-home-period-v20" hidden><select id="homeYear" aria-hidden="true"></select><select id="homePeriod" aria-hidden="true"></select></div>
+        <div class="field"><label>간트·달력 대분류</label><div class="multi"><button class="multi-btn" id="catMultiBtn">전체</button><div id="catMultiMenu" class="multi-menu hidden"></div></div></div>
         <div class="field"><label>완료</label><select id="homeDone"><option value="hide">완료 숨김</option><option value="show">완료 포함</option></select></div>
-        <div class="field gantt-month-field-v13"><label for="ganttMonthRangeV13">오늘 기준 간트 범위</label><select id="ganttMonthRangeV13" aria-label="오늘 전후 간트 표시 개월 수"><option value="1">± 1개월</option><option value="2">± 2개월</option><option value="3">± 3개월</option><option value="4">± 4개월</option><option value="5">± 5개월</option><option value="6">± 6개월</option><option value="7">± 7개월</option><option value="8">± 8개월</option><option value="9">± 9개월</option><option value="10">± 10개월</option><option value="11">± 11개월</option><option value="12" selected>± 12개월</option></select></div>
-        <div class="field gantt-cycle-field-v13"><label id="ganttCycleLabelV13">간트 반복업무 표시</label><div class="gantt-cycle-toggles-v13" role="group" aria-labelledby="ganttCycleLabelV13" title="연간 반복업무와 비반복 업무는 항상 표시됩니다."><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="weekly" aria-pressed="true">주간</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="monthly" aria-pressed="true">월간</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="quarterly" aria-pressed="true">분기</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="half" aria-pressed="true">반기</button></div></div>
         <button class="btn" id="refreshHome">새로고침</button>
       </div>
       <div id="kpis" class="kpis"></div>
 
       <div class="home-top-grid-v3">
         <div class="card visual-card gantt-card-v3">
-          <div class="panel-title"><span>간트차트</span><span class="muted" id="visualRange"></span></div>
+          <div class="panel-title gantt-panel-title-v20">
+            <span>간트차트</span>
+            <div class="gantt-heading-tools-v20">
+              <span class="muted" id="visualRange"></span>
+              <select id="ganttMonthRangeV13" aria-label="오늘 전후 간트 표시 개월 수"><option value="1">± 1개월 보기</option><option value="2">± 2개월 보기</option><option value="3">± 3개월 보기</option><option value="4">± 4개월 보기</option><option value="5">± 5개월 보기</option><option value="6">± 6개월 보기</option><option value="7">± 7개월 보기</option><option value="8">± 8개월 보기</option><option value="9">± 9개월 보기</option><option value="10">± 10개월 보기</option><option value="11">± 11개월 보기</option><option value="12" selected>± 12개월 보기</option></select>
+              <div class="gantt-cycle-toggles-v13" role="group" aria-label="간트 반복업무 표시" title="연간 반복업무와 비반복 업무는 항상 표시됩니다."><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="weekly" aria-pressed="true">주간</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="monthly" aria-pressed="true">월간</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="quarterly" aria-pressed="true">분기</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="half" aria-pressed="true">반기</button></div>
+            </div>
+          </div>
           <div class="panel-body"><div id="ganttView" class="gantt"></div></div>
         </div>
         <div class="card calendar-card-v3">
@@ -974,42 +1062,42 @@ body.mobile-ui-v17.app-modal-open-v18 .side{visibility:hidden!important;pointer-
 
       <div class="home-bottom-grid-v3">
         <div class="card overdue-panel" id="overduePanel">
-          <div class="panel-title"><span>마감 못한 일</span><b id="overdueCount">0건</b></div>
-          <div class="listbox home-bottom-list"><table class="mini-list"><thead><tr><th>업무명</th><th>마감일</th></tr></thead><tbody id="overdueList"></tbody></table></div>
+          <div class="panel-title"><span>종료일 지난 업무</span><b id="overdueCount">0건</b></div>
+          <div class="listbox home-bottom-list"><table class="mini-list"><thead><tr><th>업무명</th><th>종료일</th></tr></thead><tbody id="overdueList"></tbody></table></div>
         </div>
         <div class="card" id="periodSummaryCard">
           <div class="panel-title"><span id="periodListTitle">이번달 할 일</span><b id="periodListCount">0건</b></div>
-          <div class="listbox home-bottom-list"><table class="mini-list"><thead><tr><th>업무명</th><th>마감일</th><th>상태</th></tr></thead><tbody id="periodList"></tbody></table></div>
+          <div class="listbox home-bottom-list"><table class="mini-list"><thead><tr><th>업무명</th><th>종료일</th><th>상태</th></tr></thead><tbody id="periodList"></tbody></table></div>
         </div>
       </div>
     </section>
 
     <section id="taskListPage" class="sectionpage">
-      <div class="pagehead"><div><h2>수행 업무 목록</h2><div class="muted">업무명을 누르면 체크리스트 폼이 열립니다. 체크리스트가 전부 끝나야 완료됩니다.</div></div><button class="btn primary" id="newTaskBtn">업무 작성</button></div>
+      <div class="pagehead"><div><h2>수행 업무 목록</h2></div><button class="btn primary" id="newTaskBtn">업무 작성</button></div>
       <div class="card toolbar"><div class="field grow"><label>검색</label><input id="taskSearch" placeholder="업무명, 구분, 문서명, 키워드 검색"></div><div class="field"><label>필터</label><select id="taskStatusFilter"><option value="all">전체</option><option value="pending">미완료</option><option value="done">완료</option><option value="overdue">기한초과</option></select></div><div class="bulk-actions"><button class="btn danger" id="deleteSelectedTasks" disabled>선택 삭제</button><button class="btn" id="deleteSelectedSeries" disabled>반복 전체 삭제</button><span class="muted" id="selectedTaskCount">0건 선택</span></div></div>
-      <div class="tablewrap"><table class="datatable"><thead><tr><th><input type="checkbox" id="selectAllTasks"></th><th>긴급</th><th>구분</th><th>업무명</th><th>진행 월/분기/반기</th><th>예정/마감일</th><th>반복</th><th>상태</th><th>비고</th></tr></thead><tbody id="taskTableBody"></tbody></table></div>
+      <div class="tablewrap"><table class="datatable"><thead><tr><th><input type="checkbox" id="selectAllTasks"></th><th>긴급</th><th>구분</th><th>업무명</th><th>진행 월/분기/반기</th><th>일정</th><th>반복</th><th>상태</th><th>비고</th></tr></thead><tbody id="taskTableBody"></tbody></table></div>
     </section>
 
     <section id="dbPage" class="sectionpage">
-      <div class="pagehead"><div><h2>업무 데이터베이스</h2><div class="muted">검색은 실시간입니다. 업무명을 누르면 체크리스트·수행방법·사진을 볼 수 있습니다.</div></div><button class="btn primary" id="newDbBtn">DB 등록</button></div>
+      <div class="pagehead"><div><h2>업무 데이터베이스</h2></div><button class="btn primary" id="newDbBtn">DB 등록</button></div>
       <div class="card toolbar"><div class="field grow"><label>검색</label><input id="dbSearch" placeholder="업무명 / 구분 / 키워드 / 수행방법"></div></div>
       <div class="tablewrap"><table class="datatable"><thead><tr><th>연번</th><th>구분</th><th>업무명</th><th>진행 월/분기/반기</th><th>비고</th><th></th></tr></thead><tbody id="dbTableBody"></tbody></table></div>
     </section>
 
     <section id="holidayPage" class="sectionpage">
-      <div class="pagehead"><div><h2>휴일 DB</h2><div class="muted">토·일은 자동 휴일입니다. 국가공휴일은 연도별로 다시 불러오면 기존 국가공휴일을 교체하고 회사휴무는 그대로 둡니다.</div></div><button class="btn primary" id="addHoliday">회사/임의 휴일 추가</button></div>
+      <div class="pagehead"><div><h2>휴일 DB</h2></div><button class="btn primary" id="addHoliday">회사/임의 휴일 추가</button></div>
       <div class="card holiday-import"><div class="field"><label>불러올 연도</label><input type="number" id="holidayImportYear" min="2020" max="2045" value="2027"></div><button class="btn primary" id="loadNationalHolidays">국가공휴일 불러오기</button><span id="holidayImportStatus" class="muted">인터넷 연결이 필요합니다.</span></div>
       <div class="card panel-body holiday-table"><div id="holidayRows"></div></div>
     </section>
 
     <section id="historyPage" class="sectionpage">
-      <div class="pagehead"><div><h2>변경이력</h2><div class="muted">업무·체크리스트·DB·담당자·휴일 변경을 시간순으로 보존합니다. 이 기록은 앱에서 수정하거나 삭제할 수 없습니다.</div></div></div>
+      <div class="pagehead"><div><h2>변경이력</h2></div></div>
       <div class="card toolbar"><div class="field grow"><label>검색</label><input id="historySearch" placeholder="업무명, 변경 항목, 계정 검색"></div><button class="btn" id="refreshHistory">새로고침</button></div>
       <div class="tablewrap"><table class="datatable history-table"><thead><tr><th>시각</th><th>변경 내용</th><th>계정</th><th>상세</th></tr></thead><tbody id="historyTableBody"></tbody></table></div>
     </section>
 
     <section id="settingsPage" class="sectionpage">
-      <div class="pagehead"><div><h2>설정 / 백업</h2><div class="muted">업무 데이터는 내 Google 계정 전용 Firestore에 동기화되고, 매뉴얼 사진은 앱 전용 Google Drive 영역에 보관됩니다.</div></div></div>
+      <div class="pagehead"><div><h2>설정 / 백업</h2></div></div>
       <div class="settings-grid">
         <div class="card panel-body" id="cloudToolsCard"><h3>클라우드 / 기기</h3><p class="muted">온라인에서는 실시간 동기화하고, 연결이 끊기면 이 기기에 저장했다가 다시 연결될 때 전송합니다.</p><div class="cloud-tools-status"><div><span class="muted">연결</span><b id="cloudSettingStatus">확인 중</b></div><div><span class="muted">수행업무</span><b id="cloudTaskCount">0</b></div><div><span class="muted">업무 DB</span><b id="cloudTemplateCount">0</b></div></div><div class="settings-tools"><button class="btn" id="importLegacyIndexedDb">이 기기의 기존 v10 확인</button><button class="btn" id="connectGoogleDrive">Google Drive 연결</button><button class="btn primary hidden" id="installPwa">홈 화면에 설치</button></div><div class="install-help">로컬 HTML에서 사용한 데이터는 기존 v10의 ‘백업 다운로드’로 JSON을 만든 뒤 아래 ‘백업 불러오기’를 이용하는 방법이 가장 확실합니다.</div></div>
         <div class="card panel-body"><h3>대분류</h3><div class="inline"><input id="newCategory" placeholder="새 대분류"><button class="btn" id="addCategory">추가</button></div><div class="chiprow" id="categoryChips" style="margin-top:10px"></div></div>
@@ -1090,7 +1178,7 @@ function recalcLinks(){for(let pass=0;pass<12;pass++){let changed=false;const so
 function toast(msg){const el=$('#toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800)}
 function showPage(id){$$('.sectionpage').forEach(x=>x.classList.toggle('active',x.id===id));$$('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.page===id));if(id==='homePage')renderHome();if(id==='taskListPage')renderTaskTable();if(id==='dbPage')renderDbTable();if(id==='holidayPage')renderHolidays();if(id==='historyPage')renderHistory();if(id==='settingsPage')renderSettings()}
 
-function initSelectors(){const yrs=[];for(let y=2025;y<=2035;y++)yrs.push(`<option ${y===2026?'selected':''}>${y}</option>`);$('#homeYear').innerHTML=yrs.join('');const ps=[];for(let m=1;m<=12;m++)ps.push(`<option value="m${m}" ${m===9?'selected':''}>${m}월</option>`);for(let q=1;q<=4;q++)ps.push(`<option value="q${q}">${q}분기</option>`);ps.push('<option value="h1">상반기</option><option value="h2">하반기</option><option value="year">연간</option>');$('#homePeriod').innerHTML=ps.join('');renderCategoryMulti()}
+function initSelectors(){const now=new Date(),currentYear=now.getFullYear(),currentMonth=now.getMonth()+1,yrs=[];for(let y=currentYear-5;y<=currentYear+10;y++)yrs.push(`<option ${y===currentYear?'selected':''}>${y}</option>`);$('#homeYear').innerHTML=yrs.join('');const ps=[];for(let m=1;m<=12;m++)ps.push(`<option value="m${m}" ${m===currentMonth?'selected':''}>${m}월</option>`);for(let q=1;q<=4;q++)ps.push(`<option value="q${q}">${q}분기</option>`);ps.push('<option value="h1">상반기</option><option value="h2">하반기</option><option value="year">연간</option>');$('#homePeriod').innerHTML=ps.join('');renderCategoryMulti()}
 function renderCategoryMulti(){const menu=$('#catMultiMenu');menu.innerHTML=state.categories.map(c=>`<label><input type="checkbox" value="${esc(c)}" ${state.selectedCategories.includes(c)?'checked':''}>${esc(c)}</label>`).join('');$('#catMultiBtn').textContent=state.selectedCategories.length?state.selectedCategories.join(', '):'전체';$$('input',menu).forEach(i=>i.onchange=()=>{state.selectedCategories=$$('input:checked',menu).map(x=>x.value);renderCategoryMulti();renderHome()})}
 
 function renderHome(){recalcLinks();const tasks=selectedHomeTasks();const [a,b]=periodBounds($('#homeYear').value,$('#homePeriod').value);$('#visualRange').textContent=`${fmtDate(a)} ~ ${fmtDate(b)}`;const all=state.tasks;const overdue=all.filter(t=>effectiveStatus(t)==='overdue');const now=todayISO(),month=now.slice(0,7);const soon=addDays(now,7);const k=[['기한초과',overdue.length,'danger'],['오늘',all.filter(t=>effectiveStatus(t)!=='done'&&t.start===now).length,''],['7일 이내',all.filter(t=>effectiveStatus(t)!=='done'&&(t.deadline||t.end)>=now&&(t.deadline||t.end)<=soon).length,''],['이번달 미완료',all.filter(t=>effectiveStatus(t)!=='done'&&t.start?.startsWith(month)).length,''],['일정 미정',all.filter(t=>effectiveStatus(t)!=='done'&&t.unconfirmed).length,''],['긴급 미완료',all.filter(t=>effectiveStatus(t)!=='done'&&t.urgent).length,'']];$('#kpis').innerHTML=k.map(x=>`<div class="kpi ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');$('#overdueCount').textContent=`${overdue.length}건`;$('#overdueList').innerHTML=overdue.slice(0,12).map(t=>`<tr><td><button class="task-link" data-task="${t.id}">${esc(t.name)}${t.urgent?'<span class="dot"></span>':''}</button></td><td>${fmtDate(t.deadline||t.end)}</td></tr>`).join('')||'<tr><td colspan=2 class="muted">없음</td></tr>';$('#periodListTitle').textContent=`${periodName($('#homePeriod').value)} 업무`;$('#periodListCount').textContent=`${tasks.length}건`;$('#periodList').innerHTML=tasks.slice(0,16).map(t=>`<tr><td><button class="task-link" data-task="${t.id}">${esc(t.name)}${t.urgent?'<span class="dot"></span>':''}</button></td><td>${fmtDate(t.deadline||t.end)}</td><td>${statusBadge(t)}</td></tr>`).join('')||'<tr><td colspan=3 class="muted">해당 기간 업무 없음</td></tr>';renderVisual(tasks,a,b);bindTaskLinks();saveState()}
@@ -1139,7 +1227,7 @@ function renderHistory(){
   }).join('')||'<tr><td colspan="4" class="muted">아직 기록된 변경이력이 없습니다.</td></tr>';
 }
 
-function modal(title,body,footer='',cls=''){const root=$('#modalRoot');root.innerHTML=`<div class="modal-wrap"><div class="modal ${cls}"><div class="modal-head"><h3>${title}</h3><button class="xbtn" data-close>×</button></div><div class="modal-body">${body}</div>${footer?`<div class="modal-foot">${footer}</div>`:''}</div></div>`;$$('[data-close]',root).forEach(x=>x.onclick=closeModal);$('.modal-wrap',root).onclick=e=>{if(e.target.classList.contains('modal-wrap'))closeModal()}}
+function modal(title,body,footer='',cls=''){const root=$('#modalRoot');root.innerHTML=`<div class="modal-wrap"><div class="modal ${cls}"><div class="modal-head"><h3>${title}</h3><button class="xbtn" data-close>×</button></div><div class="modal-body">${body}</div>${footer?`<div class="modal-foot">${footer}</div>`:''}</div></div>`;$$('[data-close]',root).forEach(x=>x.onclick=closeModal)}
 function closeModal(){$('#modalRoot').innerHTML=''}
 
 function openChecklist(id){const t=state.tasks.find(x=>x.id===id);if(!t)return;const checks=t.checklist||[];const allDone=checks.length?checks.every(c=>c.done):true;const body=`<div class="completion-note ${allDone?'complete-ready':''}">${checks.length?`체크리스트 ${checks.filter(c=>c.done).length}/${checks.length} 완료`:'체크리스트 없음'} · ${allDone?'완료 처리 가능':'전부 체크해야 완료됩니다.'}</div><div class="checklist-modal">${checks.length?checks.map(c=>`<label class="checkitem"><input type="checkbox" data-check="${c.id}" ${c.done?'checked':''}><span class="text">${esc(c.text)}</span></label>`).join(''):'<div class="muted">체크리스트가 없는 업무입니다.</div>'}</div><div style="margin-top:14px" class="muted">일정: ${fmtDate(t.start)} ~ ${fmtDate(t.end)} / 마감 ${fmtDate(t.deadline)}</div>`;modal(`${t.urgent?'● ':''}${esc(t.name)}`,body,`<button class="btn" data-edit-task="${id}">업무 수정</button><button class="btn primary" id="completeTask" ${allDone?'':'disabled'}>완료 처리</button>`,'small');$$('[data-check]').forEach(x=>x.onchange=()=>{const c=t.checklist.find(v=>v.id===x.dataset.check);c.done=x.checked;saveState();openChecklist(id)});$('[data-edit-task]').onclick=()=>openTaskForm(id);$('#completeTask').onclick=()=>{if(t.checklist?.length&&!t.checklist.every(c=>c.done))return;t.status='done';t.actualComplete=t.actualComplete||todayISO();saveState();closeModal();recalcLinks();renderTaskTable();renderHome();toast('완료 처리했습니다.')};}
@@ -1267,13 +1355,62 @@ function renderTaskTable(){
 }
 function deleteTasksByIdsV2(ids){const set=new Set(ids);const groupIds=new Set(state.tasks.filter(t=>set.has(t.id)).map(t=>t.groupId).filter(Boolean));state.tasks=state.tasks.filter(t=>!set.has(t.id)&&!(t.link?.parentId&&set.has(t.link.parentId)&&groupIds.has(t.groupId)));selectedTaskIdsV2.clear();recalcLinks();saveState();renderTaskTable();renderHome()}
 function deleteSeriesV2(){const selected=state.tasks.filter(t=>selectedTaskIdsV2.has(t.id)),series=new Set(selected.map(t=>t.seriesId).filter(Boolean));if(!series.size)return;if(!confirm(`선택한 ${series.size}개 반복 묶음의 모든 일정을 삭제할까요?`))return;const groups=new Set(state.tasks.filter(t=>series.has(t.seriesId)).map(t=>t.groupId).filter(Boolean));state.tasks=state.tasks.filter(t=>!series.has(t.seriesId)&&!series.has(t.parentSeriesId)&&!groups.has(t.groupId));selectedTaskIdsV2.clear();saveState();renderTaskTable();renderHome();toast('반복 일정 전체를 삭제했습니다.')}
-function taskFormHtml(t){const current=t||{category:state.categories[0]||'',urgent:false,owner:state.owners[0]||'',start:todayISO(),end:todayISO(),deadline:todayISO(),unconfirmed:false,checklist:[],repeat:null};const rep=current.repeat||{};return `<div class="formgrid">
-<fieldset class="subbox span2"><legend>업무</legend><div class="formgrid"><div class="field"><label>구분</label><select id="tfCategory">${state.categories.map(c=>`<option ${current.category===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div><div class="field"><label>업무 형태</label><div class="radios"><label><input type="radio" name="taskKind" value="single" ${!current.groupId?'checked':''}>단일업무</label><label><input type="radio" name="taskKind" value="linked" ${current.groupId?'checked':''}>연계업무</label></div></div><div class="field span2"><label><input type="checkbox" id="tfNew" ${!current.templateId?'checked':''}> 신규 업무 직접 작성 <span class="muted">(해제하면 업무 DB 검색)</span></label></div><div class="field span2" id="tfSearchBox"><label>업무 DB 빠른 검색</label><input id="tfSearch" placeholder="업무명 일부만 입력"><div id="tfSearchResults" class="search-results hidden"></div></div><div class="field span2"><label>업무명</label><input id="tfName" value="${esc(current.name||'')}" placeholder="업무명"></div><div class="checks span2"><label><input type="checkbox" id="tfUrgent" ${current.urgent?'checked':''}> 중요업무 <span class="dot"></span></label><label><input type="checkbox" id="tfUnconfirmed" ${current.unconfirmed?'checked':''}> 세부일정 미정 → 해당월 마지막 근무일</label></div></div></fieldset>
-<fieldset class="subbox span2"><legend>일정</legend><div class="formgrid"><div class="field"><label>첫 업무 시작일</label><input type="date" id="tfStart" value="${current.start||todayISO()}"></div><div class="field"><label>한 회차 종료 방식</label><select id="tfEndType"><option value="same">시작일과 같음</option><option value="date">날짜 직접 선택</option><option value="after">시작 후 N일</option></select></div><div class="field" id="tfEndDateField"><label>종료일</label><input type="date" id="tfEndDate" value="${current.end||current.start||todayISO()}"></div><div class="field" id="tfAfterField"><label>N일 후</label><input type="number" id="tfAfterDays" min="0" value="0"></div><div class="checks span2"><label><input type="checkbox" id="tfIncludeHolidays"> N일 계산에 주말·공휴일 포함</label><label>계산 결과가 휴일이면 <select id="tfHolidayShift"><option value="prev">전 근무일</option><option value="next">다음 근무일</option><option value="keep">그대로</option></select></label></div><div class="field"><label>마감일</label><input type="date" id="tfDeadline" value="${current.deadline||current.end||current.start||todayISO()}"></div><div class="field"><label>담당자</label><select id="tfOwner">${state.owners.map(o=>`<option ${current.owner===o?'selected':''}>${esc(o)}</option>`).join('')}</select></div></div></fieldset>
+function taskFormHtml(t){
+  const current=t||{category:state.categories[0]||'',urgent:false,owner:state.owners[0]||'',start:todayISO(),end:todayISO(),deadline:todayISO(),unconfirmed:false,checklist:[],repeat:null};
+  const rep=current.repeat||{},repeatChecked=!!(current.seriesId||current.repeat);
+  return `<div class="formgrid task-form-grid-v20">
+<fieldset class="subbox span2"><legend>업무</legend><div class="formgrid">
+  <div class="field span2"><label>구분</label><select id="tfCategory">${state.categories.map(c=>`<option ${current.category===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div>
+  <div class="field span2 task-kind-field-v20"><label>업무 형태</label><div class="radios task-kind-options-v20"><label><input type="radio" name="taskKind" value="single" ${!current.groupId?'checked':''}> <span>단일업무</span></label><label><input type="radio" name="taskKind" value="linked" ${current.groupId?'checked':''}> <span>연계업무</span></label></div></div>
+  <div class="field span2 task-new-field-v20"><label><input type="checkbox" id="tfNew" ${!current.templateId?'checked':''}> <span>신규 업무 직접 작성 <span class="muted">(해제하면 업무 DB 검색)</span></span></label></div>
+  <div class="field span2" id="tfSearchBox"><label>업무 DB 빠른 검색</label><input id="tfSearch" placeholder="업무명 일부만 입력"><div id="tfSearchResults" class="search-results hidden"></div></div>
+  <div class="field span2"><label>업무명</label><input id="tfName" value="${esc(current.name||'')}" placeholder="업무명"></div>
+  <div class="checks span2"><label><input type="checkbox" id="tfUrgent" ${current.urgent?'checked':''}> 중요업무 <span class="dot"></span></label><label><input type="checkbox" id="tfUnconfirmed" ${current.unconfirmed?'checked':''}> 세부일정 미정 → 해당월 마지막 근무일</label></div>
+</div></fieldset>
+<fieldset class="subbox span2"><legend>일정</legend><div class="formgrid schedule-grid-v20">
+  <div class="field"><label>시작일</label><input type="date" id="tfStart" value="${current.start||todayISO()}"></div>
+  <div class="field"><label>종료일</label><select id="tfEndType"><option value="same">시작일과 같음</option><option value="date">날짜 직접 선택</option><option value="after">시작 후 N일</option></select></div>
+  <div class="field end-date-only-v20" id="tfEndDateField"><input type="date" id="tfEndDate" aria-label="종료일 날짜" value="${current.end||current.start||todayISO()}"></div>
+  <div class="field" id="tfAfterField"><label>시작 후</label><div class="inline"><input type="number" id="tfAfterDays" min="0" value="0"><span>일</span></div></div>
+  <div class="checks span2 end-calculation-options-v20"><label><input type="checkbox" id="tfIncludeHolidays"> N일 계산에 주말·공휴일 포함</label><label>종료일이 휴일이면 <select id="tfHolidayShift"><option value="prev">전 근무일</option><option value="next">다음 근무일</option><option value="keep">그대로</option></select></label></div>
+  <input type="hidden" id="tfDeadline" value="">
+  <div class="field"><label>담당자</label><select id="tfOwner">${state.owners.map(o=>`<option ${current.owner===o?'selected':''}>${esc(o)}</option>`).join('')}</select></div>
+</div></fieldset>
 <fieldset class="subbox span2"><legend>체크리스트</legend><div id="tfChecks" class="step-check-editor root-check-editor-v12"></div><button class="btn small root-check-add-v12" id="tfAddCheck" type="button">＋ 체크항목</button></fieldset>
-<fieldset class="subbox span2 repeat-panel"><legend>반복 일정</legend><div class="checks"><label><input type="checkbox" id="tfRepeat" ${current.seriesId||current.repeat?'checked':''}> 반복업무</label><label>주기 <select id="tfRepeatCycle"><option value="weekly">매주</option><option value="monthly">매월</option><option value="quarterly">분기</option><option value="half">반기</option><option value="yearly">연간</option></select></label><label>반복 적용 종료일 <input type="date" id="tfRepeatUntil" value="${rep.until||current.repeatUntil||current.start||todayISO()}"></label><label>휴일이면 <select id="tfRepeatHoliday"><option value="prev">전 근무일</option><option value="next">다음 근무일</option><option value="keep">그대로</option></select></label></div><div id="tfRepeatExtra" style="margin-top:10px"></div>${current.seriesId?'<div class="series-note" style="margin-top:10px">이 업무는 반복 묶음에 속합니다. 반복을 켠 채 저장하면 선택한 시작일~반복 종료일 기준으로 반복 회차 전체를 다시 생성·정리합니다. 완료된 회차는 같은 날짜가 있으면 최대한 유지합니다.</div>':''}</fieldset>
-<fieldset class="subbox span2" id="tfLinkBox"><legend>연계업무 단계</legend><div class="muted">+ 다음 업무로 2단계, 3단계… 계속 추가할 수 있습니다. 상위 일정 따라가기를 켜면 상위 날짜/완료일 변경 시 자동 재계산합니다.</div><div id="tfSteps" class="step-editor" style="margin-top:8px"></div><button class="btn small" id="tfAddStep" type="button">+ 다음 업무</button></fieldset><div class="field span2"><label>비고</label><textarea id="tfNotes" rows="3">${esc(current.notes||'')}</textarea></div></div>`}
-function recurrenceDatesV2(from,until,cycle,weekdays){const a=dateOf(from),b=dateOf(until);if(!a||!b||a>b)return[];const out=[];if(cycle==='weekly'){const wds=(weekdays?.length?weekdays:[a.getDay()]).map(Number);for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1))if(wds.includes(d.getDay()))out.push(iso(d))}else{let d=new Date(a),step=cycle==='monthly'?1:cycle==='quarterly'?3:cycle==='half'?6:12;while(d<=b){out.push(iso(d));const day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+step);const last=new Date(d.getFullYear(),d.getMonth()+1,0,12).getDate();d.setDate(Math.min(day,last))}}return [...new Set(out)]}
+<fieldset class="subbox span2 repeat-panel"><legend>반복 업무</legend>
+  <label class="repeat-switch-v20"><input type="checkbox" id="tfRepeat" ${repeatChecked?'checked':''}> <span>반복업무</span></label>
+  <div id="tfRepeatDetailsV20" class="repeat-details-v20 ${repeatChecked?'':'hidden'}">
+    <div class="repeat-main-grid-v20"><label>주기 <select id="tfRepeatCycle"><option value="weekly">매주</option><option value="monthly">매월</option><option value="quarterly">분기</option><option value="half">반기</option><option value="yearly">연간</option></select></label><label>종료일 <input type="date" id="tfRepeatUntil" value="${rep.until||current.repeatUntil||current.start||todayISO()}"></label><label>휴일이면 <select id="tfRepeatHoliday"><option value="prev">전 근무일</option><option value="next">다음 근무일</option><option value="keep">그대로</option></select></label></div>
+    <div id="tfRepeatExtra" class="repeat-extra-v20"></div>
+  </div>
+  ${current.seriesId?'<div class="series-note" style="margin-top:10px">반복을 켠 채 저장하면 선택한 시작일과 종료일 사이의 회차를 다시 계산합니다. 완료된 기존 회차 기록은 같은 날짜를 기준으로 유지합니다.</div>':''}
+</fieldset>
+<fieldset class="subbox span2" id="tfLinkBox"><legend>연계업무 단계</legend><div class="muted">＋ 다음 업무로 2단계, 3단계 업무를 계속 추가할 수 있습니다. ‘윗단계 업무 일정 연계’를 켜면 윗단계 일정이나 완료일 변경 시 자동 재계산합니다.</div><div id="tfSteps" class="step-editor" style="margin-top:8px"></div><button class="btn small" id="tfAddStep" type="button">＋ 다음 업무</button></fieldset>
+<div class="field span2"><label>비고</label><textarea id="tfNotes" rows="3">${esc(current.notes||'')}</textarea></div></div>`
+}
+function recurrenceDatesV2(from,until,cycle,weekdays,months){
+  const a=dateOf(from),b=dateOf(until);if(!a||!b||a>b)return[];
+  const out=[];
+  if(cycle==='weekly'){
+    const wds=(weekdays?.length?weekdays:[a.getDay()]).map(Number);
+    for(let d=new Date(a);d<=b;d.setDate(d.getDate()+1))if(wds.includes(d.getDay()))out.push(iso(d));
+  }else{
+    const selected=[...new Set((months||[]).map(Number).filter(month=>month>=1&&month<=12))].sort((x,y)=>x-y);
+    if(selected.length){
+      const day=a.getDate();
+      for(let cursor=new Date(a.getFullYear(),a.getMonth(),1,12);cursor<=b;cursor.setMonth(cursor.getMonth()+1)){
+        const month=cursor.getMonth()+1;if(!selected.includes(month))continue;
+        const last=new Date(cursor.getFullYear(),month,0,12).getDate();
+        const candidate=new Date(cursor.getFullYear(),cursor.getMonth(),Math.min(day,last),12);
+        if(candidate>=a&&candidate<=b)out.push(iso(candidate));
+      }
+    }else{
+      let d=new Date(a),step=cycle==='monthly'?1:cycle==='quarterly'?3:cycle==='half'?6:12;
+      while(d<=b){out.push(iso(d));const day=d.getDate();d.setDate(1);d.setMonth(d.getMonth()+step);const last=new Date(d.getFullYear(),d.getMonth()+1,0,12).getDate();d.setDate(Math.min(day,last))}
+    }
+  }
+  return [...new Set(out)];
+}
 function cloneOccurrenceV2(base,ds,seriesId,index,repeatMeta){const dur=Math.max(0,Math.round((dateOf(base.end||base.start)-dateOf(base.start))/86400000)||0),dueOff=Math.max(0,Math.round((dateOf(base.deadline||base.end||base.start)-dateOf(base.start))/86400000)||0);const shifted=repeatMeta.holidayShift==='keep'?ds:shiftWorkday(ds,repeatMeta.holidayShift||'prev');return {...clone(base),id:uid('task'),seriesId,repeat:repeatMeta,repeatIndex:index,start:shifted,end:addDays(shifted,dur),deadline:addDays(shifted,dueOff),actualComplete:null,status:'planned',relatedDocumentTitle:'',checklist:(base.checklist||[]).map(c=>({...c,id:uid('c'),done:false})),generatedKey:`${seriesId}:${ds}`}}
 function openTaskForm(id=null){
   const t=id?state.tasks.find(x=>x.id===id):null;modal(t?'업무 수정':'업무 작성',taskFormHtml(t),`<button class="btn" data-close>취소</button>${t?'<button class="btn danger" id="deleteTask">삭제</button>':''}<button class="btn primary" id="saveTask">저장</button>`);const work=clone(t||{category:state.categories[0]||'',urgent:false,status:'planned',owner:state.owners[0]||'',start:todayISO(),end:todayISO(),deadline:todayISO(),unconfirmed:false,checklist:[],templateId:null,notes:'',repeat:null,groupId:null,step:1});let checks=clone(work.checklist||[]);let steps=[];if(t?.groupId){steps=state.tasks.filter(x=>x.groupId===t.groupId&&x.step>(t.step||1)).sort((a,b)=>a.step-b.step).map(x=>clone(x))}
@@ -1298,7 +1435,7 @@ function openTaskForm(id=null){
         <div class="field wide"><label>업무 DB 검색 또는 직접 작성</label><input data-sname="${i}" value="${esc(s.name||'')}" placeholder="업무명을 입력하면 DB에서 즉시 검색"><div class="db-step-search-results hidden" data-sres="${i}"></div></div>
         <div class="field"><label>구분</label><select data-scategory="${i}">${state.categories.map(c=>`<option ${c===s.category?'selected':''}>${esc(c)}</option>`).join('')}</select></div>
         <div class="field"><label>담당자</label><select data-sowner="${i}">${ownerOptionHtmlV8(s.owner,true)}</select></div>
-        <div class="field"><label>상위 일정 따라가기</label><select data-sdyn="${i}"><option value="true">예</option><option value="false">아니오</option></select></div>
+        <div class="field"><label>윗단계 업무 일정 연계</label><select data-sdyn="${i}"><option value="true">예</option><option value="false">아니오</option></select></div>
         <div class="field"><label>시작 기준</label><select data-sbasis="${i}"><option value="actualEnd">상위 실제완료/종료일</option><option value="end">상위 종료일</option><option value="start">상위 시작일</option></select></div>
         <div class="db-step-schedule span2"><b>시작일 계산</b><div class="inline" style="margin-top:7px"><span>상위 기준일 후</span><input type="number" min="0" data-soffset="${i}" value="${Number(s.link.startOffset)}" style="width:78px"><span>일 후</span><select data-smode="${i}"><option value="business">근무일</option><option value="calendar">달력일</option></select><span>휴일이면</span><select data-sshift="${i}"><option value="prev">전 근무일</option><option value="next">다음 근무일</option><option value="keep">그대로</option></select></div><div class="hint">0일이면 상위 기준일과 같은 날 시작합니다. 바로 다음 근무일은 1일 + 근무일로 설정합니다.</div></div>
         <div class="field"><label>업무 형태</label><select data-sworktype="${i}"><option value="single">일회성 업무</option><option value="period">기간 업무</option></select></div>
@@ -1329,16 +1466,16 @@ function openTaskForm(id=null){
     $$('[data-scheckadd]').forEach(el=>el.onclick=()=>{steps[Number(el.dataset.scheckadd)].checklist.push({id:uid('c'),text:'',done:false});renderSteps()});
     $$('[data-rms]').forEach(el=>el.onclick=()=>{steps.splice(Number(el.dataset.rms),1);renderSteps()});
   }
-  function renderRepeatExtra(){const cyc=$('#tfRepeatCycle').value;const start=$('#tfStart').value||todayISO();const currentDays=work.repeat?.weekdays||[dateOf(start)?.getDay()??1];$('#tfRepeatExtra').innerHTML=cyc==='weekly'?`<div class="field"><label>반복 요일</label><div class="weekday-picks">${[['1','월'],['2','화'],['3','수'],['4','목'],['5','금'],['6','토'],['0','일']].map(([v,l])=>`<label><input type="checkbox" data-rwd="${v}" ${currentDays.map(Number).includes(Number(v))?'checked':''}>${l}</label>`).join('')}</div></div>`:`<div class="muted">${cyc==='monthly'?'첫 시작일의 일자를 기준으로 매월':cyc==='quarterly'?'첫 시작일 기준 3개월마다':cyc==='half'?'첫 시작일 기준 6개월마다':'첫 시작일 기준 매년'} 생성합니다.</div>`}
+  function renderRepeatExtra(){const cyc=$('#tfRepeatCycle').value;const start=$('#tfStart').value||todayISO();const currentDays=work.repeat?.weekdays||[dateOf(start)?.getDay()??1];$('#tfRepeatExtra').innerHTML=cyc==='weekly'?`<div class="field"><label>반복 요일</label><div class="weekday-picks">${[['1','월'],['2','화'],['3','수'],['4','목'],['5','금'],['6','토'],['0','일']].map(([v,l])=>`<label><input type="checkbox" data-rwd="${v}" ${currentDays.map(Number).includes(Number(v))?'checked':''}><span>${l}</span></label>`).join('')}</div></div>`:''}
   renderChecks();renderSteps();$('#tfRepeatCycle').value=work.repeat?.cycle||'weekly';$('#tfRepeatHoliday').value=work.repeat?.holidayShift||'prev';renderRepeatExtra();$('#tfRepeatCycle').onchange=renderRepeatExtra;
   $('#tfAddCheck').onclick=()=>{checks.push({id:uid('c'),text:'',done:false});renderChecks()};$('#tfAddStep').onclick=()=>{steps.push({name:'',category:$('#tfCategory')?.value||work.category||'',owner:$('#tfOwner')?.value||work.owner||'',checklist:[],link:{dynamic:true,basis:'actualEnd',startOffset:0,offset:0,startMode:'business',mode:'business',startHolidayShift:'next',holidayShift:'next',workType:'single',limitDays:0,limitMode:'calendar',limitHolidayShift:'next'}});renderSteps()};
   function toggleDb(){const isNew=$('#tfNew').checked;$('#tfSearchBox').classList.toggle('hidden',isNew);$('#tfName').readOnly=!isNew&&!!work.templateId}$('#tfNew').onchange=toggleDb;toggleDb();
-  $('#tfSearch').oninput=()=>{const q=$('#tfSearch').value.trim().toLowerCase(),hits=state.templates.filter(x=>q&&[x.name,x.category,x.keywords].join(' ').toLowerCase().includes(q)).slice(0,12);$('#tfSearchResults').classList.toggle('hidden',!q);$('#tfSearchResults').innerHTML=hits.map(x=>`<div class="search-hit" data-tpl="${x.id}"><b>${esc(x.name)}</b><div class="muted">${esc(x.category)} · ${esc(templatePeriodLabel(x))}</div></div>`).join('')||'<div class="search-hit muted">검색 결과 없음</div>';$$('[data-tpl]').forEach(el=>el.onclick=()=>{const tp=state.templates.find(x=>x.id===el.dataset.tpl);work.templateId=tp.id;$('#tfName').value=tp.name;$('#tfCategory').value=tp.category;checks=(tp.checklist||[]).map(text=>({id:uid('c'),text,done:false}));renderChecks();if(tp.dayRule==='unknown')$('#tfUnconfirmed').checked=true;if(tp.cycle&&tp.cycle!=='none'){work.repeat={cycle:tp.cycle,holidayShift:tp.holidayShift||'prev',weekdays:tp.cycle==='weekly'?[Number(tp.weekday??dateOf($('#tfStart').value)?.getDay()??1)]:[]};$('#tfRepeat').checked=true;$('#tfRepeatCycle').value=tp.cycle;$('#tfRepeatHoliday').value=tp.holidayShift||'prev';renderRepeatExtra()}$('#tfSearchResults').classList.add('hidden');$('#tfName').readOnly=true})};
+  $('#tfSearch').oninput=()=>{const q=$('#tfSearch').value.trim().toLowerCase(),hits=state.templates.filter(x=>q&&[x.name,x.category,x.keywords].join(' ').toLowerCase().includes(q)).slice(0,12);$('#tfSearchResults').classList.toggle('hidden',!q);$('#tfSearchResults').innerHTML=hits.map(x=>`<div class="search-hit" data-tpl="${x.id}"><b>${esc(x.name)}</b><div class="muted">${esc(x.category)} · ${esc(templatePeriodLabel(x))}</div></div>`).join('')||'<div class="search-hit muted">검색 결과 없음</div>';$$('[data-tpl]').forEach(el=>el.onclick=()=>{const tp=state.templates.find(x=>x.id===el.dataset.tpl);work.templateId=tp.id;$('#tfName').value=tp.name;$('#tfCategory').value=tp.category;checks=(tp.checklist||[]).map(text=>({id:uid('c'),text,done:false}));renderChecks();if(tp.dayRule==='unknown')$('#tfUnconfirmed').checked=true;if(tp.cycle&&tp.cycle!=='none'){work.repeat={cycle:tp.cycle,holidayShift:tp.holidayShift||'prev',weekdays:tp.cycle==='weekly'?[Number(tp.weekday??dateOf($('#tfStart').value)?.getDay()??1)]:[],months:[...(tp.cycleMonths||[])]};$('#tfRepeat').checked=true;$('#tfRepeatCycle').value=tp.cycle;$('#tfRepeatHoliday').value=tp.holidayShift||'prev';renderRepeatExtra()}$('#tfSearchResults').classList.add('hidden');$('#tfName').readOnly=true})};
   function endTypeFromCurrent(){if(work.end===work.start)return'same';return'date'}$('#tfEndType').value=endTypeFromCurrent();function toggleEnd(){const v=$('#tfEndType').value;$('#tfEndDateField').classList.toggle('hidden',v!=='date');$('#tfAfterField').classList.toggle('hidden',v!=='after')}$('#tfEndType').onchange=toggleEnd;toggleEnd();
   if($('#deleteTask'))$('#deleteTask').onclick=async()=>{if(t?.seriesId&&confirm('이 업무는 반복 일정입니다. 반복 전체를 삭제할까요?\n[확인]=전체 삭제 / [취소]=이 회차만 삭제')){const sid=t.seriesId;const groups=new Set(state.tasks.filter(x=>x.seriesId===sid).map(x=>x.groupId).filter(Boolean));state.tasks=state.tasks.filter(x=>x.seriesId!==sid&&x.parentSeriesId!==sid&&!groups.has(x.groupId))}else{state.tasks=state.tasks.filter(x=>x.id!==id)}await saveState();closeModal();renderTaskTable();renderHome()};
   $('#saveTask').onclick=async()=>{const name=$('#tfName').value.trim();if(!name)return toast('업무명을 입력하세요.');let start=$('#tfStart').value||todayISO(),un=$('#tfUnconfirmed').checked;if(un)start=shiftWorkday(endOfMonth(Number(start.slice(0,4)),Number(start.slice(5,7))),'prev');const rule={type:$('#tfEndType').value,date:$('#tfEndDate').value,days:Number($('#tfAfterDays').value||0),includeHolidays:$('#tfIncludeHolidays').checked,shift:$('#tfHolidayShift').value};let end=calcEnd(start,rule),deadline=$('#tfDeadline').value||end;if(un){end=start;deadline=start}const cleanChecks=checks.filter(x=>x.text.trim()).map(x=>({...x,text:x.text.trim()}));const base={...work,category:$('#tfCategory').value,name,urgent:$('#tfUrgent').checked,owner:$('#tfOwner').value,start,end,deadline,unconfirmed:un,checklist:cleanChecks,notes:$('#tfNotes').value,status:t?.status||'planned',periodLabel:periodFromDate(start)};const linked=$('input[name=taskKind]:checked').value==='linked';const repeatOn=$('#tfRepeat').checked;const stepDefs=linked?taskStepDefsFromDomV11(steps):[];const createdNow=[];
-    if(t){Object.assign(t,base);if(repeatOn){t.repeat={cycle:$('#tfRepeatCycle').value,until:$('#tfRepeatUntil').value||start,holidayShift:$('#tfRepeatHoliday').value,weekdays:$$('[data-rwd]:checked').map(x=>Number(x.dataset.rwd))}}else if(t.repeat)t.repeat=null}
-    else if(repeatOn){const meta={cycle:$('#tfRepeatCycle').value,from:$('#tfStart').value||start,until:$('#tfRepeatUntil').value||start,holidayShift:$('#tfRepeatHoliday').value,weekdays:$$('[data-rwd]:checked').map(x=>Number(x.dataset.rwd))};const dates=recurrenceDatesV2(meta.from,meta.until,meta.cycle,meta.weekdays);if(!dates.length)return toast('반복 기간과 반복 요일을 확인하세요.');const sid=uid('series');dates.forEach((ds,i)=>{const occ=cloneOccurrenceV2(base,ds,sid,i+1,meta);occ.groupId=linked?uid('grp'):null;state.tasks.push(occ);createdNow.push(occ);if(linked)createdNow.push(...createLinkedStepsV2(occ,stepDefs))});toast(`${dates.length}개의 반복 일정을 만들었습니다.`)}else{base.id=uid('task');base.step=1;base.groupId=linked?uid('grp'):null;base.actualComplete=null;state.tasks.push(base);createdNow.push(base);if(linked)createdNow.push(...createLinkedStepsV2(base,stepDefs))}
+    if(t){Object.assign(t,base);if(repeatOn){t.repeat={cycle:$('#tfRepeatCycle').value,until:$('#tfRepeatUntil').value||start,holidayShift:$('#tfRepeatHoliday').value,weekdays:$$('[data-rwd]:checked').map(x=>Number(x.dataset.rwd)),months:repeatMonthsFromFormV20()}}else if(t.repeat)t.repeat=null}
+    else if(repeatOn){const meta={cycle:$('#tfRepeatCycle').value,from:$('#tfStart').value||start,until:$('#tfRepeatUntil').value||start,holidayShift:$('#tfRepeatHoliday').value,weekdays:$$('[data-rwd]:checked').map(x=>Number(x.dataset.rwd)),months:repeatMonthsFromFormV20()};const dates=recurrenceDatesV2(meta.from,meta.until,meta.cycle,meta.weekdays,meta.months);if(!dates.length)return toast('반복 기간과 반복 요일을 확인하세요.');const sid=uid('series');dates.forEach((ds,i)=>{const occ=cloneOccurrenceV2(base,ds,sid,i+1,meta);occ.groupId=linked?uid('grp'):null;state.tasks.push(occ);createdNow.push(occ);if(linked)createdNow.push(...createLinkedStepsV2(occ,stepDefs))});toast(`${dates.length}개의 반복 일정을 만들었습니다.`)}else{base.id=uid('task');base.step=1;base.groupId=linked?uid('grp'):null;base.actualComplete=null;state.tasks.push(base);createdNow.push(base);if(linked)createdNow.push(...createLinkedStepsV2(base,stepDefs))}
     if(t&&linked)syncLinkedStepsForEditedV2(t,stepDefs);
     if($('#tfNew').checked&&!base.templateId&&!t){if(confirm('신규업무입니다. 업무 DB에도 새 업무로 등록할까요?')){const templateId=uid('tpl'),linkedSteps=linked?stepDefs.map(taskStepTemplateV11):[];state.templates.push({id:templateId,category:base.category,name:base.name,owner:base.owner,cycle:'none',cycleMonths:[],dayRule:'exact',exactDay:Number(base.start.slice(-2)),holidayShift:$('#tfHolidayShift').value,checklist:base.checklist.map(x=>x.text),methodBlocks:[],keywords:'',notes:'',autoSchedule:false,linkedSteps});createdNow.forEach(task=>{task.dbSourceTemplateId=templateId;if((task.step||1)===1&&!task.templateId)task.templateId=templateId})}}
     recalcLinks();await saveState();closeModal();renderTaskTable();renderHome();toast('업무를 저장했습니다.')}
@@ -1459,7 +1596,7 @@ function renderGantt(tasks,a,b){
 function recurrenceKeyV3(t){return t.generatedKey?.split(':').slice(1).join(':')||t.repeatRawDate||t.start}
 function preserveOccurrenceV3(occ,old){if(!old)return occ;occ.status=old.status||occ.status;occ.actualComplete=old.actualComplete||null;occ.notes=old.notes??occ.notes;occ.relatedDocumentTitle=old.relatedDocumentTitle||'';const doneByText=new Map((old.checklist||[]).map(c=>[c.text,!!c.done]));occ.checklist=(occ.checklist||[]).map(c=>({...c,done:doneByText.get(c.text)||false}));return occ}
 function rebuildRepeatSeriesV3(existing,base,meta,linked,steps){
-  const dates=recurrenceDatesV2(meta.from,meta.until,meta.cycle,meta.weekdays);if(!dates.length)return 0;
+  const dates=recurrenceDatesV2(meta.from,meta.until,meta.cycle,meta.weekdays,meta.months);if(!dates.length)return 0;
   const sid=existing?.seriesId||uid('series');let oldParents=[];
   if(existing?.seriesId)oldParents=state.tasks.filter(x=>x.seriesId===sid);else if(existing)oldParents=[existing];
   const preserve=new Map(oldParents.map(x=>[recurrenceKeyV3(x),x]));
@@ -1470,7 +1607,7 @@ function rebuildRepeatSeriesV3(existing,base,meta,linked,steps){
   return dates.length;
 }
 function repairLegacyRepeatsV3(){
-  let repaired=0;for(const t of [...state.tasks]){if(!t.repeat||t.seriesId||t.parentSeriesId)continue;const meta={...t.repeat,from:t.repeat.from||t.start,until:t.repeat.until||t.repeatUntil||t.end||t.start,weekdays:t.repeat.weekdays||[]};const dates=recurrenceDatesV2(meta.from,meta.until,meta.cycle,meta.weekdays);if(dates.length<=1)continue;const sid=uid('series'),idx=state.tasks.indexOf(t);if(idx<0)continue;const old=clone(t);const first=preserveOccurrenceV3(cloneOccurrenceV2(old,dates[0],sid,1,meta),old);first.id=t.id;first.repeatRawDate=dates[0];first.generatedKey=`${sid}:${dates[0]}`;state.tasks[idx]=first;for(let i=1;i<dates.length;i++){const occ=cloneOccurrenceV2(old,dates[i],sid,i+1,meta);occ.repeatRawDate=dates[i];occ.generatedKey=`${sid}:${dates[i]}`;state.tasks.push(occ)}repaired+=dates.length-1}if(repaired)saveState();return repaired
+  let repaired=0;for(const t of [...state.tasks]){if(!t.repeat||t.seriesId||t.parentSeriesId)continue;const meta={...t.repeat,from:t.repeat.from||t.start,until:t.repeat.until||t.repeatUntil||t.end||t.start,weekdays:t.repeat.weekdays||[],months:t.repeat.months||[]};const dates=recurrenceDatesV2(meta.from,meta.until,meta.cycle,meta.weekdays,meta.months);if(dates.length<=1)continue;const sid=uid('series'),idx=state.tasks.indexOf(t);if(idx<0)continue;const old=clone(t);const first=preserveOccurrenceV3(cloneOccurrenceV2(old,dates[0],sid,1,meta),old);first.id=t.id;first.repeatRawDate=dates[0];first.generatedKey=`${sid}:${dates[0]}`;state.tasks[idx]=first;for(let i=1;i<dates.length;i++){const occ=cloneOccurrenceV2(old,dates[i],sid,i+1,meta);occ.repeatRawDate=dates[i];occ.generatedKey=`${sid}:${dates[i]}`;state.tasks.push(occ)}repaired+=dates.length-1}if(repaired)saveState();return repaired
 }
 // Patch only the save handler setup by wrapping openTaskForm after the original rendered form is ready.
 const openTaskFormV2Original=openTaskForm;
@@ -1483,7 +1620,7 @@ openTaskForm=function(id=null){
     // Let original handler handle normal new repeats and non-repeat edits.
     if(!t||!repeatOn){return original?.call(btn)}
     const name=$('#tfName').value.trim();if(!name)return toast('업무명을 입력하세요.');let start=$('#tfStart').value||todayISO(),un=$('#tfUnconfirmed').checked;if(un)start=shiftWorkday(endOfMonth(Number(start.slice(0,4)),Number(start.slice(5,7))),'prev');const rule={type:$('#tfEndType').value,date:$('#tfEndDate').value,days:Number($('#tfAfterDays').value||0),includeHolidays:$('#tfIncludeHolidays').checked,shift:$('#tfHolidayShift').value};let end=calcEnd(start,rule),deadline=$('#tfDeadline').value||end;if(un){end=start;deadline=start}
-    const checks=$$('[data-ci]').map(x=>({id:uid('c'),text:x.value.trim(),done:false})).filter(x=>x.text);const base={...clone(t),category:$('#tfCategory').value,name,urgent:$('#tfUrgent').checked,owner:$('#tfOwner').value,start,end,deadline,unconfirmed:un,checklist:checks,notes:$('#tfNotes').value,status:t.status||'planned',periodLabel:periodFromDate(start)};const linked=$('input[name=taskKind]:checked').value==='linked';const meta={cycle:$('#tfRepeatCycle').value,from:$('#tfStart').value||start,until:$('#tfRepeatUntil').value||start,holidayShift:$('#tfRepeatHoliday').value,weekdays:$$('[data-rwd]:checked').map(x=>Number(x.dataset.rwd))};
+    const checks=$$('[data-ci]').map(x=>({id:uid('c'),text:x.value.trim(),done:false})).filter(x=>x.text);const base={...clone(t),category:$('#tfCategory').value,name,urgent:$('#tfUrgent').checked,owner:$('#tfOwner').value,start,end,deadline,unconfirmed:un,checklist:checks,notes:$('#tfNotes').value,status:t.status||'planned',periodLabel:periodFromDate(start)};const linked=$('input[name=taskKind]:checked').value==='linked';const meta={cycle:$('#tfRepeatCycle').value,from:$('#tfStart').value||start,until:$('#tfRepeatUntil').value||start,holidayShift:$('#tfRepeatHoliday').value,weekdays:$$('[data-rwd]:checked').map(x=>Number(x.dataset.rwd)),months:repeatMonthsFromFormV20()};
     // 반복업무를 다시 만들 때도 현재 폼의 단계별 담당자·일정·체크리스트를 빠짐없이 사용한다.
     const existingSteps=t.groupId?state.tasks.filter(x=>x.groupId===t.groupId&&x.id!==t.id).sort((a,b)=>(a.step||0)-(b.step||0)).map(x=>clone(x)):[];
     const stepDefs=taskStepDefsFromDomV11(existingSteps);
@@ -1496,7 +1633,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260907-12').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-20').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -1716,7 +1853,7 @@ function renderCategoryMulti(){
   v5EnsureSettings();
   menu.innerHTML=state.categories.map(c=>`<label><input type="checkbox" value="${esc(c)}" ${state.selectedCategories.includes(c)?'checked':''}><span class="cat-dot" style="background:${categoryColorV5(c)}"></span>${esc(c)}</label>`).join('');
   $('#catMultiBtn').innerHTML=state.selectedCategories.length?state.selectedCategories.map(c=>`<span class="cat-dot" style="background:${categoryColorV5(c)}"></span>${esc(c)}`).join(' &nbsp; '):'전체 대분류';
-  $$('input',menu).forEach(i=>i.onchange=()=>{state.selectedCategories=$$('input:checked',menu).map(x=>x.value);renderCategoryMulti();renderHome()});
+  $$('input',menu).forEach(i=>i.onchange=()=>{state.selectedCategories=$$('input:checked',menu).map(x=>x.value);saveState();renderCategoryMulti();renderHome()});
 }
 function ganttCategoryFilterHtmlV5(){
   return '';
@@ -2000,7 +2137,7 @@ function renderHome(){
   $('#kpis').innerHTML=k.map(x=>`<div class="kpi ${x[2]}"><span>${x[0]}</span><b>${x[1]}</b></div>`).join('');
   $('#overdueCount').textContent=`${overdue.length}건`;$('#overdueList').innerHTML=overdue.slice(0,30).map(t=>`<tr><td><button class="task-link" data-task="${t.id}">${t.urgent?'<span style="color:#e34d47">●</span> ':''}${esc(t.name)}</button></td><td>${fmtDate(t.deadline||t.end)}</td></tr>`).join('')||'<tr><td colspan=2 class="muted">마감 못한 업무 없음</td></tr>';
   const [yy,mm]=calKey.split('-');$('#periodListTitle').textContent=`이번달 할 일 · ${yy}년 ${Number(mm)}월`;$('#periodListCount').textContent=`${monthTasks.length}건`;$('#periodList').innerHTML=monthTasks.slice(0,50).map(t=>`<tr><td><button class="task-link" data-task="${t.id}">${t.urgent?'<span style="color:#e34d47">●</span> ':''}${esc(t.name)}</button></td><td>${fmtDate(t.deadline||t.end)}</td><td>${statusBadge(t)}</td></tr>`).join('')||'<tr><td colspan=3 class="muted">이번달 업무 없음</td></tr>';
-  renderGantt([],a,b);renderCalendar(monthTasks,ca,cb);ensureV5Ui();applyHomeLayoutV5();bindTaskLinks();renderSettings();saveState();
+  renderGantt([],a,b);renderCalendar(monthTasks,ca,cb);ensureV5Ui();applyHomeLayoutV5();bindTaskLinks();
 }
 
 const bindV5Base=bind;
@@ -2062,7 +2199,6 @@ function modal(title,body,footer='',cls=''){
   const locked=String(cls||'').includes('locked-modal');
   root.innerHTML=`<div class="modal-wrap ${locked?'locked-backdrop':''}"><div class="modal ${cls}"><div class="modal-head"><h3>${title}</h3><button class="xbtn" data-close>×</button></div><div class="modal-body">${body}</div>${footer?`<div class="modal-foot">${footer}</div>`:''}</div></div>`;
   $$('[data-close]',root).forEach(x=>x.onclick=closeModal);
-  $('.modal-wrap',root).onclick=e=>{if(!locked&&e.target.classList.contains('modal-wrap'))closeModal()};
   queueMicrotask(()=>window.cloudSync?.hydrateImages(root));
 }
 
@@ -2404,7 +2540,7 @@ function ensureV7Ui(){
   migrateV7Data();applyThemeV7();
   const grid=$('#settingsPage .settings-grid');
   if(grid&&!$('#v7ThemeCard'))grid.insertAdjacentHTML('afterbegin',themeCardHtmlV7());
-  else if($('#v7ThemeCard'))$('#v7ThemeCard').outerHTML=themeCardHtmlV7();
+  else $$('[data-v7theme]').forEach(button=>button.classList.toggle('active',button.dataset.v7theme===(state.settings.uiTheme||'mint')));
   $$('[data-v7theme]').forEach(b=>b.onclick=()=>{state.settings.uiTheme=b.dataset.v7theme;applyThemeV7();saveState();renderSettings();renderHome()});
   updatePanelLayoutButtonsV7();
 
@@ -2412,7 +2548,7 @@ function ensureV7Ui(){
   const sb=$('.navbtn[data-page="settingsPage"]');
   if(sb){
     sb.onclick=()=>showPage('settingsPage');
-    sb.addEventListener('pointerup',e=>{e.preventDefault();showPage('settingsPage')});
+    sb.onpointerup=null;
   }
 }
 const ensureV6UiV7Base=ensureV6Ui;
@@ -2718,7 +2854,7 @@ function taskListVisibleV8(){
 function renderTaskTable(){
   ensureV7Ui();migrateV8Data();
   const th=$('#taskListPage .datatable thead tr');
-  if(th)th.innerHTML='<th><input type="checkbox" id="selectAllTasks" title="현재 화면 전체선택"></th><th>긴급</th><th>구분</th><th>업무명</th><th>담당자</th><th>진행 월/분기/반기</th><th>시작일 / 마감일 <span class="list-sort-note">빠른 일정순</span></th><th>반복</th><th>상태</th><th>비고</th>';
+  if(th)th.innerHTML='<th><input type="checkbox" id="selectAllTasks" title="현재 화면 전체선택"></th><th>긴급</th><th>구분</th><th>업무명</th><th>담당자</th><th>진행 월/분기/반기</th><th>일정 <span class="list-sort-note">빠른 일정순</span></th><th>반복</th><th>상태</th><th>비고</th>';
   const arr=taskListVisibleV8();
   $('#taskTableBody').innerHTML=arr.map(t=>`<tr>
     <td><input type="checkbox" data-task-select="${t.id}" ${selectedTaskIdsV2.has(t.id)?'checked':''}></td>
@@ -2726,7 +2862,7 @@ function renderTaskTable(){
     <td><button class="task-link" data-task="${t.id}">${esc(t.name)}</button>${t.dbAuto?'<div><span class="db-auto-badge">DB 자동</span></div>':''}</td>
     <td class="task-owner-cell">${ownerDisplayV8(t.owner)}</td>
     <td>${esc(t.periodLabel||periodFromDate(t.start))}</td>
-    <td><div class="inline-date-wrap"><input class="task-date-input" type="date" value="${t.start||''}" data-start-id="${t.id}"><small>마감 ${fmtDate(t.deadline||t.end)}</small></div></td>
+    <td><div class="inline-date-wrap"><input class="task-date-input" type="date" value="${t.start||''}" data-start-id="${t.id}"><small>종료 ${fmtDate(t.end||t.start)}</small></div></td>
     <td>${repeatLabelV2(t)}</td><td>${statusSelectV2(t)}</td><td>${esc(t.notes||'')}</td></tr>`).join('');
   bindTaskLinks();
   $$('[data-task-select]').forEach(x=>x.onchange=()=>{x.checked?selectedTaskIdsV2.add(x.dataset.taskSelect):selectedTaskIdsV2.delete(x.dataset.taskSelect);updateBulkV2()});
@@ -3405,8 +3541,8 @@ function syncGanttControlsV13(){
 }
 function bindGanttControlsV13(){
   const monthSelect=$('#ganttMonthRangeV13');
-  if(monthSelect)monthSelect.onchange=()=>{state.settings.ganttMonthRangeV13=Math.max(1,Math.min(12,Number(monthSelect.value)||12));renderHome()};
-  $$('[data-gantt-cycle-v13]').forEach(button=>button.onclick=()=>{ensureGanttFilterSettingsV13();const cycle=button.dataset.ganttCycleV13,current=new Set(state.settings.ganttVisibleCyclesV13);if(current.has(cycle))current.delete(cycle);else current.add(cycle);state.settings.ganttVisibleCyclesV13=GANTT_FILTER_CYCLES_V13.filter(item=>current.has(item));renderHome()});
+  if(monthSelect)monthSelect.onchange=()=>{state.settings.ganttMonthRangeV13=Math.max(1,Math.min(12,Number(monthSelect.value)||12));saveState();renderHome()};
+  $$('[data-gantt-cycle-v13]').forEach(button=>button.onclick=()=>{ensureGanttFilterSettingsV13();const cycle=button.dataset.ganttCycleV13,current=new Set(state.settings.ganttVisibleCyclesV13);if(current.has(cycle))current.delete(cycle);else current.add(cycle);state.settings.ganttVisibleCyclesV13=GANTT_FILTER_CYCLES_V13.filter(item=>current.has(item));saveState();renderHome()});
   syncGanttControlsV13();
 }
 const ganttTasksV13Base=ganttTasksV4;
@@ -3585,7 +3721,7 @@ function decorateMobileRowV17(row,labels,titleIndex){
   cells.forEach((cell,index)=>{if(index!==0&&index!==titleIndex&&['','-'].includes(cell.textContent.trim()))cell.classList.add('mobile-empty-field-v17')});
 }
 function decorateTaskCardsV17(){
-  const labels=['선택','긴급','대분류','업무명','담당자','진행 시기','시작일 / 마감일','반복','상태','비고'];
+  const labels=['선택','긴급','대분류','업무명','담당자','진행 시기','일정','반복','상태','비고'];
   $$('#taskTableBody tr').forEach(row=>decorateMobileRowV17(row,labels,3));
 }
 function decorateDbCardsV17(){
@@ -3734,7 +3870,7 @@ openChecklist=function(id){
   const body=`<div class="completion-note ${allDone?'complete-ready':''}" aria-live="polite">${checklistMessageV18(t,checks,doneCount,allDone)}</div>
     <div class="checklist-modal">${checks.length?checks.map(c=>`<label class="checkitem"><input type="checkbox" data-check="${c.id}" ${c.done?'checked':''} ${alreadyDone?'disabled':''}><span class="text">${esc(c.text)}</span></label>`).join(''):'<div class="muted">등록된 체크리스트가 없습니다.</div>'}</div>
     <div class="related-document-v15"><label for="relatedDocumentTitleV15">관련 공문 제목 <span class="muted" style="display:inline">(선택)</span></label><input id="relatedDocumentTitleV15" maxlength="300" autocomplete="off" value="${esc(t.relatedDocumentTitle||'')}" placeholder="예: 정기감사 자료 제출 요청"><span class="muted">자동 저장되며 업무목록 검색에서 공문 제목으로 찾을 수 있습니다.</span></div>
-    <div class="muted checklist-schedule-v18">일정 ${fmtDate(t.start)} ~ ${fmtDate(t.end)} · 마감 ${fmtDate(t.deadline)}</div>`;
+    <div class="muted checklist-schedule-v18">일정 ${fmtDate(t.start)} ~ ${fmtDate(t.end||t.start)}${t.actualComplete?` · 완료 ${fmtDate(t.actualComplete)}`:''}</div>`;
   const completeLabel=alreadyDone?'완료됨':'업무 완료';
   modal(`${t.urgent?'● ':''}${esc(t.name)}`,body,`<button class="btn" data-edit-task="${id}">내용 수정</button><button class="btn primary" id="completeTask" ${(allDone&&!alreadyDone)?'':'disabled'}>${completeLabel}</button>`,'small checklist-task-modal-v18');
   const docInput=$('#relatedDocumentTitleV15');
@@ -3778,6 +3914,105 @@ renderTaskTable=function(){
   });
   return result;
 };
+
+// ========================= APP V20 — HOME/날짜/반복 폼 정리 =========================
+function normalizeCompactDateV20(value){
+  const raw=String(value??'').trim();if(!raw)return'';
+  let year,month,day,match;
+  if(/^\d{8}$/.test(raw)){year=Number(raw.slice(0,4));month=Number(raw.slice(4,6));day=Number(raw.slice(6,8))}
+  else if((match=raw.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})$/))){year=Number(match[1]);month=Number(match[2]);day=Number(match[3])}
+  else return'';
+  const date=new Date(year,month-1,day,12);
+  if(date.getFullYear()!==year||date.getMonth()+1!==month||date.getDate()!==day)return'';
+  return `${String(year).padStart(4,'0')}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+}
+function upgradeDateInputV20(input){
+  if(!input||input.dataset.dateInputV20||input.dataset.dateProxyV20)return input;
+  const initial=input.value,previousInput=input.oninput,previousChange=input.onchange,previousBlur=input.onblur;
+  const wrapper=document.createElement('span');wrapper.className='date-entry-v20';
+  input.before(wrapper);wrapper.appendChild(input);
+  input.type='text';input.inputMode='numeric';input.autocomplete='off';input.placeholder='YYYY-MM-DD 또는 YYYYMMDD';
+  input.dataset.dateInputV20='true';input.classList.add('date-text-v20');input.value=normalizeCompactDateV20(initial)||initial;
+  const picker=document.createElement('input');picker.type='date';picker.className='date-picker-v20';picker.dataset.dateProxyV20='true';picker.tabIndex=-1;picker.value=normalizeCompactDateV20(input.value);picker.disabled=input.disabled;picker.setAttribute('aria-label','달력에서 날짜 선택');wrapper.appendChild(picker);
+  const normalize=()=>{const normalized=normalizeCompactDateV20(input.value);if(normalized){input.value=normalized;picker.value=normalized;input.classList.remove('is-invalid-v20');return true}if(!input.value.trim()){picker.value='';input.classList.remove('is-invalid-v20');return true}input.classList.add('is-invalid-v20');return false};
+  input.oninput=function(event){if(/^\d{8}$/.test(input.value.trim()))normalize();else input.classList.remove('is-invalid-v20');previousInput?.call(input,event)};
+  input.onchange=function(event){normalize();previousChange?.call(input,event)};
+  input.onblur=function(event){normalize();previousBlur?.call(input,event)};
+  picker.onchange=()=>{if(!picker.value)return;input.value=picker.value;input.classList.remove('is-invalid-v20');input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}))};
+  return input;
+}
+function enhanceDateInputsV20(root=document){
+  $$('input[type="date"]:not([data-date-proxy-v20])',root).forEach(upgradeDateInputV20);
+}
+function defaultRepeatMonthsV20(cycle,start=todayISO()){
+  const month=Math.max(1,Math.min(12,Number(String(start).slice(5,7))||new Date().getMonth()+1));
+  if(cycle==='monthly')return Array.from({length:12},(_,index)=>index+1);
+  if(cycle==='quarterly')return Array.from({length:4},(_,index)=>((month-1+index*3)%12)+1).sort((a,b)=>a-b);
+  if(cycle==='half')return [month,((month+5)%12)+1].sort((a,b)=>a-b);
+  if(cycle==='yearly')return[month];
+  return[];
+}
+function repeatMonthsFromFormV20(){
+  return $$('[data-rmonth-v20]:checked').map(input=>Number(input.dataset.rmonthV20)).filter(month=>month>=1&&month<=12).sort((a,b)=>a-b);
+}
+function setupTaskFormV20(id=null){
+  const dialog=$('#modalRoot .modal'),task=id?state.tasks.find(item=>item.id===id):null;if(!dialog||!$('#tfEndType',dialog))return;
+  dialog.classList.add('task-form-v20');
+
+  const endType=$('#tfEndType',dialog),include=$('#tfIncludeHolidays',dialog),shift=$('#tfHolidayShift',dialog),endOptions=$('.end-calculation-options-v20',dialog);
+  const syncEnd=()=>{const enabled=endType.value==='after';if(include)include.disabled=!enabled;if(shift)shift.disabled=!enabled;endOptions?.classList.toggle('is-disabled-v20',!enabled)};
+  const previousEndChange=endType.onchange;endType.onchange=function(event){previousEndChange?.call(endType,event);syncEnd()};syncEnd();
+
+  const repeatSwitch=$('#tfRepeat',dialog),details=$('#tfRepeatDetailsV20',dialog),cycle=$('#tfRepeatCycle',dialog),extra=$('#tfRepeatExtra',dialog),panel=repeatSwitch?.closest('.repeat-panel');
+  if(!repeatSwitch||!details||!cycle||!extra)return;
+  const repeat=task?.repeat||{},start=()=>$('#tfStart',dialog)?.value||task?.start||todayISO();
+  const monthDrafts={},initialCycle=repeat.cycle||cycle.value;
+  if(Array.isArray(repeat.months)&&repeat.months.length)monthDrafts[initialCycle]=[...repeat.months];
+  let weekdayDraft=(repeat.weekdays||[dateOf(start())?.getDay()??1]).map(Number),lastCycle=cycle.value;
+  const capture=()=>{
+    if(lastCycle==='weekly')weekdayDraft=$$('[data-rwd]:checked',extra).map(input=>Number(input.dataset.rwd));
+    else{const chosen=repeatMonthsFromFormV20();if(chosen.length)monthDrafts[lastCycle]=chosen}
+  };
+  const renderExtra=()=>{
+    const value=cycle.value;lastCycle=value;
+    if(value==='weekly'){
+      const chosen=weekdayDraft.length?weekdayDraft:[dateOf(start())?.getDay()??1];
+      extra.innerHTML=`<div class="field"><label>반복 요일</label><div class="weekday-picks">${[['1','월'],['2','화'],['3','수'],['4','목'],['5','금'],['6','토'],['0','일']].map(([day,label])=>`<label><input type="checkbox" data-rwd="${day}" ${chosen.includes(Number(day))?'checked':''}><span>${label}</span></label>`).join('')}</div></div>`;
+      return;
+    }
+    const selected=monthDrafts[value]||((value===initialCycle&&(repeat.months||[]).length)?repeat.months:defaultRepeatMonthsV20(value,start()));
+    monthDrafts[value]=[...selected].map(Number);
+    extra.innerHTML=`<div class="field"><label>실시 월</label><div class="month-picks-v20">${Array.from({length:12},(_,index)=>index+1).map(month=>`<label><input type="checkbox" data-rmonth-v20="${month}" ${monthDrafts[value].includes(month)?'checked':''}><span>${month}월</span></label>`).join('')}</div></div>`;
+    $$('[data-rmonth-v20]',extra).forEach(input=>input.onchange=()=>{monthDrafts[value]=repeatMonthsFromFormV20()});
+  };
+  const locked=!!(task?.dbAuto||task?.dbManual||panel?.classList.contains('db-auto-locked'));
+  const syncRepeat=()=>{
+    const on=repeatSwitch.checked;details.classList.toggle('hidden',!on);details.setAttribute('aria-hidden',String(!on));
+    $$('input,select,button',details).forEach(control=>control.disabled=!on||locked);
+  };
+  cycle.onchange=()=>{capture();renderExtra();syncRepeat()};
+  repeatSwitch.onchange=()=>{if(repeatSwitch.checked)renderExtra();syncRepeat()};
+  $('#tfSearchResults',dialog)?.addEventListener('click',event=>{
+    const hit=event.target.closest('[data-tpl]');if(!hit)return;
+    setTimeout(()=>{const template=state.templates.find(item=>item.id===hit.dataset.tpl);if(template?.cycle){cycle.value=template.cycle;weekdayDraft=(template.weekdays||[template.weekday]).filter(value=>value!==undefined).map(Number);const templateMonths=[...(template.cycleMonths||[])];if(templateMonths.length)monthDrafts[template.cycle]=templateMonths;else delete monthDrafts[template.cycle];lastCycle=template.cycle;renderExtra();syncRepeat()}},0);
+  },true);
+  renderExtra();syncRepeat();
+}
+
+const modalV20Base=modal;
+modal=function(title,body,footer='',cls=''){const result=modalV20Base(title,body,footer,cls);requestAnimationFrame(()=>enhanceDateInputsV20($('#modalRoot')));return result};
+const openTaskFormV20Base=openTaskForm;
+openTaskForm=function(id=null){const result=openTaskFormV20Base(id);setupTaskFormV20(id);enhanceDateInputsV20($('#modalRoot'));return result};
+const renderTaskTableV20Base=renderTaskTable;
+renderTaskTable=function(){const result=renderTaskTableV20Base();enhanceDateInputsV20($('#taskListPage'));return result};
+const renderHolidaysV20Base=renderHolidays;
+renderHolidays=function(){const result=renderHolidaysV20Base();enhanceDateInputsV20($('#holidayPage'));return result};
+const renderCalendarV20Base=renderCalendar;
+renderCalendar=function(tasks,a,b){
+  const visible=(tasks||[]).filter(task=>!state.selectedCategories.length||state.selectedCategories.includes(task.category)).filter(task=>$('#homeDone')?.value==='show'||effectiveStatus(task)!=='done');
+  return renderCalendarV20Base(visible,a,b);
+};
+setTimeout(()=>enhanceDateInputsV20(document),0);
 
 </script>
 </body></html>
