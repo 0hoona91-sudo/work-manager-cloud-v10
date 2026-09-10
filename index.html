@@ -1398,7 +1398,7 @@ const DBNAME='TaskManagerLocalDB_v1';
 function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DBNAME,1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('data'))e.target.result.createObjectStore('data')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function readLocalState(){try{const db=await openDb();const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get('state');const saved=await new Promise((res,rej)=>{req.onsuccess=()=>res(req.result||null);req.onerror=()=>rej(req.error)});db.close();return saved}catch(e){console.warn('로컬 데이터 확인 실패',e);return null}}
 async function writeLocalState(snapshot){try{const db=await openDb();const tx=db.transaction('data','readwrite');tx.objectStore('data').put(clone(snapshot),'state');await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){console.warn('기기 캐시 저장 실패',e)}}
-async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260910-23');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
+async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260910-24');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
 async function saveState(meta={}){const snapshot=clone(state);await writeLocalState(snapshot);if(window.cloudSync)await window.cloudSync.save(snapshot,meta)}
 function seed(){state.categories=['소방','시설','행정','교육','회계','인사','복지','기타'];state.owners=['나영훈','관리소장','시설담당','경리담당'];state.holidays=clone(holidaySeed);state.templates=clone(sampleTemplates);state.tasks=clone(sampleTasks);state.selectedCategories=[]}
 
@@ -1875,7 +1875,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-23').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-24').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -1982,7 +1982,9 @@ function v5MinDate(a,b){return !a?b:!b?a:(a<b?a:b)}
 function v5EnsureSettings(){
   state.settings=state.settings||{};
   state.settings.categoryColors=state.settings.categoryColors||{};
-  state.settings.autoHorizonMonths=Number(state.settings.autoHorizonMonths||12);
+  // DB 반복업무는 비용 예측이 쉬운 Rolling 12개월로 고정한다.
+  // 예전 설정값은 데이터 호환을 위해 남기되 더 긴 범위를 한꺼번에 만들지 않는다.
+  state.settings.autoHorizonMonths=12;
   state.settings.homeLayout=state.settings.homeLayout||'split';
   state.settings.suppressedAutoKeys=state.settings.suppressedAutoKeys||[];
   state.categories.forEach((c,i)=>{if(!state.settings.categoryColors[c])state.settings.categoryColors[c]=V5_PALETTE[i%V5_PALETTE.length]});
@@ -2031,7 +2033,7 @@ function ensureV5Ui(){
       <h3>업무 DB 자동화</h3>
       <p class="muted">업무 DB를 “설계도”로 사용합니다. 반복 DB는 자동으로 수행업무를 만들고, 연계업무는 상위 일정 변경에 따라 뒤 단계가 자동 재계산됩니다.</p>
       <div class="inline">
-        <label>기본 자동확보 기간 <input id="autoHorizonMonths" type="number" min="1" max="36" style="width:82px"> 개월</label>
+        <label>Rolling 자동확보 기간 <input id="autoHorizonMonths" type="number" min="12" max="12" value="12" disabled style="width:82px"> 개월</label>
         <button class="btn primary" id="syncDbSchedules">지금 자동생성 / 동기화</button>
       </div>
       <div class="db-auto-stats">
@@ -4433,6 +4435,77 @@ renderDbTable=function(){
   return renderDbTableV23Base();
 };
 bindDriveFileDownloadsV23();
+
+// ========================= APP V24 — DB repeat Rolling 12 months =========================
+const ROLLING_AUTO_MONTHS_V24=12;
+
+function rollingAutoTargetV24(reference=todayISO()){
+  const edge=v5AddMonths(reference,ROLLING_AUTO_MONTHS_V24);
+  return endOfMonth(Number(edge.slice(0,4)),Number(edge.slice(5,7)));
+}
+
+// 신규 DB 회차에 딸린 연계 단계만 계산한다. 기존 업무의 일정·상태·체크 진행률은 건드리지 않는다.
+function recalcNewDbChainV24(root){
+  const children=state.tasks.filter(task=>task.parentAutoRootId===root.id);
+  for(let pass=0;pass<20;pass++){
+    let changed=false;
+    for(const task of children.sort((a,b)=>(a.step||1)-(b.step||1))){
+      if(!task.link?.dynamic)continue;
+      const parent=state.tasks.find(item=>item.id===task.link.parentId);if(!parent)continue;
+      const basis=task.link.basis==='actualEnd'?(parent.actualComplete||parent.deadline||parent.end||parent.start):(task.link.basis==='start'?parent.start:(parent.end||parent.start));
+      if(!basis)continue;
+      let start=calcByModeV6(basis,Number(task.link.startOffset??task.link.offset??0),task.link.startMode||task.link.mode||'business');
+      if((task.link.startHolidayShift||task.link.holidayShift||'next')!=='keep')start=shiftWorkday(start,task.link.startHolidayShift||task.link.holidayShift||'next');
+      let due=calcByModeV6(start,Number(task.link.limitDays||0),task.link.limitMode||'calendar');
+      if((task.link.limitHolidayShift||'next')!=='keep')due=shiftWorkday(due,task.link.limitHolidayShift||'next');
+      const end=(task.link.workType||'single')==='period'?due:start;
+      if(start!==task.start||end!==task.end||due!==task.deadline){task.start=start;task.end=end;task.deadline=due;task.periodLabel=periodFromDate(start);changed=true}
+    }
+    if(!changed)break;
+  }
+}
+
+function appendMissingTemplateOccurrencesV24(template,from,to){
+  if(!template.autoSchedule||!template.cycle||template.cycle==='none'||!from||!to||from>to)return 0;
+  const suppressed=new Set(state.settings.suppressedAutoKeys||[]);
+  let created=0;
+  for(const spec of templateOccurrenceSpecsV5(template,from,to)){
+    if(suppressed.has(spec.key)||state.tasks.some(task=>task.generatedKey===spec.key))continue;
+    const root=taskFromDbTemplateV5(template,spec);
+    state.tasks.push(root);
+    ensureDbLinkedChildrenV5(root,template,'pending');
+    recalcNewDbChainV24(root);
+    created++;
+  }
+  return created;
+}
+
+// 화면 범위와 무관하게 현재 시점부터 12개월 뒤 월말까지만 확보한다.
+// autoGeneratedThrough가 목표일에 도달했으면 회차 계산 자체를 생략한다.
+function v5DefaultAutoRange(){
+  const today=todayISO();
+  return[today,rollingAutoTargetV24(today)];
+}
+
+function ensureAutoSchedulesV5(_rangeStart=null,_rangeEnd=null){
+  v5EnsureSettings();
+  const today=todayISO(),horizon=rollingAutoTargetV24(today);
+  let created=0,advanced=0;
+  for(const template of state.templates||[]){
+    if(!template.autoSchedule||!template.cycle||template.cycle==='none')continue;
+    const target=template.activeUntil?v5MinDate(horizon,template.activeUntil):horizon;
+    const covered=/^\d{4}-\d{2}-\d{2}$/.test(String(template.autoGeneratedThrough||''))?template.autoGeneratedThrough:'';
+    if(covered&&covered>=target)continue;
+    let from=today;
+    if(template.activeFrom)from=v5MaxDate(from,template.activeFrom);
+    if(covered)from=v5MaxDate(from,addDays(covered,1));
+    if(target>=from)created+=appendMissingTemplateOccurrencesV24(template,from,target);
+    template.autoGeneratedThrough=target;
+    advanced++;
+  }
+  if(created||advanced)saveState({reason:`반복업무 Rolling 12개월 자동 보충${created?` · ${created}회차 추가`:''}`});
+  return created;
+}
 
 </script>
 </body></html>
