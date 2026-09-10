@@ -111,6 +111,13 @@ const sandbox = {
     date.setDate(date.getDate() + Number(amount || 0));
     return sandbox.iso(date);
   },
+  esc(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;");
+  },
   endOfMonth(year, month) {
     return sandbox.iso(new Date(year, month, 0, 12));
   },
@@ -155,8 +162,45 @@ const functions = [
   "ganttFilterBoundsV13",
   "ganttRepeatCycleV13",
   "ganttCycleVisibleV13",
+  "canCompleteTaskV18",
+  "applyTaskStatusFieldsV18",
+  "statusSelectV18",
 ];
 for (const name of functions) vm.runInContext(extractLastFunction(name), context);
+
+const completionSample = {
+  status: "planned",
+  actualComplete: null,
+  checklist: [{ id: "finish-1", text: "결과 확인", done: false }],
+};
+assert.equal(context.canCompleteTaskV18(completionSample), false, "남은 체크항목이 있으면 업무 완료를 막아야 합니다.");
+completionSample.checklist[0].done = true;
+assert.equal(context.canCompleteTaskV18(completionSample), true, "모든 체크항목이 끝나면 업무 완료가 가능해야 합니다.");
+context.applyTaskStatusFieldsV18(completionSample, "done");
+assert.equal(completionSample.status, "done", "완료 처리 시 업무 상태를 done으로 저장해야 합니다.");
+assert.equal(completionSample.actualComplete, "2026-09-05", "완료 처리 시 실제 완료일을 함께 저장해야 합니다.");
+context.applyTaskStatusFieldsV18(completionSample, "planned");
+assert.equal(completionSample.actualComplete, null, "완료 상태를 해제하면 실제 완료일도 제거해야 합니다.");
+
+const pendingStatusHtml = context.statusSelectV18({
+  id: "pending-1",
+  name: "미완료 업무",
+  status: "planned",
+  deadline: "2026-09-10",
+});
+assert.ok(!pendingStatusHtml.includes('value="done"'), "미완료 업무의 목록 상태 선택기에 완료 경로가 중복되면 안 됩니다.");
+const doneStatusHtml = context.statusSelectV18({
+  id: "done-1",
+  name: "완료 업무",
+  status: "done",
+  actualComplete: "2026-09-05",
+});
+assert.ok(doneStatusHtml.includes('<option value="done" selected>완료</option>'), "완료된 업무는 현재 완료 상태를 표시해야 합니다.");
+assert.ok(!html.includes('id="openHolidaySetting"'), "설정 화면에 하단 메뉴와 중복되는 휴일 이동 버튼이 없어야 합니다.");
+assert.ok(!html.includes('id="openTaskSetting"'), "설정 화면에 하단 메뉴와 중복되는 업무 이동 버튼이 없어야 합니다.");
+assert.ok(!html.includes('id="openDbSetting"'), "설정 화면에 하단 메뉴와 중복되는 DB 이동 버튼이 없어야 합니다.");
+assert.ok(!html.includes("간트 숨기기") && !html.includes("달력 숨기기"), "HOME 패널에 상단 배치 선택기와 중복되는 숨기기 버튼이 없어야 합니다.");
+assert.match(extractLastFunction("ganttCategoryFilterHtmlV5"), /return\s+''/, "간트 내부의 중복 대분류 필터를 생성하면 안 됩니다.");
 
 const linkedTemplate = {
   id: "qa-template-linked-4",
@@ -462,6 +506,13 @@ assert.ok(html.includes('grid-template-areas:"title title" "category owner"'), "
 assert.ok(html.includes("function decorateHistoryCardsV17()"), "변경이력도 모바일 카드로 표시해야 합니다.");
 assert.ok(html.includes("ensureMobileAccountCardV17"), "모바일 설정 화면에 계정과 로그아웃 조작을 제공해야 합니다.");
 assert.ok(html.includes(".mobile-ui-v17 .calendar-card-v3 .calendar{min-width:700px"), "모바일 달력은 글자가 찌그러지지 않도록 가로 스크롤해야 합니다.");
+assert.ok(html.includes('id="app-v18-completion-mobile-style"'), "모바일 완료 흐름 전용 스타일이 있어야 합니다.");
+assert.ok(html.includes(".mobile-ui-v17 .app-modal-wrap-v18{z-index:3200"), "팝업이 모바일 하단 메뉴보다 위에 표시되어야 합니다.");
+assert.ok(html.includes("app-modal-open-v18 .side{visibility:hidden"), "팝업이 열리면 중복되는 하단 메뉴를 숨겨야 합니다.");
+assert.ok(html.includes("height:auto!important;max-height:calc(100dvh - 16px)"), "짧은 체크리스트 팝업에 불필요한 빈 공간을 만들지 않아야 합니다.");
+assert.ok(html.includes("아래 ‘업무 완료’를 눌러 마무리하세요"), "체크 완료와 업무 완료가 별도 단계임을 안내해야 합니다.");
+assert.ok(html.includes("await persistTaskStatusV18(t,'done',{closeAfter:true})"), "체크리스트 완료 버튼이 공통 상태 저장 경로를 사용해야 합니다.");
+assert.ok(html.includes("const renderTaskTableV18Base=renderTaskTable"), "업무목록 상태 변경도 공통 완료 저장 경로로 다시 연결해야 합니다.");
 
 assert.match(
   html,
