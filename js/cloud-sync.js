@@ -82,6 +82,45 @@ let localOnly = false;
 let needsInitialUpload = false;
 let lastSyncAt = null;
 const driveObjectUrls = new Map();
+const DRIVE_TOKEN_SESSION_KEY = "workManagerDriveSessionV23";
+const DRIVE_TOKEN_LIFETIME_MS = 50 * 60 * 1000;
+const MAX_DRIVE_FILE_BYTES = 50 * 1024 * 1024;
+
+function rememberDriveAccessToken(token, user = currentUser) {
+  driveAccessToken = String(token || "");
+  if (!driveAccessToken) return "";
+  try {
+    sessionStorage.setItem(DRIVE_TOKEN_SESSION_KEY, JSON.stringify({
+      token: driveAccessToken,
+      uid: user?.uid || "",
+      expiresAt: Date.now() + DRIVE_TOKEN_LIFETIME_MS,
+    }));
+  } catch {
+    // iPad의 저장공간 제한 환경에서는 메모리 토큰만 사용한다.
+  }
+  return driveAccessToken;
+}
+
+function clearDriveAccessToken() {
+  driveAccessToken = "";
+  driveFolderId = "";
+  try { sessionStorage.removeItem(DRIVE_TOKEN_SESSION_KEY); } catch {}
+}
+
+function restoreDriveAccessToken(user = currentUser) {
+  if (driveAccessToken) return driveAccessToken;
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(DRIVE_TOKEN_SESSION_KEY) || "null");
+    if (!saved?.token || Number(saved.expiresAt || 0) <= Date.now() || (saved.uid && user?.uid && saved.uid !== user.uid)) {
+      sessionStorage.removeItem(DRIVE_TOKEN_SESSION_KEY);
+      return "";
+    }
+    driveAccessToken = saved.token;
+  } catch {
+    return "";
+  }
+  return driveAccessToken;
+}
 
 function makeRecordMaps() {
   return Object.fromEntries(LIVE_COLLECTIONS.map((name) => [name, new Map()]));
@@ -395,11 +434,11 @@ async function authenticate() {
       const button = document.getElementById("cloudGoogleLogin");
       button.disabled = true;
       document.getElementById("cloudGateError").textContent = "";
-      const provider = makeGoogleProvider();
+      const provider = makeGoogleProvider(true);
       try {
         const result = await signInWithPopup(auth, provider);
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        if (credential?.accessToken) driveAccessToken = credential.accessToken;
+        if (credential?.accessToken) rememberDriveAccessToken(credential.accessToken, result.user);
         resolve(result.user);
       } catch (error) {
         button.disabled = false;
@@ -413,10 +452,10 @@ async function authenticate() {
   });
 }
 
-function makeGoogleProvider() {
+function makeGoogleProvider(selectAccount = false) {
   const provider = new GoogleAuthProvider();
   provider.addScope("https://www.googleapis.com/auth/drive.file");
-  provider.setCustomParameters({ prompt: "select_account" });
+  if (selectAccount) provider.setCustomParameters({ prompt: "select_account" });
   return provider;
 }
 
@@ -509,6 +548,7 @@ export async function bootstrapCloud({ state, legacyState = null } = {}) {
     localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }),
   });
   currentUser = await authenticate();
+  restoreDriveAccessToken(currentUser);
   const configuredUid = String(appConfig.ownerUid || "");
   document.getElementById("cloudUser").textContent = currentUser.email || currentUser.displayName || "Google 계정";
   if (!configuredUid || configuredUid.startsWith("__")) {
@@ -541,6 +581,7 @@ export async function bootstrapCloud({ state, legacyState = null } = {}) {
     throw new Error("Unauthorized account.");
   }
   document.getElementById("cloudSignOut").onclick = async () => {
+    clearDriveAccessToken();
     await signOut(auth);
     location.reload();
   };
@@ -565,12 +606,14 @@ function controller() {
   return {
     get user() { return currentUser; },
     get mode() { return localOnly ? "local" : "cloud"; },
-    hasDriveAccess() { return localOnly || Boolean(driveAccessToken); },
+    hasDriveAccess() { return localOnly || Boolean(restoreDriveAccessToken()); },
     stableTaskId: stableKeyId,
     activate,
     save,
     importState,
     createImageBlock,
+    createFileBlock,
+    downloadDriveFile,
     hydrateImages,
     ensureDriveAccess,
     flush,
@@ -887,7 +930,8 @@ function mergeById(current, incoming) {
 }
 
 async function ensureDriveAccess() {
-  if (driveAccessToken) return driveAccessToken;
+  const restored = restoreDriveAccessToken();
+  if (restored) return restored;
   if (!currentUser) throw new Error("Google 로그인이 필요합니다.");
   let result;
   try {
@@ -896,9 +940,9 @@ async function ensureDriveAccess() {
     throw new Error(friendlyError(error), { cause: error });
   }
   const credential = GoogleAuthProvider.credentialFromResult(result);
-  driveAccessToken = credential?.accessToken || "";
-  if (!driveAccessToken) throw new Error("Google Drive 권한을 확인하지 못했습니다.");
-  return driveAccessToken;
+  const token = credential?.accessToken || "";
+  if (!token) throw new Error("Google Drive 권한을 확인하지 못했습니다.");
+  return rememberDriveAccessToken(token);
 }
 
 async function ensureDriveFolder() {
@@ -927,25 +971,27 @@ async function ensureDriveFolder() {
   return driveFolderId;
 }
 
-async function createImageBlock(file, id = `mb-${Date.now().toString(36)}`) {
-  if (!file?.type?.startsWith("image/")) throw new Error("이미지 파일만 첨부할 수 있습니다.");
+async function createDriveBlock(file, { id, type, kind }) {
+  if (!file?.name) throw new Error("첨부할 파일을 확인하지 못했습니다.");
+  if (Number(file.size || 0) > MAX_DRIVE_FILE_BYTES) throw new Error("첨부파일은 한 개당 50MB 이하만 업로드할 수 있습니다.");
   const folderId = await ensureDriveFolder();
-  const token = driveAccessToken;
+  const token = await ensureDriveAccess();
+  const mimeType = file.type || "application/octet-stream";
   const metadataResponse = await driveFetch("https://www.googleapis.com/drive/v3/files?fields=id,name,mimeType,size", {
     method: "POST",
     headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       name: `${new Date().toISOString().replaceAll(":", "-")}_${file.name}`,
-      mimeType: file.type,
+      mimeType,
       parents: [folderId],
-      appProperties: { workManagerApp: appConfig.driveAppMarker || "work-manager-v10", kind: "manual-photo" },
+      appProperties: { workManagerApp: appConfig.driveAppMarker || "work-manager-v10", kind },
     }),
   });
   const metadata = await metadataResponse.json();
   try {
     await driveFetch(`https://www.googleapis.com/upload/drive/v3/files/${encodeURIComponent(metadata.id)}?uploadType=media`, {
       method: "PATCH",
-      headers: { Authorization: `Bearer ${token}`, "Content-Type": file.type },
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": mimeType },
       body: file,
     });
   } catch (error) {
@@ -956,7 +1002,16 @@ async function createImageBlock(file, id = `mb-${Date.now().toString(36)}`) {
   }
   const objectUrl = URL.createObjectURL(file);
   driveObjectUrls.set(metadata.id, objectUrl);
-  return { id, type: "image", driveFileId: metadata.id, name: file.name, mimeType: file.type, size: file.size, caption: "", data: objectUrl };
+  return { id, type, driveFileId: metadata.id, name: file.name, mimeType, size: Number(file.size || metadata.size || 0), caption: "", ...(type === "image" ? { data: objectUrl } : {}) };
+}
+
+async function createImageBlock(file, id = `mb-${Date.now().toString(36)}`) {
+  if (!file?.type?.startsWith("image/")) throw new Error("이미지 파일만 첨부할 수 있습니다.");
+  return createDriveBlock(file, { id, type: "image", kind: "manual-photo" });
+}
+
+async function createFileBlock(file, id = `mb-${Date.now().toString(36)}`) {
+  return createDriveBlock(file, { id, type: "file", kind: "template-attachment" });
 }
 
 async function ensureImageUploads(state, allowPrompt = false) {
@@ -995,12 +1050,7 @@ async function hydrateImages(root = document) {
     const load = async () => {
       image.classList.add("drive-image-loading");
       try {
-        await ensureDriveAccess();
-        const response = await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media`, {
-          headers: { Authorization: `Bearer ${driveAccessToken}` },
-        });
-        const objectUrl = URL.createObjectURL(await response.blob());
-        driveObjectUrls.set(fileId, objectUrl);
+        const objectUrl = await getDriveObjectUrl(fileId);
         image.src = objectUrl;
         image.classList.remove("drive-image-pending");
       } catch (error) {
@@ -1018,9 +1068,32 @@ async function hydrateImages(root = document) {
   }
 }
 
+async function getDriveObjectUrl(fileId) {
+  if (driveObjectUrls.has(fileId)) return driveObjectUrls.get(fileId);
+  const token = await ensureDriveAccess();
+  const response = await driveFetch(`https://www.googleapis.com/drive/v3/files/${encodeURIComponent(fileId)}?alt=media`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const objectUrl = URL.createObjectURL(await response.blob());
+  driveObjectUrls.set(fileId, objectUrl);
+  return objectUrl;
+}
+
+async function downloadDriveFile(fileId, fileName = "첨부파일") {
+  if (!fileId) throw new Error("다운로드할 Drive 파일 정보가 없습니다.");
+  const objectUrl = await getDriveObjectUrl(fileId);
+  const anchor = document.createElement("a");
+  anchor.href = objectUrl;
+  anchor.download = String(fileName || "첨부파일");
+  anchor.rel = "noopener";
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+}
+
 async function driveFetch(url, options = {}) {
   const response = await fetch(url, options);
-  if (response.status === 401) driveAccessToken = "";
+  if (response.status === 401) clearDriveAccessToken();
   if (!response.ok) {
     let message = `Google Drive ${response.status}`;
     try {
