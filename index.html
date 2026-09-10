@@ -881,6 +881,63 @@ html.mobile-ui-v17,html.mobile-ui-v17 body{max-width:100%;overflow-x:hidden!impo
 }
 </style>
 
+<style id="app-v18-completion-mobile-style">
+/* APP V18: 팝업과 하단 메뉴가 겹치지 않게 하고 체크리스트 완료 흐름을 간결하게 표시한다. */
+.mobile-ui-v17.app-modal-open-v18 body,
+body.mobile-ui-v17.app-modal-open-v18{overflow:hidden!important;padding-bottom:0!important}
+.mobile-ui-v17.app-modal-open-v18 .side,
+body.mobile-ui-v17.app-modal-open-v18 .side{visibility:hidden!important;pointer-events:none!important}
+.mobile-ui-v17 .app-modal-wrap-v18{z-index:3200!important}
+
+.mobile-ui-v17 .checklist-wrap-v18{
+  align-items:flex-start!important;overflow:hidden!important;
+  padding:max(8px,env(safe-area-inset-top)) 8px max(8px,env(safe-area-inset-bottom))!important
+}
+.mobile-ui-v17 .modal.checklist-task-modal-v18{
+  width:100%!important;height:auto!important;max-height:calc(100dvh - 16px)!important;
+  display:grid!important;grid-template-rows:auto minmax(0,1fr) auto!important;
+  border-radius:20px!important;overflow:hidden!important
+}
+.mobile-ui-v17 .checklist-task-modal-v18 .modal-head{
+  position:relative!important;top:auto!important;padding:16px!important
+}
+.mobile-ui-v17 .checklist-task-modal-v18 .modal-head h3{
+  min-width:0!important;font-size:21px!important;line-height:1.3!important;
+  word-break:keep-all!important;overflow-wrap:anywhere!important
+}
+.mobile-ui-v17 .checklist-task-modal-v18 .modal-body{
+  min-height:0!important;overflow-y:auto!important;padding:16px!important
+}
+.mobile-ui-v17 .checklist-task-modal-v18 .modal-foot{
+  position:relative!important;display:grid!important;grid-template-columns:1fr 1.2fr!important;
+  gap:8px!important;padding:12px 16px max(12px,env(safe-area-inset-bottom))!important;
+  background:#fff!important;box-shadow:0 -8px 22px rgba(35,50,40,.07)!important
+}
+.mobile-ui-v17 .checklist-task-modal-v18 .modal-foot .btn{
+  width:100%!important;min-height:48px!important;margin:0!important
+}
+.mobile-ui-v17 .checklist-task-modal-v18 .completion-note{
+  margin-bottom:10px!important;padding:11px 12px!important;line-height:1.45!important
+}
+.mobile-ui-v17 .checklist-task-modal-v18 .checkitem{
+  min-height:52px!important;padding:11px 6px!important;align-items:center!important
+}
+.mobile-ui-v17 .checklist-task-modal-v18 .checkitem input{flex:0 0 22px!important;width:22px!important;height:22px!important}
+.mobile-ui-v17 .checklist-task-modal-v18 .checkitem .text{font-size:15px!important;line-height:1.45!important;word-break:keep-all!important}
+.mobile-ui-v17 .checklist-task-modal-v18 .related-document-v15{margin-top:12px!important;padding:11px!important}
+.mobile-ui-v17 .checklist-task-modal-v18 .checklist-schedule-v18{margin-top:12px!important;line-height:1.45!important}
+
+/* 모바일에서 설명성 문구와 중복 배지를 줄여 핵심 정보가 먼저 보이게 한다. */
+.mobile-ui-v17 .home-heading-copy-v12>.sub{display:none!important}
+.mobile-ui-v17 #dbTableBody .db-chain-row td:nth-child(7){display:none!important}
+.mobile-ui-v17 #taskTableBody tr.task-done-v18{border-color:rgba(77,127,96,.22)!important;background:#fbfefc!important}
+.mobile-ui-v17 #taskTableBody tr.task-done-v18 .mobile-card-title-v17 .task-link{color:#537060!important}
+
+@media(max-width:380px){
+  .mobile-ui-v17 .checklist-task-modal-v18 .modal-foot{grid-template-columns:1fr!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -960,7 +1017,7 @@ html.mobile-ui-v17,html.mobile-ui-v17 body{max-width:100%;overflow-x:hidden!impo
         <div class="card panel-body"><h3>백업 / 복원</h3><p class="muted">전체 업무 데이터와 비공개 Drive 사진 참조를 JSON으로 저장합니다. 기존 v10 백업도 그대로 불러올 수 있습니다.</p><div class="inline"><button class="btn primary" id="exportBackup">백업 다운로드</button><label class="btn">백업 불러오기<input type="file" id="importBackup" accept="application/json" hidden></label></div></div>
         <div class="card panel-body"><h3>데이터 내보내기</h3><p class="muted">수행업무·업무DB를 CSV로 내려받습니다.</p><div class="inline"><button class="btn" id="exportTaskCsv">수행업무 CSV</button><button class="btn" id="exportDbCsv">업무DB CSV</button></div></div>
         <div class="card panel-body"><h3>국가공휴일 데이터</h3><p class="muted">기본은 키 없이 동작하는 KR 공휴일 서비스를 사용합니다. 공공데이터포털의 한국천문연구원 특일정보 API 키(Decoding)가 있으면 우선 사용합니다.</p><div class="field"><label>공공데이터포털 서비스키 (선택)</label><input id="holidayApiKey" type="password" placeholder="없어도 사용 가능"></div><div class="muted" style="margin-top:8px">서비스키는 이 브라우저에만 저장됩니다.</div></div>
-        <div class="card panel-body"><h3>데이터 점검 / 반복업무 관리</h3><p class="muted">이전 버전에서 1건만 생성된 반복업무를 다시 펼치거나 현재 데이터를 점검합니다.</p><div class="settings-tools"><button class="btn" id="repairRepeatsSetting">반복업무 회차 복구</button><button class="btn" id="openHolidaySetting">휴일 DB 열기</button><button class="btn" id="openTaskSetting">수행업무 목록 열기</button><button class="btn" id="openDbSetting">업무 DB 열기</button></div><div class="inline" style="margin-top:12px;gap:8px"><div class="settings-stat"><span class="muted">수행업무</span><b id="settingsTaskCount">0</b></div><div class="settings-stat"><span class="muted">업무 DB</span><b id="settingsDbCount">0</b></div><div class="settings-stat"><span class="muted">휴일</span><b id="settingsHolidayCount">0</b></div></div></div>
+        <div class="card panel-body"><h3>데이터 점검 / 반복업무 관리</h3><p class="muted">이전 버전에서 1건만 생성된 반복업무를 다시 펼치거나 현재 데이터를 점검합니다.</p><div class="settings-tools"><button class="btn" id="repairRepeatsSetting">반복업무 회차 복구</button></div><div class="inline" style="margin-top:12px;gap:8px"><div class="settings-stat"><span class="muted">수행업무</span><b id="settingsTaskCount">0</b></div><div class="settings-stat"><span class="muted">업무 DB</span><b id="settingsDbCount">0</b></div><div class="settings-stat"><span class="muted">휴일</span><b id="settingsHolidayCount">0</b></div></div></div>
       </div>
     </section>
   </main>
@@ -1528,9 +1585,6 @@ renderSettings=function(){
 // Keep all settings/admin features visible and wire the restored management tools.
 setTimeout(()=>{
   $('#repairRepeatsSetting')?.addEventListener('click',()=>{const n=repairLegacyRepeatsV3();renderHome();renderTaskTable();toast(n?`${n}건의 반복 회차를 복구했습니다.`:'복구할 반복업무가 없습니다.')});
-  $('#openHolidaySetting')?.addEventListener('click',()=>showPage('holidayPage'));
-  $('#openTaskSetting')?.addEventListener('click',()=>showPage('taskListPage'));
-  $('#openDbSetting')?.addEventListener('click',()=>showPage('dbPage'));
   renderSettings();
 },0);
 
@@ -1582,14 +1636,7 @@ function ensureV5Ui(){
   if($('#newTaskBtn'))$('#newTaskBtn').textContent='＋ 업무 작성';
   if($('#newDbBtn'))$('#newDbBtn').textContent='＋ DB 등록';
 
-  // Home panel view controls.
-  const gtitle=$('.gantt-card-v3 .panel-title'), ctitle=$('.calendar-card-v3 .panel-title');
-  if(gtitle&&!gtitle.querySelector('.panel-actions')){
-    gtitle.insertAdjacentHTML('beforeend','<div class="panel-actions"><button class="panel-action" data-v5layout="gantt">⛶ 크게</button><button class="panel-action" data-v5layout="calendar">간트 숨기기</button><button class="panel-action" data-v5layout="split">▣ 나란히</button></div>');
-  }
-  if(ctitle&&!ctitle.querySelector('.panel-actions')){
-    ctitle.insertAdjacentHTML('beforeend','<div class="panel-actions"><button class="panel-action" data-v5layout="calendar">⛶ 크게</button><button class="panel-action" data-v5layout="gantt">달력 숨기기</button><button class="panel-action" data-v5layout="split">▣ 나란히</button></div>');
-  }
+  // HOME 배치는 상단의 나란히/간트만/달력만 조작부 한 곳에서만 바꾼다.
   if($('#refreshHome')&&!$('#homeLayoutControl')){
     $('#refreshHome').insertAdjacentHTML('beforebegin','<div class="home-layout-control" id="homeLayoutControl"><button data-v5layout="split">나란히</button><button data-v5layout="gantt">간트만</button><button data-v5layout="calendar">달력만</button></div>');
   }
@@ -1672,8 +1719,7 @@ function renderCategoryMulti(){
   $$('input',menu).forEach(i=>i.onchange=()=>{state.selectedCategories=$$('input:checked',menu).map(x=>x.value);renderCategoryMulti();renderHome()});
 }
 function ganttCategoryFilterHtmlV5(){
-  const label=state.selectedCategories.length?state.selectedCategories.join(', '):'대분류 전체';
-  return `<div class="multi gantt-category-filter"><button class="btn small" id="ganttCatBtn">● ${esc(label)}</button><div id="ganttCatMenu" class="gantt-category-menu hidden"></div></div>`;
+  return '';
 }
 function bindGanttCategoryFilterV5(){
   const btn=$('#ganttCatBtn'),menu=$('#ganttCatMenu'); if(!btn||!menu)return;
@@ -2346,19 +2392,7 @@ const migrateStateV7Base=migrateStateV2;
 migrateStateV2=function(){migrateStateV7Base();migrateV7Data();applyThemeV7()};
 
 function updatePanelLayoutButtonsV7(){
-  const mode=state.settings.homeLayout||'split';
-  const g=$('.gantt-card-v3 .panel-actions'),c=$('.calendar-card-v3 .panel-actions');
-  if(g){
-    if(mode==='gantt')g.innerHTML='<button class="panel-action v7-restore" data-v7layout="split">↙ 작게</button><button class="panel-action" data-v7layout="calendar">달력 보기</button>';
-    else if(mode==='calendar')g.innerHTML='';
-    else g.innerHTML='<button class="panel-action" data-v7layout="gantt">⛶ 크게</button><button class="panel-action" data-v7layout="calendar">간트 숨기기</button>';
-  }
-  if(c){
-    if(mode==='calendar')c.innerHTML='<button class="panel-action v7-restore" data-v7layout="split">↙ 작게</button><button class="panel-action" data-v7layout="gantt">간트 보기</button>';
-    else if(mode==='gantt')c.innerHTML='';
-    else c.innerHTML='<button class="panel-action" data-v7layout="calendar">⛶ 크게</button><button class="panel-action" data-v7layout="gantt">달력 숨기기</button>';
-  }
-  $$('[data-v7layout]').forEach(b=>b.onclick=()=>{state.settings.homeLayout=b.dataset.v7layout;applyHomeLayoutV5();saveState()});
+  $$('.gantt-card-v3 .panel-actions,.calendar-card-v3 .panel-actions').forEach(actions=>actions.remove());
 }
 const applyHomeLayoutV7Base=applyHomeLayoutV5;
 applyHomeLayoutV5=function(){applyHomeLayoutV7Base();updatePanelLayoutButtonsV7()};
@@ -3593,6 +3627,157 @@ bind=function(){const result=bindV17Base();bindMobileFilterV17('catMultiBtn','ca
 applyMobileUiV17();
 window.addEventListener('resize',applyMobileUiV17);
 window.addEventListener('orientationchange',()=>requestAnimationFrame(applyMobileUiV17));
+
+// ========================= APP V18 — 모바일 완료 흐름 / 팝업 정리 =========================
+function canCompleteTaskV18(task){
+  return !(task?.checklist?.length)||task.checklist.every(item=>item.done);
+}
+function applyTaskStatusFieldsV18(task,next){
+  task.status=next;
+  if(next==='done')task.actualComplete=task.actualComplete||todayISO();
+  else task.actualComplete=null;
+  return task;
+}
+function setAppModalOpenV18(open){
+  document.documentElement.classList.toggle('app-modal-open-v18',open);
+  document.body.classList.toggle('app-modal-open-v18',open);
+}
+function decorateOpenModalV18(){
+  const wrap=$('#modalRoot .modal-wrap'),dialog=$('#modalRoot .modal');
+  if(!wrap||!dialog)return;
+  wrap.classList.add('app-modal-wrap-v18');
+  if($('#completeTask',dialog)){
+    wrap.classList.add('checklist-wrap-v18');
+    dialog.classList.add('checklist-task-modal-v18');
+  }
+  setAppModalOpenV18(true);
+}
+const modalV18Base=modal;
+modal=function(title,body,footer='',cls=''){
+  const result=modalV18Base(title,body,footer,cls);
+  decorateOpenModalV18();
+  return result;
+};
+const closeModalV18Base=closeModal;
+closeModal=function(){
+  setAppModalOpenV18(false);
+  return closeModalV18Base();
+};
+
+async function persistTaskStatusV18(task,next,{closeAfter=false}={}){
+  if(!task)return false;
+  if(next==='done'&&!canCompleteTaskV18(task)){
+    toast('체크리스트를 먼저 모두 완료해 주세요.');
+    openChecklist(task.id);
+    return false;
+  }
+  const previous={status:task.status||'planned',actualComplete:task.actualComplete||null};
+  applyTaskStatusFieldsV18(task,next);
+  recalcLinks();
+  try{
+    await saveState({reason:next==='done'?'업무 완료 처리':'업무 상태 변경'});
+    if(closeAfter)closeModal();
+    renderTaskTable();renderHome();
+    toast(next==='done'?'업무를 완료했습니다.':'업무 상태를 저장했습니다.');
+    return true;
+  }catch(error){
+    task.status=previous.status;task.actualComplete=previous.actualComplete;recalcLinks();
+    renderTaskTable();renderHome();
+    if(closeAfter)openChecklist(task.id);
+    toast('상태를 저장하지 못했습니다. 다시 시도해 주세요.');
+    return false;
+  }
+}
+function checklistMessageV18(task,checks,doneCount,allDone){
+  if(effectiveStatus(task)==='done')return `업무 완료됨 · 체크리스트 ${doneCount}/${checks.length} 확인`;
+  if(!checks.length)return '체크리스트 없음 · 바로 업무 완료할 수 있습니다.';
+  if(allDone)return `체크 완료 ${doneCount}/${checks.length} · 아래 ‘업무 완료’를 눌러 마무리하세요.`;
+  return `체크리스트 ${doneCount}/${checks.length} · 모두 체크하면 업무 완료 버튼이 활성화됩니다.`;
+}
+
+/* 완료는 체크리스트 창 한 곳에서만 처리한다. 목록 선택기는 진행 상태 변경과 완료 취소에만 쓴다. */
+function statusSelectV18(task){
+  const status=effectiveStatus(task),stored=task.status||'planned',overdue=status==='overdue';
+  const current=status==='done'?'done':stored;
+  const options=[
+    ['planned',overdue&&current==='planned'?'기한초과(자동)':'예정'],
+    ['prep','준비중'],
+    ['progress','진행중'],
+    ['hold','보류']
+  ];
+  if(current==='done')options.push(['done','완료']);
+  if(current==='overdue')options.push(['overdue','기한초과']);
+  return `<select class="status-select ${overdue?'status-overdue':''}" data-status-id="${task.id}" aria-label="${esc(task.name)} 진행 상태" title="완료 처리는 업무명을 눌러 체크리스트에서 진행합니다.">${options.map(([value,label])=>`<option value="${value}" ${current===value?'selected':''}>${label}</option>`).join('')}</select>`;
+}
+statusSelectV2=statusSelectV18;
+
+/* 같은 화면에 중복된 HOME 조작부는 상단 조작부 하나만 남긴다. */
+function removeDuplicateControlsV18(){
+  $('.gantt-category-filter')?.remove();
+  $$('.gantt-card-v3 .panel-actions,.calendar-card-v3 .panel-actions').forEach(actions=>actions.replaceChildren());
+}
+const updatePanelLayoutButtonsV18Base=updatePanelLayoutButtonsV7;
+updatePanelLayoutButtonsV7=function(){
+  updatePanelLayoutButtonsV18Base();
+  removeDuplicateControlsV18();
+};
+const renderHomeV18Base=renderHome;
+renderHome=function(){
+  const result=renderHomeV18Base();
+  removeDuplicateControlsV18();
+  return result;
+};
+
+openChecklist=function(id){
+  const t=state.tasks.find(x=>x.id===id);if(!t)return;
+  const checks=t.checklist||[],doneCount=checks.filter(c=>c.done).length,allDone=canCompleteTaskV18(t),alreadyDone=effectiveStatus(t)==='done';
+  const body=`<div class="completion-note ${allDone?'complete-ready':''}" aria-live="polite">${checklistMessageV18(t,checks,doneCount,allDone)}</div>
+    <div class="checklist-modal">${checks.length?checks.map(c=>`<label class="checkitem"><input type="checkbox" data-check="${c.id}" ${c.done?'checked':''} ${alreadyDone?'disabled':''}><span class="text">${esc(c.text)}</span></label>`).join(''):'<div class="muted">등록된 체크리스트가 없습니다.</div>'}</div>
+    <div class="related-document-v15"><label for="relatedDocumentTitleV15">관련 공문 제목 <span class="muted" style="display:inline">(선택)</span></label><input id="relatedDocumentTitleV15" maxlength="300" autocomplete="off" value="${esc(t.relatedDocumentTitle||'')}" placeholder="예: 정기감사 자료 제출 요청"><span class="muted">자동 저장되며 업무목록 검색에서 공문 제목으로 찾을 수 있습니다.</span></div>
+    <div class="muted checklist-schedule-v18">일정 ${fmtDate(t.start)} ~ ${fmtDate(t.end)} · 마감 ${fmtDate(t.deadline)}</div>`;
+  const completeLabel=alreadyDone?'완료됨':'업무 완료';
+  modal(`${t.urgent?'● ':''}${esc(t.name)}`,body,`<button class="btn" data-edit-task="${id}">내용 수정</button><button class="btn primary" id="completeTask" ${(allDone&&!alreadyDone)?'':'disabled'}>${completeLabel}</button>`,'small checklist-task-modal-v18');
+  const docInput=$('#relatedDocumentTitleV15');
+  if(docInput){
+    docInput.oninput=()=>{t.relatedDocumentTitle=docInput.value;scheduleRelatedDocumentSaveV15()};
+    docInput.onchange=()=>{captureRelatedDocumentV15(t);clearTimeout(relatedDocumentSaveTimerV15);relatedDocumentSaveTimerV15=null;saveState({reason:'관련 공문 제목 변경'})};
+  }
+  $$('[data-check]').forEach(input=>input.onchange=async()=>{
+    captureRelatedDocumentV15(t);clearTimeout(relatedDocumentSaveTimerV15);relatedDocumentSaveTimerV15=null;
+    const item=t.checklist.find(value=>value.id===input.dataset.check);if(!item)return;
+    const previous=item.done;item.done=input.checked;
+    openChecklist(id);
+    try{await saveState({reason:'체크리스트 변경'})}
+    catch(error){item.done=previous;openChecklist(id);toast('체크 상태를 저장하지 못했습니다. 다시 시도해 주세요.')}
+  });
+  $('[data-edit-task]').onclick=()=>{captureRelatedDocumentV15(t);scheduleRelatedDocumentSaveV15();openTaskForm(id)};
+  const complete=$('#completeTask');
+  if(complete&&!complete.disabled)complete.onclick=async()=>{
+    captureRelatedDocumentV15(t);clearTimeout(relatedDocumentSaveTimerV15);relatedDocumentSaveTimerV15=null;
+    complete.disabled=true;complete.textContent='저장 중…';
+    await persistTaskStatusV18(t,'done',{closeAfter:true});
+  };
+};
+
+const renderTaskTableV18Base=renderTaskTable;
+renderTaskTable=function(){
+  const result=renderTaskTableV18Base();
+  $$('#taskTableBody tr').forEach(row=>{
+    const id=$('[data-task]',row)?.dataset.task,task=state.tasks.find(item=>item.id===id);
+    row.classList.toggle('task-done-v18',!!task&&effectiveStatus(task)==='done');
+  });
+  $$('[data-status-id]').forEach(select=>select.onchange=async()=>{
+    const task=state.tasks.find(item=>item.id===select.dataset.statusId);if(!task)return;
+    const next=select.value,previous=task.status||'planned';
+    if(next==='done'&&!canCompleteTaskV18(task)){
+      select.value=previous;toast('체크리스트를 먼저 모두 완료해 주세요.');openChecklist(task.id);return;
+    }
+    select.disabled=true;
+    const saved=await persistTaskStatusV18(task,next);
+    if(!saved&&select.isConnected){select.disabled=false;select.value=previous}
+  });
+  return result;
+};
 
 </script>
 </body></html>
