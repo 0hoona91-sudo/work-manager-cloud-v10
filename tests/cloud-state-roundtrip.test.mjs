@@ -144,7 +144,10 @@ const state = {
       startMode: "business",
       methodBlocks: [{ id: "step-image", type: "image", driveFileId: "drive-step", data: "blob:must-not-save" }],
     }],
-    methodBlocks: [{ id: "root-image", type: "image", driveFileId: "drive-root", objectUrl: "blob:local-only", data: "data:image/png;base64,local-only" }],
+    methodBlocks: [
+      { id: "root-image", type: "image", driveFileId: "drive-root", objectUrl: "blob:local-only", data: "data:image/png;base64,local-only" },
+      { id: "root-file", type: "file", driveFileId: "drive-form", name: "점검표.xlsx", mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", size: 2048, caption: "작성 양식" },
+    ],
     photos: ["legacy-photo"],
     method: "legacy method",
   }],
@@ -172,7 +175,7 @@ assert.equal(maps.checklistItems.size, 3, "업무·DB·연계단계 체크리스
 assert.equal(maps.taskLinks.size, 1);
 assert.equal(maps.templates.size, 1);
 assert.equal(maps.linkedRules.size, 1);
-assert.equal(maps.manualBlocks.size, 2);
+assert.equal(maps.manualBlocks.size, 3);
 assert.equal(maps.categories.size, 2);
 assert.equal(maps.owners.size, 2);
 assert.equal(maps.holidays.size, 1);
@@ -187,7 +190,7 @@ assert.equal(taskDoc.relatedDocumentTitle, "시설점검 결과 제출 요청", 
 for (const block of maps.manualBlocks.values()) {
   assert.ok(!Object.hasOwn(block, "data"), "base64/blob 사진 데이터를 Firestore에 저장하면 안 됩니다.");
   assert.ok(!Object.hasOwn(block, "objectUrl"), "로컬 object URL을 Firestore에 저장하면 안 됩니다.");
-  assert.ok(block.driveFileId, "사진 블록에는 Drive 파일 ID만 남아야 합니다.");
+  assert.ok(block.driveFileId, "사진·첨부파일 블록에는 Drive 파일 ID만 남아야 합니다.");
 }
 const settingsDoc = maps.settings.get("main");
 assert.ok(!Object.hasOwn(settingsDoc, "holidayApiKey"), "외부 API 키를 Firestore에 동기화하면 안 됩니다.");
@@ -203,6 +206,9 @@ assert.deepEqual(Array.from(roundTrip.tasks[0].repeat.months), [1, 4, 7, 10], "�
 assert.equal(roundTrip.templates[0].linkedSteps[0].name, "결과 보고");
 assert.equal(roundTrip.templates[0].linkedSteps[0].checklist[0], "보고 확인");
 assert.equal(roundTrip.templates[0].methodBlocks[0].driveFileId, "drive-root");
+assert.equal(roundTrip.templates[0].methodBlocks[1].type, "file");
+assert.equal(roundTrip.templates[0].methodBlocks[1].name, "점검표.xlsx");
+assert.equal(roundTrip.templates[0].methodBlocks[1].driveFileId, "drive-form");
 assert.equal(roundTrip.settings.holidayApiKey, "device-only");
 assert.equal(roundTrip.settings.uiTheme, "navy", "선택한 V21 네이비 테마가 새로고침 후에도 유지되어야 합니다.");
 assert.equal(roundTrip.settings.designV21Applied, true, "V21 최초 적용 표식이 클라우드 상태에 유지되어야 합니다.");
