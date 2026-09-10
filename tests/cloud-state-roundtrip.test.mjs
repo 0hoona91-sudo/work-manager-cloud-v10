@@ -123,6 +123,7 @@ const state = {
     end: "2026-09-08",
     deadline: "2026-09-08",
     relatedDocumentTitle: "시설점검 결과 제출 요청",
+    repeat: { cycle: "quarterly", from: "2026-09-08", until: "2027-09-08", months: [1, 4, 7, 10] },
     generatedKey: "dbauto:tpl-1:M:2026-09",
     checklist: [{ id: "check-1", text: "현장 확인", done: false }],
     link: { parentId: "task-0", dynamic: true, basis: "end", startOffset: 1, startMode: "business" },
@@ -196,6 +197,7 @@ const roundTrip = context.deserializeState(maps, { holidayApiKey: "device-only" 
 assert.equal(roundTrip.tasks[0].checklist[0].text, "현장 확인");
 assert.equal(roundTrip.tasks[0].link.parentId, "task-0");
 assert.equal(roundTrip.tasks[0].relatedDocumentTitle, "시설점검 결과 제출 요청", "관련 공문 제목이 새로고침 후에도 유지되어야 합니다.");
+assert.deepEqual(Array.from(roundTrip.tasks[0].repeat.months), [1, 4, 7, 10], "반복업무의 사용자가 선택한 실시 월이 새로고침 후에도 유지되어야 합니다.");
 assert.equal(roundTrip.templates[0].linkedSteps[0].name, "결과 보고");
 assert.equal(roundTrip.templates[0].linkedSteps[0].checklist[0], "보고 확인");
 assert.equal(roundTrip.templates[0].methodBlocks[0].driveFileId, "drive-root");
