@@ -30,6 +30,11 @@ assert.match(cloud, /persistentMultipleTabManager/, "여러 탭이 같은 오프
 assert.match(cloud, /https:\/\/www\.googleapis\.com\/auth\/drive\.file/, "Drive 권한은 앱이 만든/연 파일로 제한해야 합니다.");
 assert.doesNotMatch(cloud, /auth\/drive(?:["'])/, "전체 Google Drive 권한을 요청하면 안 됩니다.");
 assert.match(cloud, /hasDriveAccess\(\)/, "사진 선택 전에 Drive 권한 준비 여부를 확인할 수 있어야 합니다.");
+assert.match(cloud, /DRIVE_TOKEN_SESSION_KEY/, "Drive 접근 토큰은 같은 탭에서 다시 사용할 수 있어야 합니다.");
+assert.match(cloud, /sessionStorage\.setItem\(DRIVE_TOKEN_SESSION_KEY/, "Drive 접근 토큰은 영구 저장소가 아닌 세션에만 보관해야 합니다.");
+assert.match(cloud, /createFileBlock/, "업무 DB 양식 파일을 Drive에 업로드할 수 있어야 합니다.");
+assert.match(cloud, /downloadDriveFile/, "Drive 첨부파일을 앱에서 내려받을 수 있어야 합니다.");
+assert.match(cloud, /MAX_DRIVE_FILE_BYTES/, "브라우저 업로드에 안전한 파일 크기 제한이 있어야 합니다.");
 assert.match(cloud, /popup-blocked/, "팝업 차단 오류를 사용자가 해결할 수 있는 안내로 변환해야 합니다.");
 assert.doesNotMatch(cloud, /signInWithRedirect/, "iPad 저장공간 제한을 유발하는 리디렉션 로그인을 사용하면 안 됩니다.");
 assert.doesNotMatch(cloud, /getRedirectResult/, "사용하지 않는 리디렉션 로그인 결과를 확인하면 안 됩니다.");
@@ -58,4 +63,4 @@ for (const moduleName of ["firebase-app.js", "firebase-auth.js", "firebase-fires
 }
 assert.match(serviceWorker, /cache\.addAll\(FIREBASE_MODULES\)\.catch/, "Firebase CDN 장애가 앱 셸 설치를 막으면 안 됩니다.");
 
-console.log("PASS cloud/PWA contract: 36 assertions");
+console.log("PASS cloud/PWA contract: Drive session and file attachment included");
