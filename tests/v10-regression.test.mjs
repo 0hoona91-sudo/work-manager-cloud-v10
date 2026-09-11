@@ -373,6 +373,23 @@ assert.deepEqual(chainTasks.map((task) => task.id), idsBeforeMove, "재계산이
 assert.equal(context.state.tasks.filter((task) => task.groupId === chainResult.groupId).length, 4, "날짜 재계산으로 중복업무가 생기면 안 됩니다.");
 assert.equal(context.state.tasks.find((task) => task.id === "qa-history")?.actualComplete, "2026-08-31", "완료된 과거 이력이 보존되어야 합니다.");
 
+context.state = {
+  tasks: [
+    { id: "qa-link-root", step: 1, start: "2026-09-10", end: "2026-09-10", deadline: "2026-09-10", status: "planned" },
+    { id: "qa-link-normal", step: 2, start: "2026-09-01", end: "2026-09-01", deadline: "2026-09-01", status: "planned", link: { parentId: "qa-link-root", dynamic: true, basis: "start", startOffset: 1, startMode: "calendar", startHolidayShift: "keep", workType: "single", limitDays: 0, limitMode: "calendar", limitHolidayShift: "keep" } },
+    { id: "qa-link-manual", step: 2, start: "2026-10-01", end: "2026-10-01", deadline: "2026-10-01", status: "planned", manualOverride: true, link: { parentId: "qa-link-root", dynamic: true, basis: "start", startOffset: 2, startMode: "calendar", startHolidayShift: "keep", workType: "single", limitDays: 0, limitMode: "calendar", limitHolidayShift: "keep" } },
+    { id: "qa-link-schedule", step: 2, start: "2026-10-02", end: "2026-10-02", deadline: "2026-10-02", status: "planned", scheduleOverride: true, link: { parentId: "qa-link-root", dynamic: true, basis: "start", startOffset: 3, startMode: "calendar", startHolidayShift: "keep", workType: "single", limitDays: 0, limitMode: "calendar", limitHolidayShift: "keep" } },
+    { id: "qa-link-done", step: 2, start: "2026-08-31", end: "2026-08-31", deadline: "2026-08-31", status: "done", actualComplete: "2026-08-31", link: { parentId: "qa-link-root", dynamic: true, basis: "start", startOffset: 4, startMode: "calendar", startHolidayShift: "keep", workType: "single", limitDays: 0, limitMode: "calendar", limitHolidayShift: "keep" } },
+  ],
+  holidays: [],
+  settings: {},
+};
+context.recalcLinks();
+assert.equal(context.state.tasks.find((task) => task.id === "qa-link-normal").start, "2026-09-11", "정상 연계업무는 상위 일정 변경을 따라가야 합니다.");
+assert.equal(context.state.tasks.find((task) => task.id === "qa-link-manual").start, "2026-10-01", "사용자가 직접 고정한 연계일정은 자동 재계산으로 덮어쓰면 안 됩니다.");
+assert.equal(context.state.tasks.find((task) => task.id === "qa-link-schedule").start, "2026-10-02", "일정 예외처리된 연계업무는 자동 재계산으로 덮어쓰면 안 됩니다.");
+assert.equal(context.state.tasks.find((task) => task.id === "qa-link-done").start, "2026-08-31", "완료된 연계업무의 과거 일정은 자동 재계산으로 이동하면 안 됩니다.");
+
 const repeatTemplate = {
   id: "qa-template-repeat",
   category: "행정",
@@ -716,6 +733,8 @@ assert.ok(html.includes("body.app-v21.mobile-ui-v17 .home-hero-v21"), "모바일
 assert.ok(html.includes("body.app-v21.mobile-ui-v17 .side"), "V21에서도 모바일 고정 하단 메뉴 스타일을 유지해야 합니다.");
 assert.ok(html.includes("category:$('#dfCat')?.value||t.category"), "새 연계 단계는 현재 1단계 대분류를 이어받아야 합니다.");
 assert.ok(html.includes("owner:$('#dfOwner')?.value||t.owner||''"), "새 연계 단계는 현재 1단계 담당자를 이어받아야 합니다.");
+assert.ok(html.includes("category:rootCategory,owner:$('#dfOwner')?.value||t.owner||'',name,cycle:cyc"), "업무 DB 저장 시 담당자를 첫 저장 경로에서 함께 보존해야 합니다.");
+assert.ok(!html.includes("const beforeIds=new Set(state.templates.map(x=>x.id))"), "업무 DB 한 번 저장으로 클라우드 저장을 두 번 실행하면 안 됩니다.");
 assert.ok(html.includes("repairLinkedInheritanceV23"), "기존 기본 대분류·미지정 담당자 오류를 한 번 복구해야 합니다.");
 assert.ok(html.includes('id="addMethodFile"'), "업무 DB 폼에 양식 파일 첨부 입력이 있어야 합니다.");
 assert.ok(html.includes("makeMethodFileBlock"), "업무 DB 파일을 Drive 블록으로 생성해야 합니다.");
