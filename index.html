@@ -1398,7 +1398,7 @@ const DBNAME='TaskManagerLocalDB_v1';
 function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DBNAME,1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('data'))e.target.result.createObjectStore('data')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function readLocalState(){try{const db=await openDb();const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get('state');const saved=await new Promise((res,rej)=>{req.onsuccess=()=>res(req.result||null);req.onerror=()=>rej(req.error)});db.close();return saved}catch(e){console.warn('로컬 데이터 확인 실패',e);return null}}
 async function writeLocalState(snapshot){try{const db=await openDb();const tx=db.transaction('data','readwrite');tx.objectStore('data').put(clone(snapshot),'state');await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){console.warn('기기 캐시 저장 실패',e)}}
-async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260910-25');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
+async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260911-26');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
 async function saveState(meta={}){const snapshot=clone(state);await writeLocalState(snapshot);if(window.cloudSync)await window.cloudSync.save(snapshot,meta)}
 function seed(){state.categories=['소방','시설','행정','교육','회계','인사','복지','기타'];state.owners=['나영훈','관리소장','시설담당','경리담당'];state.holidays=clone(holidaySeed);state.templates=clone(sampleTemplates);state.tasks=clone(sampleTasks);state.selectedCategories=[]}
 
@@ -1875,7 +1875,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260910-25').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260911-26').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2122,7 +2122,7 @@ function templateOccurrenceSpecsV5(t,from,to){
     for(let d=dateOf(start),e=dateOf(end);d<=e;d.setDate(d.getDate()+1)){
       if(days.includes(d.getDay())){
         const raw=iso(d),planned=t.holidayShift==='keep'?raw:shiftWorkday(raw,t.holidayShift||'prev');
-        out.push({key:`dbauto:${t.id}:W:${raw}`,raw,planned});
+        if(planned>=start&&planned<=end)out.push({key:`dbauto:${t.id}:W:${raw}`,raw,planned});
       }
     }
     return out;
@@ -2565,15 +2565,17 @@ function ensureDbLinkedChildrenV5(root,tpl,policy='pending'){
         unconfirmed:false,checklist:(src.checklist||[]).map((text,index)=>({id:stableGeneratedCheckId(childId,index),text,done:false})),notes:src.notes,templateId:s.templateId||null,actualComplete:null,periodLabel:periodFromDate(prev.end||prev.start),
         link:linkDef,repeat:null,manualOverride:false};
       state.tasks.push(child);
-    }else if(effectiveStatus(child)!=='done'){
+    }else if(policy!=='append'&&effectiveStatus(child)!=='done'){
       child.parentAutoRootId=root.id;child.groupId=groupId;child.step=i+2;child.category=src.category;child.name=src.name;child.urgent=src.urgent;child.owner=src.owner;child.notes=src.notes;child.templateId=s.templateId||null;
       child.checklist=preserveChecklistV5(child.checklist,src.checklist);
       if(!child.manualOverride)child.link=linkDef;
     }
     prev=child;
   });
-  const stale=state.tasks.filter(x=>x.parentAutoRootId===root.id&&!valid.has(x.generatedKey)&&effectiveStatus(x)!=='done');
-  if(stale.length){const ids=new Set(stale.map(x=>x.id));state.tasks=state.tasks.filter(x=>!ids.has(x.id))}
+  if(policy!=='append'){
+    const stale=state.tasks.filter(x=>x.parentAutoRootId===root.id&&!valid.has(x.generatedKey)&&effectiveStatus(x)!=='done');
+    if(stale.length){const ids=new Set(stale.map(x=>x.id));state.tasks=state.tasks.filter(x=>!ids.has(x.id))}
+  }
 }
 function recalcLinks(){
   for(let pass=0;pass<20;pass++){
@@ -4423,8 +4425,8 @@ function rollingAutoTargetV24(reference=todayISO()){
 }
 
 // 신규 DB 회차에 딸린 연계 단계만 계산한다. 기존 업무의 일정·상태·체크 진행률은 건드리지 않는다.
-function recalcNewDbChainV24(root){
-  const children=state.tasks.filter(task=>task.parentAutoRootId===root.id);
+function recalcNewDbChainV24(root,createdIds=null){
+  const children=state.tasks.filter(task=>task.parentAutoRootId===root.id&&(!createdIds||createdIds.has(task.id)));
   for(let pass=0;pass<20;pass++){
     let changed=false;
     for(const task of children.sort((a,b)=>(a.step||1)-(b.step||1))){
@@ -4448,18 +4450,34 @@ function appendMissingTemplateOccurrencesV24(template,from,to){
   const suppressed=new Set(state.settings.suppressedAutoKeys||[]);
   let created=0;
   for(const spec of templateOccurrenceSpecsV5(template,from,to)){
-    if(suppressed.has(spec.key)||state.tasks.some(task=>task.generatedKey===spec.key))continue;
-    const root=taskFromDbTemplateV5(template,spec);
-    state.tasks.push(root);
-    ensureDbLinkedChildrenV5(root,template,'pending');
-    recalcNewDbChainV24(root);
-    created++;
+    if(suppressed.has(spec.key))continue;
+    let root=state.tasks.find(task=>task.generatedKey===spec.key);
+    if(!root){root=taskFromDbTemplateV5(template,spec);state.tasks.push(root);created++}
+    const childStart=state.tasks.length;
+    // 기존 단계는 그대로 두고 부분 저장 실패로 빠진 단계만 추가한다.
+    ensureDbLinkedChildrenV5(root,template,'append');
+    const createdIds=new Set(state.tasks.slice(childStart).map(task=>task.id));
+    if(createdIds.size)recalcNewDbChainV24(root,createdIds);
   }
   return created;
 }
 
+function rollingTemplateSessionTokenV24(template,today,target,generatedKeys,holidayDates){
+  return JSON.stringify({
+    today,target,covered:template.autoGeneratedThrough||'',
+    rule:{
+      id:template.id,autoSchedule:!!template.autoSchedule,activeFrom:template.activeFrom||'',activeUntil:template.activeUntil||'',
+      cycle:template.cycle||'',cycleMonths:template.cycleMonths||[],quarter:template.quarter??null,half:template.half??null,
+      dayRule:template.dayRule||'',exactDay:template.exactDay??null,weekday:template.weekday??null,weekdays:template.weekdays||[],
+      holidayShift:template.holidayShift||'prev',durationDays:Number(template.durationDays||0),deadlineOffset:Number(template.deadlineOffset||0),
+      category:template.category||'',owner:template.owner||'',urgent:!!template.urgent,checklist:template.checklist||[],notes:template.notes||'',linkedSteps:template.linkedSteps||[]
+    },
+    generatedKeys:[...generatedKeys].sort(),holidayDates,suppressed:(state.settings.suppressedAutoKeys||[]).filter(key=>String(key).startsWith(`dbauto:${template.id}:`)).sort()
+  });
+}
+
 // 화면 범위와 무관하게 현재 시점부터 12개월 뒤 월말까지만 확보한다.
-// autoGeneratedThrough가 목표일에 도달했으면 회차 계산 자체를 생략한다.
+// 한 세션에서는 원본 규칙·생성 키·기준일이 바뀐 경우에만 다시 확인한다.
 function v5DefaultAutoRange(){
   const today=todayISO();
   return[today,rollingAutoTargetV24(today)];
@@ -4468,20 +4486,29 @@ function v5DefaultAutoRange(){
 function ensureAutoSchedulesV5(_rangeStart=null,_rangeEnd=null){
   v5EnsureSettings();
   const today=todayISO(),horizon=rollingAutoTargetV24(today);
-  let created=0,advanced=0;
+  const checked=window.v24RollingSessionChecks instanceof Map?window.v24RollingSessionChecks:(window.v24RollingSessionChecks=new Map());
+  const keysByTemplate=new Map(),holidayDates=(state.holidays||[]).map(item=>item.date).filter(Boolean).sort();
+  for(const task of state.tasks||[]){
+    if(!task.autoSourceTemplateId||!task.generatedKey)continue;
+    if(!keysByTemplate.has(task.autoSourceTemplateId))keysByTemplate.set(task.autoSourceTemplateId,[]);
+    keysByTemplate.get(task.autoSourceTemplateId).push(task.generatedKey);
+  }
+  let created=0,changed=false;
   for(const template of state.templates||[]){
     if(!template.autoSchedule||!template.cycle||template.cycle==='none')continue;
     const target=template.activeUntil?v5MinDate(horizon,template.activeUntil):horizon;
-    const covered=/^\d{4}-\d{2}-\d{2}$/.test(String(template.autoGeneratedThrough||''))?template.autoGeneratedThrough:'';
-    if(covered&&covered>=target)continue;
+    const beforeToken=rollingTemplateSessionTokenV24(template,today,target,keysByTemplate.get(template.id)||[],holidayDates);
+    if(checked.get(template.id)===beforeToken)continue;
     let from=today;
     if(template.activeFrom)from=v5MaxDate(from,template.activeFrom);
-    if(covered)from=v5MaxDate(from,addDays(covered,1));
+    const beforeCount=state.tasks.length;
     if(target>=from)created+=appendMissingTemplateOccurrencesV24(template,from,target);
-    template.autoGeneratedThrough=target;
-    advanced++;
+    if(state.tasks.length!==beforeCount)changed=true;
+    if(template.autoGeneratedThrough!==target){template.autoGeneratedThrough=target;changed=true}
+    const currentKeys=(state.tasks||[]).filter(task=>task.autoSourceTemplateId===template.id&&task.generatedKey).map(task=>task.generatedKey);
+    checked.set(template.id,rollingTemplateSessionTokenV24(template,today,target,currentKeys,holidayDates));
   }
-  if(created||advanced)saveState({reason:`반복업무 Rolling 12개월 자동 보충${created?` · ${created}회차 추가`:''}`});
+  if(changed)saveState({reason:`반복업무 Rolling 12개월 자동 보충${created?` · ${created}회차 추가`:''}`});
   return created;
 }
 
