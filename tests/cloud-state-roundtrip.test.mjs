@@ -234,6 +234,19 @@ const documentDiffs = context.diffMaps(maps, context.serializeState(documentChan
 assert.equal(documentDiffs.length, 1, "공문 제목 변경은 해당 업무 문서 한 건만 갱신해야 합니다.");
 assert.deepEqual(Array.from(documentDiffs[0].fields), ["relatedDocumentTitle"]);
 
+const photoRemoved = JSON.parse(JSON.stringify(state));
+photoRemoved.templates[0].methodBlocks = photoRemoved.templates[0].methodBlocks.filter((block) => block.id !== "root-image");
+const photoDeleteDiffs = context.diffMaps(maps, context.serializeState(photoRemoved));
+assert.equal(photoDeleteDiffs.length, 2, "사진 한 장 삭제는 DB 참조목록과 해당 Drive 연결 블록만 갱신해야 합니다.");
+const photoBlockDelete = photoDeleteDiffs.find((item) => item.collection === "manualBlocks" && item.type === "delete");
+const photoOrderingUpdate = photoDeleteDiffs.find((item) => item.collection === "manualBlocks" && item.type === "update");
+assert.equal(photoBlockDelete?.type, "delete");
+assert.equal(photoBlockDelete?.before.driveFileId, "drive-root", "삭제 전 Drive 파일 ID를 다른 첨부정보와 섞으면 안 됩니다.");
+assert.deepEqual(Array.from(photoOrderingUpdate?.fields || []), ["order"], "사진 삭제 뒤 남은 첨부의 정렬값 외 다른 필드를 갱신하면 안 됩니다.");
+const photoRemovedRoundTrip = context.deserializeState(context.serializeState(photoRemoved), {});
+assert.equal(photoRemovedRoundTrip.templates[0].methodBlocks.length, 1, "삭제하지 않은 양식 파일은 그대로 유지되어야 합니다.");
+assert.equal(photoRemovedRoundTrip.templates[0].methodBlocks[0].driveFileId, "drive-form", "사진 삭제가 다른 Drive 첨부파일을 지우면 안 됩니다.");
+
 const completed = JSON.parse(JSON.stringify(state));
 completed.tasks[0].status = "done";
 completed.tasks[0].actualComplete = "2026-09-09";
