@@ -44,6 +44,7 @@ node tests/v10-regression.test.mjs
 node tests/cloud-state-roundtrip.test.mjs
 node tests/cloud-contract.test.mjs
 node tests/firestore-usage-regression.test.mjs
+node tests/home-focus-regression.test.mjs
 ```
 
 ## V23 연계 상속·Drive 첨부·테마
@@ -79,3 +80,16 @@ node tests/firestore-usage-regression.test.mjs
 | 저장 선조회 | 자동 통과 | update 충돌 문서와 신규 `generatedKeys` 잠금만 트랜잭션에서 읽고 일반 create/delete 선조회 제거 |
 | 경합 중복로그 | 자동 통과 | 다른 기기가 이미 생성 잠금을 확보한 회차는 업무와 changeLogs 모두 추가 write 없음 |
 | 동일 값 update | 자동 통과 | 트랜잭션에서 확인한 원격 필드가 이미 목표값이면 revision·문서·changeLogs write 생략 |
+
+## V26 HOME 업무 요약·집중보기
+
+| 항목 | 결과 | 확인 내용 |
+| --- | --- | --- |
+| 오늘 업무 | 자동 통과 | 오늘 일정에 걸치는 미완료 업무만 집계하고 완료·실제완료 업무 제외 |
+| 기한초과 | 자동 통과 | 기존 `effectiveStatus`를 재사용하고 완료·보류 업무를 미처리 기한초과로 잘못 포함하지 않음 |
+| 이번 주 | 자동 통과 | 간트의 주간 기준과 같은 월요일~일요일 범위에서 일정이 겹치는 미완료 업무 집계 |
+| 긴급 업무 | 자동 통과 | 기존 `urgent` 값과 완료 판정을 함께 사용 |
+| 집중보기 | 자동 통과 / 화면 확인 대기 | 카드에서 기존 업무목록으로 이동하고 상세·체크리스트·상태 저장 경로 재사용 |
+| 모바일 배치 | 자동 통과 / 화면 확인 대기 | PC 4열, 모바일·태블릿 2열과 42px 이상 집중보기 이동 버튼 적용 |
+| 실시간 갱신 | 자동 통과 | 기존 원격 반영 경로의 `renderHome`·`renderTaskTable` 호출로 건수와 목록 재계산 |
+| Firestore 영향 | 구조 확인 | 기존 메모리 `state.tasks`만 사용하며 요약 전용 read·listener·write 없음 |

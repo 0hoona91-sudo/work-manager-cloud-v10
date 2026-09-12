@@ -1261,6 +1261,32 @@ body.app-v21.mobile-ui-v17 .navbtn.active{background:var(--accent-soft)!importan
 @media(max-width:620px){.method-add-actions-v23{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important}.method-add-actions-v23>.btn{justify-content:center!important}.method-add-actions-v23>.muted,.method-add-actions-v23>.drive-photo-help-v12{grid-column:1/-1}.method-file-card-v23{grid-template-columns:auto minmax(0,1fr)}.method-file-download-v23{grid-column:1/-1;width:100%}}
 </style>
 
+<style id="app-v25-home-focus-style">
+/* APP V25: 기존 HOME 지표 자리를 네 가지 실무 집중보기로 사용한다. */
+body.app-v21 #kpis.home-focus-grid-v25{grid-template-columns:repeat(4,minmax(140px,1fr))!important}
+body.app-v21 .home-focus-card-v25{
+  width:100%;margin:0;appearance:none;color:inherit;font:inherit;text-align:left;cursor:pointer;
+  transition:transform .16s ease,border-color .16s ease,box-shadow .16s ease
+}
+body.app-v21 .home-focus-card-v25:hover{transform:translateY(-2px);border-color:color-mix(in srgb,var(--accent) 38%,#dfe7f1)!important;box-shadow:0 12px 28px rgba(31,57,90,.1)!important}
+body.app-v21 .home-focus-card-v25:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 32%,transparent);outline-offset:2px}
+body.app-v21 .home-focus-card-v25 b{display:flex!important;align-items:baseline;gap:3px}
+body.app-v21 .home-focus-card-v25 b small{font-size:12px;font-weight:800;color:#728197}
+body.app-v21 .home-focus-card-v25 em{display:block;margin-top:4px;color:#8a96a7;font-size:10px;font-style:normal;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.app-v21 .home-focus-card-v25.danger em,body.app-v21 .home-focus-card-v25.urgent em{color:#b86b6b}
+body.app-v21 .home-focus-card-v25.urgent::before{background:#fff0f0!important;color:#d44a4a!important}
+body.app-v21 .home-focus-card-v25.urgent b{color:#cb4444!important}
+.task-focus-banner-v25{display:flex;align-items:center;gap:12px;margin-bottom:12px;padding:12px 14px!important;border:1px solid color-mix(in srgb,var(--accent) 24%,#dce5f1)!important;background:var(--accent-softer)!important}
+.task-focus-copy-v25{display:flex;min-width:0;flex:1;flex-direction:column;gap:2px}.task-focus-copy-v25 span{color:var(--accent-deep);font-size:10px;font-weight:900;letter-spacing:.08em}.task-focus-copy-v25 b{color:#233a58;font-size:16px}.task-focus-copy-v25 b em{margin-left:5px;color:var(--accent-deep);font-style:normal}.task-focus-copy-v25 small{color:#68788d;line-height:1.4}
+#taskListPage.task-focus-active-v25>.toolbar{display:none!important}
+@media(max-width:900px){body.app-v21 #kpis.home-focus-grid-v25{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+@media(max-width:620px){
+  body.app-v21 .home-focus-card-v25{min-height:82px!important;padding-right:8px!important}
+  body.app-v21 .home-focus-card-v25 em{white-space:normal;line-height:1.3}
+  .task-focus-banner-v25{align-items:stretch;flex-wrap:wrap}.task-focus-copy-v25{order:-1;flex-basis:100%}.task-focus-banner-v25>.btn{flex:1 1 130px;min-height:42px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1875,7 +1901,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260911-27').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260912-28').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2475,7 +2501,8 @@ function renderTaskCategoryFilterV6(){
 }
 
 function taskListVisibleV6(){
-  const q=$('#taskSearch')?.value.trim().toLowerCase()||'',f=$('#taskStatusFilter')?.value||'all',cats=state.settings.taskListCategories||[];
+  const focus=String(window.v25HomeFocusKey||'');
+  const q=focus?'':($('#taskSearch')?.value.trim().toLowerCase()||''),f=focus?'all':($('#taskStatusFilter')?.value||'all'),cats=focus?[]:(state.settings.taskListCategories||[]);
   let arr=[...state.tasks].sort((a,b)=>{
     const sa=a.start||'9999-99-99',sb=b.start||'9999-99-99';
     if(sa!==sb)return sa.localeCompare(sb);
@@ -2486,6 +2513,7 @@ function taskListVisibleV6(){
   arr=arr.filter(t=>!q||[t.name,t.category,t.notes,t.owner,t.deadline,t.templateId].join(' ').toLowerCase().includes(q));
   if(cats.length)arr=arr.filter(t=>cats.includes(t.category));
   arr=arr.filter(t=>f==='all'||(f==='pending'&&effectiveStatus(t)!=='done')||(f==='done'&&effectiveStatus(t)==='done')||(f==='overdue'&&effectiveStatus(t)==='overdue'));
+  if(focus)arr=arr.filter(t=>taskMatchesHomeFocusV25(t,focus));
   return arr;
 }
 function bindSelectAllV6(arr){
@@ -4511,6 +4539,81 @@ function ensureAutoSchedulesV5(_rangeStart=null,_rangeEnd=null){
   if(changed)saveState({reason:`반복업무 Rolling 12개월 자동 보충${created?` · ${created}회차 추가`:''}`});
   return created;
 }
+
+// ========================= APP V25 — HOME summary / focused task list =========================
+const HOME_FOCUS_META_V25={
+  today:{label:'오늘 업무',icon:'✓',hint:'오늘 일정에 포함된 미완료 업무'},
+  overdue:{label:'기한초과',icon:'!',hint:'기한이 지난 미완료 업무',tone:'danger'},
+  week:{label:'이번 주',icon:'7',hint:'이번 주 일정에 포함된 미완료 업무'},
+  urgent:{label:'긴급 업무',icon:'●',hint:'긴급 표시된 미완료 업무',tone:'urgent'}
+};
+window.v25HomeFocusKey='';
+
+function homeFocusWeekBoundsV25(reference=todayISO()){
+  const monday=dateOf(reference);if(!monday)return[reference,reference];
+  monday.setDate(monday.getDate()-((monday.getDay()+6)%7));
+  const start=iso(monday);return[start,addDays(start,6)];
+}
+function taskMatchesHomeFocusV25(task,key,reference=todayISO()){
+  const status=effectiveStatus(task);if(status==='done')return false;
+  if(key==='today')return taskMatchesRange(task,reference,reference);
+  if(key==='overdue')return status==='overdue';
+  if(key==='week'){const[start,end]=homeFocusWeekBoundsV25(reference);return taskMatchesRange(task,start,end)}
+  if(key==='urgent')return!!task.urgent;
+  return true;
+}
+function homeFocusTasksV25(key,reference=todayISO()){
+  return(state.tasks||[]).filter(task=>taskMatchesHomeFocusV25(task,key,reference));
+}
+function renderHomeFocusV25(){
+  const root=$('#kpis');if(!root)return;
+  const hero=$('#homeHeroV21');if(hero&&hero.nextElementSibling!==root)hero.after(root);
+  root.classList.add('home-focus-grid-v25');
+  root.innerHTML=Object.entries(HOME_FOCUS_META_V25).map(([key,meta])=>{
+    const count=homeFocusTasksV25(key).length;
+    return`<button type="button" class="kpi home-focus-card-v25 ${meta.tone||''}" data-home-focus-v25="${key}" data-v21-icon="${meta.icon}" aria-label="${meta.label} ${count}건, 업무목록에서 보기"><span>${meta.label}</span><b>${count}<small>건</small></b><em>${meta.hint}</em></button>`;
+  }).join('');
+  $$('[data-home-focus-v25]',root).forEach(card=>card.onclick=()=>openHomeFocusV25(card.dataset.homeFocusV25));
+}
+function clearHomeFocusV25(updateHistory=true){
+  window.v25HomeFocusKey='';
+  if(updateHistory&&history.state?.homeFocusV25){
+    const next={...history.state};delete next.homeFocusV25;history.replaceState(next,'',location.href);
+  }
+}
+function openHomeFocusV25(key){
+  if(!HOME_FOCUS_META_V25[key])return;
+  window.v25HomeFocusKey=key;
+  try{history.pushState({...history.state,homeFocusV25:key},'',location.href)}catch(error){console.warn('집중보기 이동 기록을 만들지 못했습니다.',error)}
+  showPage('taskListPage');
+}
+function renderTaskFocusV25(){
+  const page=$('#taskListPage'),key=String(window.v25HomeFocusKey||''),meta=HOME_FOCUS_META_V25[key];if(!page)return;
+  page.classList.toggle('task-focus-active-v25',!!meta);
+  let banner=$('#taskFocusBannerV25');
+  if(!meta){banner?.remove();return}
+  if(!banner){
+    const table=$('#taskListPage .tablewrap');table?.insertAdjacentHTML('beforebegin','<div class="card task-focus-banner-v25" id="taskFocusBannerV25"></div>');
+    banner=$('#taskFocusBannerV25');
+  }
+  const count=homeFocusTasksV25(key).length;
+  banner.innerHTML=`<button type="button" class="btn" id="homeFocusBackV25">← HOME</button><div class="task-focus-copy-v25"><span>집중보기</span><b>${meta.label}<em>${count}건</em></b><small>${meta.hint}</small></div><button type="button" class="btn" id="homeFocusClearV25">전체 업무 보기</button>`;
+  $('#homeFocusBackV25').onclick=()=>{if(history.state?.homeFocusV25)history.back();else{clearHomeFocusV25(false);showPage('homePage')}};
+  $('#homeFocusClearV25').onclick=()=>{clearHomeFocusV25();renderTaskTable()};
+  if(!$('#taskTableBody tr'))$('#taskTableBody').innerHTML='<tr><td colspan="10" class="muted">해당하는 미완료 업무가 없습니다.</td></tr>';
+}
+
+const renderHomeV25Base=renderHome;
+renderHome=function(){const result=renderHomeV25Base();renderHomeFocusV25();return result};
+const renderTaskTableV25Base=renderTaskTable;
+renderTaskTable=function(){const result=renderTaskTableV25Base();renderTaskFocusV25();return result};
+const showPageV25Base=showPage;
+showPage=function(id){if(id!=='taskListPage'&&window.v25HomeFocusKey)clearHomeFocusV25();return showPageV25Base(id)};
+window.addEventListener('popstate',event=>{
+  const key=String(event.state?.homeFocusV25||'');
+  if(HOME_FOCUS_META_V25[key]){window.v25HomeFocusKey=key;showPageV25Base('taskListPage');return}
+  if(window.v25HomeFocusKey){clearHomeFocusV25(false);showPageV25Base('homePage')}
+});
 
 </script>
 </body></html>
