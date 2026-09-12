@@ -1387,6 +1387,41 @@ body.app-v21 .home-focus-card-v25.urgent b{color:#cb4444!important}
 }
 </style>
 
+<style id="app-v27-unified-search-history-style">
+/* APP V27: 기존 목록 데이터를 재사용하는 통합검색과 업무DB 과거 수행이력. */
+.unified-search-v27{margin-bottom:12px;padding:0!important;overflow:hidden}
+.unified-search-head-v27{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border-bottom:1px solid #e5ebf2;background:var(--accent-softer)}
+.unified-search-head-v27 b{color:#263d5b}.unified-search-head-v27 span{color:#6e7d91;font-size:12px}
+.unified-search-groups-v27{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+.unified-search-group-v27{min-width:0;padding:13px 15px}.unified-search-group-v27+.unified-search-group-v27{border-left:1px solid #e5ebf2}
+.unified-search-group-title-v27{display:flex;align-items:center;justify-content:space-between;margin:0 0 8px;color:#53657b;font-size:12px}
+.unified-search-group-title-v27 b{color:var(--accent-deep);font-size:12px}
+.unified-search-list-v27{display:flex;flex-direction:column;gap:4px}
+.unified-search-row-v27{width:100%;min-height:58px;display:grid;grid-template-columns:auto minmax(0,1fr);grid-template-areas:"category title" "category meta" "category reason";column-gap:9px;align-items:start;padding:8px 9px;border:1px solid transparent;border-radius:10px;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.unified-search-row-v27:hover{border-color:color-mix(in srgb,var(--accent) 25%,#dce5f1);background:var(--accent-softer)}
+.unified-search-row-v27:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:1px}
+.unified-search-category-v27{grid-area:category;max-width:94px;margin-top:1px;padding:3px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent-deep);font-size:10px;font-weight:850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.unified-search-title-v27{grid-area:title;min-width:0;color:#263d5b;font-size:14px;line-height:1.35;font-weight:800;overflow-wrap:anywhere}
+.unified-search-meta-v27{grid-area:meta;color:#697a8f;font-size:11px;line-height:1.35}
+.unified-search-reason-v27{grid-area:reason;color:var(--accent-deep);font-size:10px;line-height:1.35}
+.unified-search-empty-v27{padding:17px 9px;color:#7c8999;font-size:12px;text-align:center}
+.unified-search-more-v27{width:100%;min-height:42px;border:0;border-top:1px solid #e5ebf2;background:#fff;color:var(--accent-deep);font-weight:800;cursor:pointer}
+.db-history-v27{margin-top:18px;padding-top:16px;border-top:1px solid #e1e8f0}
+.db-history-head-v27{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:8px}.db-history-head-v27 h4{margin:0;color:#263d5b;font-size:15px}.db-history-head-v27 span{color:#718096;font-size:11px}
+.db-history-list-v27{display:flex;flex-direction:column;gap:5px}
+.db-history-row-v27{width:100%;min-height:60px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:5px 10px;padding:10px 11px;border:1px solid #e0e7ef;border-radius:11px;background:#fff;color:inherit;text-align:left;cursor:pointer}
+.db-history-row-v27:hover{border-color:color-mix(in srgb,var(--accent) 32%,#dce5f1);background:var(--accent-softer)}
+.db-history-row-v27:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:1px}
+.db-history-date-v27{color:#263d5b;font-size:13px;font-weight:850}.db-history-status-v27{justify-self:end}.db-history-meta-v27{display:flex;min-width:0;flex-wrap:wrap;gap:4px 8px;color:#697a8f;font-size:11px;line-height:1.35}.db-history-meta-v27 span{overflow-wrap:anywhere}
+.db-history-flag-v27{color:var(--accent-deep);font-weight:800}.db-history-empty-v27{padding:18px 8px;color:#7c8999;font-size:12px;text-align:center}
+.db-history-more-v27{width:100%;min-height:42px;margin-top:7px}
+@media(max-width:760px){
+  .unified-search-groups-v27{grid-template-columns:minmax(0,1fr)}.unified-search-group-v27+.unified-search-group-v27{border-top:1px solid #e5ebf2;border-left:0}
+  .unified-search-head-v27{align-items:flex-start;flex-direction:column;gap:3px}.unified-search-row-v27{min-height:62px;padding:9px 6px}
+  .db-history-row-v27{min-height:64px}.db-history-head-v27{align-items:flex-start;flex-direction:column;gap:3px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1439,7 +1474,8 @@ body.app-v21 .home-focus-card-v25.urgent b{color:#cb4444!important}
 
     <section id="taskListPage" class="sectionpage">
       <div class="pagehead"><div><h2>수행 업무 목록</h2></div><button class="btn primary" id="newTaskBtn">업무 작성</button></div>
-      <div class="card toolbar"><div class="field grow"><label>검색</label><input id="taskSearch" placeholder="업무명, 구분, 문서명, 키워드 검색"></div><div class="field"><label>필터</label><select id="taskStatusFilter"><option value="all">전체</option><option value="pending">미완료</option><option value="done">완료</option><option value="overdue">기한초과</option></select></div><div class="bulk-actions"><button class="btn danger" id="deleteSelectedTasks" disabled>선택 삭제</button><button class="btn" id="deleteSelectedSeries" disabled>반복 전체 삭제</button><span class="muted" id="selectedTaskCount">0건 선택</span></div></div>
+      <div class="card toolbar"><div class="field grow"><label>통합검색</label><input id="taskSearch" placeholder="업무명, 대분류, 공문, 메모, 방법, 체크리스트 검색"></div><div class="field"><label>필터</label><select id="taskStatusFilter"><option value="all">전체</option><option value="pending">미완료</option><option value="done">완료</option><option value="overdue">기한초과</option></select></div><div class="bulk-actions"><button class="btn danger" id="deleteSelectedTasks" disabled>선택 삭제</button><button class="btn" id="deleteSelectedSeries" disabled>반복 전체 삭제</button><span class="muted" id="selectedTaskCount">0건 선택</span></div></div>
+      <section class="card unified-search-v27" id="unifiedSearchV27" aria-live="polite" hidden></section>
       <div class="tablewrap"><table class="datatable"><thead><tr><th><input type="checkbox" id="selectAllTasks"></th><th>긴급</th><th>구분</th><th>업무명</th><th>진행 월/분기/반기</th><th>일정</th><th>반복</th><th>상태</th><th>비고</th></tr></thead><tbody id="taskTableBody"></tbody></table></div>
     </section>
 
@@ -2001,7 +2037,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260912-29').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260912-30').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -4785,6 +4821,162 @@ window.addEventListener('resize',()=>requestAnimationFrame(syncMobileLayoutV26))
 window.addEventListener('orientationchange',()=>requestAnimationFrame(syncMobileLayoutV26));
 window.addEventListener('popstate',()=>requestAnimationFrame(()=>{if($('#homePage')?.classList.contains('active')){window.v26MobileGanttOpen=false;applyMobileGanttStateV26()}}));
 ensureMobileGanttToggleV26();
+
+// ========================= APP V27 — unified search / DB task history =========================
+const UNIFIED_SEARCH_BATCH_V27=10;
+const DB_HISTORY_BATCH_V27=10;
+window.v27UnifiedSearchQuery='';
+window.v27UnifiedSearchLimit=UNIFIED_SEARCH_BATCH_V27;
+window.v27DbHistoryLimits=window.v27DbHistoryLimits instanceof Map?window.v27DbHistoryLimits:new Map();
+
+function normalizeSearchV27(value){
+  return String(value??'').normalize('NFKC').trim().replace(/\s+/g,' ').toLowerCase();
+}
+function searchValueV27(value){
+  if(Array.isArray(value))return value.map(searchValueV27).join(' ');
+  if(value&&typeof value==='object')return [value.text,value.caption,value.name,value.fileName].map(searchValueV27).join(' ');
+  return String(value??'');
+}
+function checklistSearchTextV27(items){
+  return(items||[]).map(item=>typeof item==='string'?item:item?.text||'').join(' ');
+}
+function methodSearchTextV27(blocks){
+  return(blocks||[]).flatMap(block=>[block?.text,block?.caption,block?.name,block?.fileName]).filter(Boolean).join(' ');
+}
+function matchingSearchLabelsV27(fields,query){
+  const term=normalizeSearchV27(query);if(!term)return[];
+  return fields.filter(field=>normalizeSearchV27(searchValueV27(field.value)).includes(term)).map(field=>field.label);
+}
+function taskTemplateSourceV27(task){
+  const rootId=task?.autoSourceTemplateId||task?.dbManualRootTemplateId||task?.dbSourceTemplateId||task?.templateId;
+  const root=(state.templates||[]).find(template=>template.id===rootId);if(!root)return null;
+  let stage=0;
+  if(task.dbManual&&task.dbManualRootTemplateId===root.id)stage=Number(task.dbManualSourceStage||0);
+  else if(task.autoSourceTemplateId===root.id&&task.parentAutoRootId)stage=Math.max(1,Number(task.step||2)-1);
+  else if(task.dbSourceTemplateId===root.id)stage=Math.max(0,Number(task.step||1)-1);
+  if(stage>0&&root.linkedSteps?.[stage-1])return{root,source:effectiveStepSourceV6(root.linkedSteps[stage-1],root),stage};
+  return{root,source:root,stage:0};
+}
+function taskSearchFieldsV27(task){
+  const linked=taskTemplateSourceV27(task),source=linked?.source,root=linked?.root;
+  return[
+    {label:'업무명',value:task?.name},{label:'대분류',value:task?.category},{label:'관련 공문',value:task?.relatedDocumentTitle},
+    {label:'메모',value:task?.notes},{label:'키워드',value:[task?.keywords,source?.keywords,root?.keywords]},
+    {label:'업무방법',value:[methodSearchTextV27(task?.methodBlocks),methodSearchTextV27(source?.methodBlocks)]},
+    {label:'체크리스트',value:checklistSearchTextV27(task?.checklist)},
+    {label:'연계업무',value:linked?.stage>0?task?.name:''},{label:'담당자',value:task?.owner},
+    {label:'일정·연결정보',value:[task?.start,task?.end,task?.deadline,task?.templateId]}
+  ];
+}
+function taskMatchesUnifiedSearchV27(task,query){
+  return matchingSearchLabelsV27(taskSearchFieldsV27(task),query).length>0;
+}
+function dbSearchFieldsV27(row){
+  const source=row.kind==='root'?row.root:effectiveStepSourceV6(row.step,row.root);
+  const referenced=row.kind==='step'&&row.step?.templateId?(state.templates||[]).find(template=>template.id===row.step.templateId):null;
+  return[
+    {label:row.kind==='step'?'연계업무':'업무명',value:row.name},{label:'대분류',value:row.category},
+    {label:'키워드',value:[source?.keywords,referenced?.keywords,row.kind==='root'?row.root?.keywords:'']},
+    {label:'메모',value:[row.notes,source?.notes]},{label:'업무방법',value:methodSearchTextV27(source?.methodBlocks)},
+    {label:'체크리스트',value:checklistSearchTextV27(source?.checklist)},
+    {label:'연계업무',value:row.kind==='root'?(row.root?.linkedSteps||[]).map(step=>step.name):''},
+    {label:'진행주기',value:row.cycle},{label:'담당자',value:ownerForDbRefV8(row.ref)}
+  ];
+}
+function dbRowMatchesUnifiedSearchV27(row,query){
+  return matchingSearchLabelsV27(dbSearchFieldsV27(row),query).length>0;
+}
+function taskListVisibleV27(){
+  const focus=String(window.v25HomeFocusKey||'');
+  const q=focus?'':normalizeSearchV27($('#taskSearch')?.value||''),f=focus?'all':($('#taskStatusFilter')?.value||'all'),cats=focus?[]:(state.settings.taskListCategories||[]);
+  let arr=[...(state.tasks||[])].sort((a,b)=>{
+    const sa=a.start||'9999-99-99',sb=b.start||'9999-99-99';if(sa!==sb)return sa.localeCompare(sb);
+    const da=a.deadline||a.end||a.start||'9999-99-99',db=b.deadline||b.end||b.start||'9999-99-99';if(da!==db)return da.localeCompare(db);
+    return String(a.name||'').localeCompare(String(b.name||''),'ko');
+  });
+  if(q)arr=arr.filter(task=>taskMatchesUnifiedSearchV27(task,q));
+  if(cats.length)arr=arr.filter(task=>cats.includes(task.category));
+  arr=arr.filter(task=>f==='all'||(f==='pending'&&effectiveStatus(task)!=='done')||(f==='done'&&effectiveStatus(task)==='done')||(f==='overdue'&&effectiveStatus(task)==='overdue'));
+  if(focus)arr=arr.filter(task=>taskMatchesHomeFocusV25(task,focus));
+  return arr;
+}
+taskListVisibleV6=taskListVisibleV27;
+dbVisibleRowsV10=function(){
+  const q=normalizeSearchV27($('#dbSearch')?.value||'');
+  return flattenDbRowsV6().filter(row=>!q||dbRowMatchesUnifiedSearchV27(row,q));
+};
+
+function unifiedTaskRowHtmlV27(task,query){
+  const reasons=matchingSearchLabelsV27(taskSearchFieldsV27(task),query).slice(0,3).join(' · ');
+  return`<button type="button" class="unified-search-row-v27" data-unified-task-v27="${esc(task.id)}"><span class="unified-search-category-v27">${esc(task.category||'미분류')}</span><span class="unified-search-title-v27">${task.urgent?'<span class="dot"></span> ':''}${esc(task.name||'이름 없는 업무')}</span><span class="unified-search-meta-v27">${esc(compactTaskScheduleV26(task))} · ${esc(statusLabel(effectiveStatus(task)))}</span><span class="unified-search-reason-v27">${esc(reasons)}에서 일치</span></button>`;
+}
+function unifiedDbRowHtmlV27(row,query){
+  const reasons=matchingSearchLabelsV27(dbSearchFieldsV27(row),query).slice(0,3).join(' · ');
+  return`<button type="button" class="unified-search-row-v27" data-unified-db-v27="${esc(row.ref)}"><span class="unified-search-category-v27">${esc(row.category||'미분류')}</span><span class="unified-search-title-v27">${esc(row.name||'이름 없는 업무DB')}</span><span class="unified-search-meta-v27">${esc(row.cycle)}${row.kind==='step'?' · 연계 단계':''}</span><span class="unified-search-reason-v27">${esc(reasons)}에서 일치</span></button>`;
+}
+function renderUnifiedSearchV27(){
+  const root=$('#unifiedSearchV27'),input=$('#taskSearch');if(!root||!input)return;
+  const query=normalizeSearchV27(input.value);
+  if(!query||window.v25HomeFocusKey){root.hidden=true;root.innerHTML='';window.v27UnifiedSearchQuery='';window.v27UnifiedSearchLimit=UNIFIED_SEARCH_BATCH_V27;return}
+  if(query!==window.v27UnifiedSearchQuery){window.v27UnifiedSearchQuery=query;window.v27UnifiedSearchLimit=UNIFIED_SEARCH_BATCH_V27}
+  const tasks=taskListVisibleV27(),dbRows=flattenDbRowsV6().filter(row=>dbRowMatchesUnifiedSearchV27(row,query));
+  const limit=window.v27UnifiedSearchLimit,visibleTasks=tasks.slice(0,limit),visibleDb=dbRows.slice(0,limit),hasMore=tasks.length>limit||dbRows.length>limit;
+  const taskList=visibleTasks.map(task=>unifiedTaskRowHtmlV27(task,query)).join('')||'<div class="unified-search-empty-v27">일치하는 수행업무가 없습니다.</div>';
+  const dbList=visibleDb.map(row=>unifiedDbRowHtmlV27(row,query)).join('')||'<div class="unified-search-empty-v27">일치하는 업무DB가 없습니다.</div>';
+  root.hidden=false;
+  root.innerHTML=`<div class="unified-search-head-v27"><b>“${esc(query)}” 통합검색</b><span>수행업무 ${tasks.length}건 · 업무DB ${dbRows.length}건</span></div><div class="unified-search-groups-v27"><section class="unified-search-group-v27"><h3 class="unified-search-group-title-v27"><span>[수행업무]</span><b>${tasks.length}건</b></h3><div class="unified-search-list-v27">${taskList}</div></section><section class="unified-search-group-v27"><h3 class="unified-search-group-title-v27"><span>[업무DB]</span><b>${dbRows.length}건</b></h3><div class="unified-search-list-v27">${dbList}</div></section></div>${hasMore?`<button type="button" class="unified-search-more-v27" id="unifiedSearchMoreV27">더 보기 · 현재 종류별 최대 ${Math.min(limit,Math.max(tasks.length,dbRows.length))}건</button>`:''}`;
+  $$('[data-unified-task-v27]',root).forEach(button=>button.onclick=()=>openChecklist(button.dataset.unifiedTaskV27));
+  $$('[data-unified-db-v27]',root).forEach(button=>button.onclick=()=>openDbDetailV6(button.dataset.unifiedDbV27));
+  const more=$('#unifiedSearchMoreV27');if(more)more.onclick=()=>{window.v27UnifiedSearchLimit+=UNIFIED_SEARCH_BATCH_V27;renderUnifiedSearchV27()};
+}
+
+function taskLinkedToDbRefV27(task,ref){
+  const[kind,rootId,indexText]=String(ref||'').split('|');if(!task||!rootId)return false;
+  if(kind==='root'){
+    if(task.autoSourceTemplateId===rootId&&!task.parentAutoRootId)return true;
+    if(task.dbManualRootTemplateId===rootId&&Number(task.dbManualSourceStage||0)===0)return true;
+    if(task.dbSourceTemplateId===rootId&&Number(task.step||1)===1)return true;
+    return!task.autoSourceTemplateId&&!task.dbManualRootTemplateId&&!task.dbSourceTemplateId&&task.templateId===rootId;
+  }
+  if(kind!=='step')return false;
+  const sourceStage=Number(indexText)+1;if(!Number.isInteger(sourceStage)||sourceStage<1)return false;
+  if(task.autoSourceTemplateId===rootId&&!!task.parentAutoRootId&&Number(task.step||0)===sourceStage+1)return true;
+  if(task.dbManualRootTemplateId===rootId&&Number(task.dbManualSourceStage)===sourceStage)return true;
+  return task.dbSourceTemplateId===rootId&&Number(task.step||0)===sourceStage+1;
+}
+function isPastDbTaskV27(task,reference=todayISO()){
+  if(!task)return false;
+  if(task.actualComplete||task.status==='done')return true;
+  const scheduledEnd=task.end||task.start;return!!scheduledEnd&&scheduledEnd<reference;
+}
+function dbHistoryTasksV27(ref,reference=todayISO()){
+  return(state.tasks||[]).filter(task=>taskLinkedToDbRefV27(task,ref)&&isPastDbTaskV27(task,reference)).sort((a,b)=>{
+    const ad=a.start||a.end||a.actualComplete||'',bd=b.start||b.end||b.actualComplete||'';
+    if(ad!==bd)return bd.localeCompare(ad);
+    return String(b.actualComplete||'').localeCompare(String(a.actualComplete||''));
+  });
+}
+function historyDateV27(value){
+  return /^\d{4}-\d{2}-\d{2}$/.test(String(value||''))?String(value).replaceAll('-','.'):String(value||'');
+}
+function historyScheduleV27(task){
+  const start=historyDateV27(task?.start),end=historyDateV27(task?.end||task?.start);
+  if(!start)return'일정 미정';return start===end?start:`${start} ~ ${end}`;
+}
+function renderDbHistoryV27(ref){
+  const body=$('#modalRoot .modal-body');if(!body)return;
+  body.querySelector('#dbHistoryV27')?.remove();
+  const tasks=dbHistoryTasksV27(ref),limit=window.v27DbHistoryLimits.get(ref)||DB_HISTORY_BATCH_V27,visible=tasks.slice(0,limit);
+  const rows=visible.map(task=>`<button type="button" class="db-history-row-v27" data-db-history-task-v27="${esc(task.id)}"><span class="db-history-date-v27">${esc(historyScheduleV27(task))}</span><span class="db-history-status-v27">${statusBadge(task)}</span><span class="db-history-meta-v27">${task.actualComplete?`<span>실제 완료 ${esc(historyDateV27(task.actualComplete))}</span>`:'<span>실제 완료일 없음</span>'}${task.manualOverride?'<span class="db-history-flag-v27">수동 일정</span>':''}${task.relatedDocumentTitle?`<span>공문 · ${esc(task.relatedDocumentTitle)}</span>`:''}</span></button>`).join('')||'<div class="db-history-empty-v27">현재 날짜보다 이전이거나 완료된 수행기록이 없습니다.</div>';
+  body.insertAdjacentHTML('beforeend',`<section class="db-history-v27" id="dbHistoryV27"><div class="db-history-head-v27"><h4>과거 수행이력</h4><span>최신 일정순 · ${tasks.length}건</span></div><div class="db-history-list-v27">${rows}</div>${tasks.length>limit?`<button type="button" class="btn db-history-more-v27" id="dbHistoryMoreV27">더 보기 (${visible.length}/${tasks.length})</button>`:''}</section>`);
+  $$('[data-db-history-task-v27]',body).forEach(button=>button.onclick=()=>openChecklist(button.dataset.dbHistoryTaskV27));
+  const more=$('#dbHistoryMoreV27');if(more)more.onclick=()=>{window.v27DbHistoryLimits.set(ref,limit+DB_HISTORY_BATCH_V27);renderDbHistoryV27(ref)};
+}
+
+const openDbDetailV27Base=openDbDetailV6;
+openDbDetailV6=function(ref){window.v27DbHistoryLimits.set(ref,DB_HISTORY_BATCH_V27);const result=openDbDetailV27Base(ref);renderDbHistoryV27(ref);return result};
+const renderTaskTableV27Base=renderTaskTable;
+renderTaskTable=function(){const result=renderTaskTableV27Base();renderUnifiedSearchV27();return result};
 
 </script>
 </body></html>

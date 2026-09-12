@@ -79,6 +79,6 @@ assert.match(html, /const renderDbTableV26Base=renderDbTable;\s*renderDbTable=fu
 assert.match(html, /taskListVisibleV6[\s\S]*taskStatusFilter[\s\S]*taskListCategories/, "기존 검색·상태·대분류 필터 경로를 유지해야 합니다.");
 assert.match(html, /HOME_FOCUS_META_V25/, "3단계 HOME 요약 기능을 유지해야 합니다.");
 assert.match(html, /ROLLING_AUTO_MONTHS_V24=12/, "Rolling 12개월 기능을 유지해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-12-29/, "4단계 배포 캐시 버전이어야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-12-30/, "최신 배포 캐시에서도 4단계 모바일 UI가 유지되어야 합니다.");
 
 console.log("PASS mobile compact lists and collapsed HOME gantt regression");
