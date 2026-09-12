@@ -45,6 +45,7 @@ node tests/cloud-state-roundtrip.test.mjs
 node tests/cloud-contract.test.mjs
 node tests/firestore-usage-regression.test.mjs
 node tests/home-focus-regression.test.mjs
+node tests/mobile-compact-regression.test.mjs
 ```
 
 ## V23 연계 상속·Drive 첨부·테마
@@ -93,3 +94,16 @@ node tests/home-focus-regression.test.mjs
 | 모바일 배치 | 자동 통과 / 화면 확인 대기 | PC 4열, 모바일·태블릿 2열과 42px 이상 집중보기 이동 버튼 적용 |
 | 실시간 갱신 | 자동 통과 | 기존 원격 반영 경로의 `renderHome`·`renderTaskTable` 호출로 건수와 목록 재계산 |
 | Firestore 영향 | 구조 확인 | 기존 메모리 `state.tasks`만 사용하며 요약 전용 read·listener·write 없음 |
+
+## 4단계 모바일 컴팩트 목록·간트 접힘
+
+| 항목 | 결과 | 확인 내용 |
+| --- | --- | --- |
+| 수행업무 목록 | 자동 통과 / 화면 확인 대기 | 체크박스·대분류·업무명·일정만 남긴 컴팩트 목록과 행 전체 상세 진입 |
+| 업무DB 목록 | 자동 통과 / 화면 확인 대기 | 체크박스·대분류·업무명·반복주기·수정 진입만 남기고 상세 메타 숨김 |
+| 긴 업무명·일정 | 자동 통과 / 화면 확인 대기 | 15px 글자와 자동 줄바꿈, 단일일·기간일·일정 미정 표시 |
+| 체크 터치 | 자동 통과 / 화면 확인 대기 | 44px 선택 영역과 22px 체크박스, 행 상세 열기와 이벤트 분리 |
+| 모바일 간트 | 자동 통과 / 화면 확인 대기 | HOME 진입 시 기본 접힘, 브라우저 UI 상태의 보기·접기와 기존 간트 위치 이동 재사용 |
+| PC 보호 | 자동 통과 / 화면 확인 대기 | 컴팩트 목록과 간트 토글을 기존 모바일 판정 클래스에만 적용 |
+| 기존 기능 보호 | 자동 통과 | HOME 요약·검색·필터·Rolling 12개월 함수와 기존 렌더 경로 재사용 |
+| Firestore 영향 | 구조 확인 | UI 함수에 Firestore read·listener·write 및 `saveState` 추가 없음 |
