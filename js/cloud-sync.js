@@ -15,7 +15,6 @@ import {
   collection,
   deleteField,
   doc,
-  getDocs,
   increment,
   initializeFirestore,
   limit,
@@ -46,6 +45,7 @@ const DATA_COLLECTIONS = [
   "generatedKeys",
 ];
 const LIVE_COLLECTIONS = [...DATA_COLLECTIONS, "changeLogs"];
+const CHANGE_LOG_LIMIT = 300;
 const ENTITY_LABELS = {
   tasks: "수행업무",
   checklistItems: "체크리스트",
@@ -76,6 +76,9 @@ let queuedState = null;
 let queuedResolvers = [];
 let queuedVersion = 0;
 let unsubscribeAll = [];
+let coreReadyPromise = null;
+let historyListenerStarted = false;
+let historyReadyPromise = null;
 let remoteApplyTimer = 0;
 let renderRemote = null;
 let localOnly = false;
@@ -491,22 +494,6 @@ async function configureAuthPersistence(authInstance) {
   throw lastError || new Error("Firebase 로그인 저장소를 준비하지 못했습니다.");
 }
 
-async function loadAllCollections() {
-  setSyncStatus("syncing", "데이터 불러오는 중");
-  const maps = makeRecordMaps();
-  await Promise.all(DATA_COLLECTIONS.map(async (name) => {
-    const snap = await getDocs(collection(db, name));
-    snap.forEach((entry) => maps[name].set(entry.id, withoutSyncFields(entry.data())));
-  }));
-  try {
-    const logsSnap = await getDocs(query(collection(db, "changeLogs"), orderBy("clientTime", "desc"), limit(300)));
-    logsSnap.forEach((entry) => maps.changeLogs.set(entry.id, withoutSyncFields(entry.data())));
-  } catch (error) {
-    if (error?.code !== "permission-denied") console.warn("change history", error);
-  }
-  return maps;
-}
-
 function chooseInitialState(legacyState, user) {
   if (!legacyState?.tasks || !legacyState?.templates) return Promise.resolve(emptyState(user));
   gate(
@@ -582,14 +569,19 @@ export async function bootstrapCloud({ state, legacyState = null } = {}) {
   }
   document.getElementById("cloudSignOut").onclick = async () => {
     clearDriveAccessToken();
+    stopRealtime();
     await signOut(auth);
     location.reload();
   };
   gate("클라우드 데이터를 불러오는 중입니다.");
-  recordMaps = await loadAllCollections();
+  recordMaps = makeRecordMaps();
+  const initialLoad = await subscribeRealtime();
   shadowMaps = mapClone(recordMaps);
   if (cloudHasData(recordMaps)) {
     replaceState(stateRef, deserializeState(recordMaps, stateRef.settings || {}));
+  } else if (!initialLoad.serverConfirmed) {
+    gate("오프라인 캐시에 업무 데이터가 없습니다.", "", "인터넷 연결 후 다시 열어 주세요. 기존 클라우드 데이터는 변경되지 않습니다.");
+    throw new Error("Cloud data is unavailable while offline.");
   } else {
     const initial = await chooseInitialState(legacyState, currentUser);
     replaceState(stateRef, initial);
@@ -616,6 +608,7 @@ function controller() {
     downloadDriveFile,
     hydrateImages,
     ensureDriveAccess,
+    loadChangeLogs,
     flush,
   };
 }
@@ -624,7 +617,7 @@ async function activate({ onRemote } = {}) {
   renderRemote = onRemote || null;
   active = true;
   if (localOnly) return;
-  subscribeRealtime();
+  await subscribeRealtime();
   if (needsInitialUpload || queuedState) {
     const snapshot = queuedState || clone(stateRef);
     queuedState = null;
@@ -635,31 +628,98 @@ async function activate({ onRemote } = {}) {
   }
 }
 
+function applySnapshotChanges(name, snapshot) {
+  if (snapshot.metadata.hasPendingWrites) return false;
+  const target = recordMaps[name];
+  let changed = false;
+  snapshot.docChanges().forEach((change) => {
+    if (change.type === "removed") {
+      if (target.delete(change.doc.id)) changed = true;
+      return;
+    }
+    const next = withoutSyncFields(change.doc.data());
+    if (JSON.stringify(target.get(change.doc.id)) === JSON.stringify(next)) return;
+    target.set(change.doc.id, next);
+    changed = true;
+  });
+  if (!snapshot.metadata.fromCache) {
+    lastSyncAt = new Date();
+    setSyncStatus("online", "최신 상태");
+  }
+  return changed;
+}
+
 function subscribeRealtime() {
-  unsubscribeAll.forEach((off) => off());
-  unsubscribeAll = [];
-  for (const name of LIVE_COLLECTIONS) {
-    const source = name === "changeLogs"
-      ? query(collection(db, name), orderBy("clientTime", "desc"), limit(300))
-      : collection(db, name);
-    const off = onSnapshot(source, { includeMetadataChanges: true }, (snapshot) => {
-      if (snapshot.metadata.hasPendingWrites) return;
-      const target = recordMaps[name];
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "removed") target.delete(change.doc.id);
-        else target.set(change.doc.id, withoutSyncFields(change.doc.data()));
-      });
-      if (!snapshot.metadata.fromCache) {
-        lastSyncAt = new Date();
-        setSyncStatus("online", "최신 상태");
+  if (coreReadyPromise) return coreReadyPromise;
+  setSyncStatus("syncing", "데이터 불러오는 중");
+  const firstSnapshot = new Set();
+  const serverReady = new Set();
+  let settled = false;
+  let resolveReady;
+  let rejectReady;
+  coreReadyPromise = new Promise((resolve, reject) => {
+    resolveReady = resolve;
+    rejectReady = reject;
+  });
+  const resolveWhenReady = () => {
+    const serverConfirmed = serverReady.size === DATA_COLLECTIONS.length;
+    const cachedOffline = firstSnapshot.size === DATA_COLLECTIONS.length && navigator.onLine === false;
+    if (settled || (!serverConfirmed && !cachedOffline)) return;
+    settled = true;
+    resolveReady({ serverConfirmed });
+  };
+  for (const name of DATA_COLLECTIONS) {
+    const off = onSnapshot(collection(db, name), { includeMetadataChanges: true }, (snapshot) => {
+      const changed = applySnapshotChanges(name, snapshot);
+      if (!snapshot.metadata.hasPendingWrites) firstSnapshot.add(name);
+      if (!snapshot.metadata.hasPendingWrites && !snapshot.metadata.fromCache && !serverReady.has(name)) {
+        serverReady.add(name);
       }
-      scheduleRemoteApply();
+      resolveWhenReady();
+      if (active && changed) scheduleRemoteApply();
     }, (error) => {
       console.error(`Realtime ${name}`, error);
       setSyncStatus("error", friendlyError(error));
+      rejectReady(error);
     });
     unsubscribeAll.push(off);
   }
+  return coreReadyPromise;
+}
+
+function loadChangeLogs() {
+  if (localOnly) return Promise.resolve();
+  if (historyReadyPromise) return historyReadyPromise;
+  historyListenerStarted = true;
+  let resolveReady;
+  historyReadyPromise = new Promise((resolve) => { resolveReady = resolve; });
+  const source = query(collection(db, "changeLogs"), orderBy("clientTime", "desc"), limit(CHANGE_LOG_LIMIT));
+  const off = onSnapshot(source, { includeMetadataChanges: true }, (snapshot) => {
+    if (applySnapshotChanges("changeLogs", snapshot) && active) {
+      stateRef.changeLogs = [...recordMaps.changeLogs.values()]
+        .sort((a, b) => String(b.clientTime || "").localeCompare(String(a.clientTime || "")))
+        .slice(0, CHANGE_LOG_LIMIT)
+        .map((item) => clone(item));
+      scheduleRemoteApply();
+    }
+    if (!snapshot.metadata.hasPendingWrites && (!snapshot.metadata.fromCache || navigator.onLine === false)) resolveReady();
+  }, (error) => {
+    historyListenerStarted = false;
+    historyReadyPromise = null;
+    resolveReady();
+    console.error("Realtime changeLogs", error);
+    setSyncStatus("error", friendlyError(error));
+  });
+  unsubscribeAll.push(off);
+  return historyReadyPromise;
+}
+
+function stopRealtime() {
+  unsubscribeAll.forEach((off) => off());
+  unsubscribeAll = [];
+  coreReadyPromise = null;
+  historyListenerStarted = false;
+  historyReadyPromise = null;
 }
 
 function scheduleRemoteApply() {
@@ -819,7 +879,8 @@ async function commitTransaction(changes, nextMaps, metadata) {
   const generatedCreates = changes.filter((change) => change.collection === "generatedKeys" && change.type === "create");
   await runTransaction(db, async (transaction) => {
     const snapshots = new Map();
-    for (const change of [...writeChanges, ...generatedCreates]) {
+    // 수정 충돌과 자동생성 잠금에 필요한 문서만 읽는다. 생성·삭제는 현재 상태를 다시 읽어도 결과가 달라지지 않는다.
+    for (const change of [...writeChanges.filter((item) => item.type === "update"), ...generatedCreates]) {
       const ref = doc(db, change.collection, change.id);
       snapshots.set(`${change.collection}/${change.id}`, await transaction.get(ref));
     }
@@ -832,15 +893,31 @@ async function commitTransaction(changes, nextMaps, metadata) {
         skippedTaskIds.add(lockChange.after.taskId);
       }
     }
+    const appliedWriteChanges = [];
     for (const change of writeChanges) {
       if (belongsToSkippedTask(change, skippedTaskIds)) continue;
+      if (change.type === "update") {
+        const snap = snapshots.get(`${change.collection}/${change.id}`);
+        if (snap?.exists()) {
+          const remote = snap.data() || {};
+          const fields = change.fields.filter((field) => Object.hasOwn(change.after || {}, field)
+            ? JSON.stringify(remote[field]) !== JSON.stringify(change.after[field])
+            : Object.hasOwn(remote, field));
+          if (!fields.length) continue;
+          appliedWriteChanges.push({ ...change, fields });
+          continue;
+        }
+      }
+      appliedWriteChanges.push(change);
+    }
+    for (const change of appliedWriteChanges) {
       const ref = doc(db, change.collection, change.id);
       const snap = snapshots.get(`${change.collection}/${change.id}`);
       if (change.type === "delete") {
         transaction.delete(ref);
         continue;
       }
-      if (!snap.exists() || change.type === "create") {
+      if (change.type === "create" || !snap?.exists()) {
         transaction.set(ref, { ...plain(change.after), revision: 1, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }, { merge: true });
       } else {
         transaction.update(ref, { ...patchFor(change), revision: Number(snap.data().revision || 0) + 1, updatedAt: serverTimestamp() });
@@ -851,9 +928,9 @@ async function commitTransaction(changes, nextMaps, metadata) {
       const snap = snapshots.get(`generatedKeys/${change.id}`);
       if (!snap.exists()) transaction.set(doc(db, "generatedKeys", change.id), { ...plain(change.after), createdAt: serverTimestamp() });
     }
-    if (writeChanges.length) {
+    if (appliedWriteChanges.length) {
       const logRef = doc(collection(db, "changeLogs"));
-      transaction.set(logRef, makeLog(writeChanges, metadata));
+      transaction.set(logRef, makeLog(appliedWriteChanges, metadata));
     }
   });
 }
@@ -1106,4 +1183,4 @@ async function driveFetch(url, options = {}) {
   return response;
 }
 
-window.addEventListener("beforeunload", () => unsubscribeAll.forEach((off) => off()));
+window.addEventListener("beforeunload", stopRealtime);

@@ -26,6 +26,17 @@ for (const collection of [
 }
 
 assert.match(cloud, /runTransaction\(/, "문서 충돌 처리를 위한 Firestore 트랜잭션을 사용해야 합니다.");
+assert.doesNotMatch(cloud, /\bgetDocs\b/, "초기 데이터와 실시간 listener를 같은 세션에서 중복 조회하면 안 됩니다.");
+assert.match(cloud, /if \(coreReadyPromise\) return coreReadyPromise;/, "핵심 listener 초기화는 세션에서 한 번만 실행해야 합니다.");
+assert.match(cloud, /for \(const name of DATA_COLLECTIONS\)[\s\S]*onSnapshot\(collection\(db, name\)/, "핵심 컬렉션의 최초 listener 스냅샷을 초기 데이터로 재사용해야 합니다.");
+assert.match(cloud, /cachedOffline[\s\S]*navigator\.onLine === false/, "오프라인에서는 준비된 Firestore 캐시로 앱을 열 수 있어야 합니다.");
+assert.match(cloud, /!initialLoad\.serverConfirmed[\s\S]*기존 클라우드 데이터는 변경되지 않습니다/, "빈 오프라인 캐시를 새 클라우드로 오인하면 안 됩니다.");
+assert.match(cloud, /function loadChangeLogs\(\)[\s\S]*limit\(CHANGE_LOG_LIMIT\)/, "변경이력은 화면에서 요청할 때만 제한 조회해야 합니다.");
+assert.match(html, /historyPage[\s\S]*loadChangeLogs/, "변경이력 화면 진입이 지연 listener를 시작해야 합니다.");
+assert.match(html, /async function exportJson\(\)\{await window\.cloudSync\?\.loadChangeLogs/, "JSON 백업은 지연된 변경이력까지 준비한 뒤 내려받아야 합니다.");
+assert.match(cloud, /writeChanges\.filter\(\(item\) => item\.type === "update"\)/, "생성·삭제 문서를 트랜잭션에서 의미 없이 선조회하면 안 됩니다.");
+assert.match(cloud, /makeLog\(appliedWriteChanges, metadata\)/, "동시 생성 잠금으로 건너뛴 작업은 변경로그를 쓰면 안 됩니다.");
+assert.match(cloud, /JSON\.stringify\(remote\[field\]\) !== JSON\.stringify\(change\.after\[field\]\)/, "트랜잭션 시점에 원격 값이 이미 같으면 update를 생략해야 합니다.");
 assert.match(cloud, /persistentLocalCache/, "Firestore 영속 오프라인 캐시를 켜야 합니다.");
 assert.match(cloud, /persistentMultipleTabManager/, "여러 탭이 같은 오프라인 캐시를 안전하게 공유해야 합니다.");
 assert.match(cloud, /https:\/\/www\.googleapis\.com\/auth\/drive\.file/, "Drive 권한은 앱이 만든/연 파일로 제한해야 합니다.");
@@ -69,5 +80,6 @@ for (const moduleName of ["firebase-app.js", "firebase-auth.js", "firebase-fires
   assert.match(serviceWorker, new RegExp(moduleName.replace(".", "\\.")), `${moduleName}을 첫 설치 때 미리 캐시해야 합니다.`);
 }
 assert.match(serviceWorker, /cache\.addAll\(FIREBASE_MODULES\)\.catch/, "Firebase CDN 장애가 앱 셸 설치를 막으면 안 됩니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-11-27/, "2단계 최적화 배포 캐시 버전이어야 합니다.");
 
 console.log("PASS cloud/PWA contract: Drive session and file attachment included");

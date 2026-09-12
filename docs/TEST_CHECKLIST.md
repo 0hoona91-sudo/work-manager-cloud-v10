@@ -43,6 +43,7 @@
 node tests/v10-regression.test.mjs
 node tests/cloud-state-roundtrip.test.mjs
 node tests/cloud-contract.test.mjs
+node tests/firestore-usage-regression.test.mjs
 ```
 
 ## V23 연계 상속·Drive 첨부·테마
@@ -66,3 +67,15 @@ node tests/cloud-contract.test.mjs
 | 읽기·쓰기 절감 | 구조 확인 | 새 Firestore 조회 없이 기존 로딩 상태만 사용하고, 같은 세션의 동일 조건은 재검사·저장 생략 |
 - 업무 DB의 `＋ 파일`로 50MB 이하 양식을 올리고 저장한 뒤 상세 화면의 `다운로드`로 원래 파일명을 유지해 내려받는지 확인합니다.
 - 설정/백업에서 민트·피치·라벤더·스카이·크림을 각각 선택했을 때 배경뿐 아니라 사이드바·HOME 요약·주요 버튼·팝업 제목 색도 함께 바뀌는지 확인합니다.
+
+## V25 Firestore 사용량·초기 로딩
+
+| 항목 | 결과 | 확인 내용 |
+| --- | --- | --- |
+| 초기 중복조회 | 자동 통과 | 12개 핵심 컬렉션의 별도 `getDocs`를 제거하고 최초 listener 서버 스냅샷을 초기 상태로 재사용 |
+| listener 중복 | 자동 통과 | 핵심 listener 준비 Promise를 재사용해 초기화·화면 렌더가 반복되어도 컬렉션별 한 개 유지 |
+| 변경이력 | 자동 통과 | HOME 시작 시 조회하지 않고 변경이력·JSON 백업 첫 요청 때 최근 300건 listener를 한 번 등록해 세션에서 재사용 |
+| 실제 변경 렌더 | 자동 통과 | 외부 문서 변경은 반영하고, 메타데이터만 바뀐 스냅샷은 전체 재렌더 생략 |
+| 저장 선조회 | 자동 통과 | update 충돌 문서와 신규 `generatedKeys` 잠금만 트랜잭션에서 읽고 일반 create/delete 선조회 제거 |
+| 경합 중복로그 | 자동 통과 | 다른 기기가 이미 생성 잠금을 확보한 회차는 업무와 changeLogs 모두 추가 write 없음 |
+| 동일 값 update | 자동 통과 | 트랜잭션에서 확인한 원격 필드가 이미 목표값이면 revision·문서·changeLogs write 생략 |
