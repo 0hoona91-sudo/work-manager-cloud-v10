@@ -93,6 +93,9 @@ for (const marker of ["tfEndModeV32", "당일 마무리", "일 이후까지", "t
   assert.ok(taskFormSource.includes(marker), `종료일 UI에 ${marker} 요소가 있어야 합니다.`);
 }
 assert.match(taskFormSource, /id="tfEndType" hidden/, "기존 계산·저장 경로용 종료 유형은 숨김 상태로 유지해야 합니다.");
+const endUiSource = extractLastFunction("setupTaskEndUiV32");
+assert.match(endUiSource, /dateField\.hidden=false[\s\S]*afterField\.hidden=false/, "비선택 종료 방식의 라디오 설명은 숨기지 않아야 합니다.");
+assert.match(endUiSource, /input\.disabled=mode!=='date'[\s\S]*input\.disabled=mode!=='after'/, "비선택 종료 방식은 설명을 유지하고 입력만 비활성화해야 합니다.");
 
 const dbFormSource = extractLastFunction("openDbForm");
 assert.ok(dbFormSource.includes("자동생성 종료일 (비워두면 종료 없이 계속 생성)"), "업무DB 자동생성 종료일 설명을 간결하게 표시해야 합니다.");
@@ -122,7 +125,7 @@ assert.match(html, /APP V29 — impact preview \/ trash \/ template versions/, "
 assert.match(html, /APP V30 — template attachments \/ clone draft/, "관련자료와 업무DB 복제 기능을 유지해야 합니다.");
 assert.match(html, /APP V31 — annual plan \/ category \/ month matrix/, "기존 연간 업무 계산·화면 기능을 유지해야 합니다.");
 assert.match(html, /@media\(max-width:620px\)[\s\S]*home-annual-date-v32\{align-items:stretch;flex-direction:column\}/, "모바일 HOME 버튼과 날짜 영역은 가로 넘침 없이 세로 배치해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-35/, "9.5단계 서비스워커 캐시 버전을 사용해야 합니다.");
-assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-35'\)/, "9.5단계 서비스워커 URL을 등록해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-36/, "9.5단계 서비스워커 캐시 버전을 사용해야 합니다.");
+assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-36'\)/, "9.5단계 서비스워커 URL을 등록해야 합니다.");
 
 console.log("PASS stage 9.5 task/database input UX cleanup regression");
