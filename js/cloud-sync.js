@@ -243,8 +243,8 @@ function serializeState(state) {
   }
 
   for (const template of state.templates || []) {
-    const { checklist = [], linkedSteps = [], methodBlocks = [], photos, method, ...templateFields } = template;
-    maps.templates.set(template.id, plain({ ...templateFields, id: template.id }));
+    const { checklist = [], linkedSteps = [], methodBlocks = [], attachments = [], photos, method, ...templateFields } = template;
+    maps.templates.set(template.id, plain({ ...templateFields, attachments: attachments.map(cleanAttachmentMetadata), id: template.id }));
     checklist.forEach((text, order) => {
       maps.checklistItems.set(docId("template", template.id, order),
         plain({ parentType: "template", parentId: template.id, order, text: String(text || ""), done: false }));
@@ -367,6 +367,10 @@ function deserializeState(maps, localSettings = {}) {
 
 function cleanBlock(block) {
   return omit(block, ["parentType", "parentId", "order"]);
+}
+
+function cleanAttachmentMetadata(file) {
+  return omit(file, ["data", "objectUrl", "blobUrl", "previewUrl", "parentType", "parentId", "order"]);
 }
 
 function omit(value, keys) {
@@ -614,6 +618,7 @@ function controller() {
     importState,
     createImageBlock,
     createFileBlock,
+    openDriveFile,
     downloadDriveFile,
     hydrateImages,
     ensureDriveAccess,
@@ -1291,6 +1296,23 @@ async function downloadDriveFile(fileId, fileName = "첨부파일") {
   document.body.appendChild(anchor);
   anchor.click();
   anchor.remove();
+}
+
+async function openDriveFile(fileId, fileName = "첨부파일", mimeType = "") {
+  if (!fileId) throw new Error("열 Google Drive 파일 정보가 없습니다.");
+  const lowerName = String(fileName || "").toLowerCase();
+  const previewable = String(mimeType || "").startsWith("image/") || String(mimeType || "").startsWith("text/") || mimeType === "application/pdf" || /\.(pdf|txt|csv)$/.test(lowerName);
+  if (!previewable) return downloadDriveFile(fileId, fileName);
+  const preview = window.open("", "_blank");
+  try {
+    const objectUrl = await getDriveObjectUrl(fileId);
+    if (!preview) return downloadDriveFile(fileId, fileName);
+    preview.opener = null;
+    preview.location.replace(objectUrl);
+  } catch (error) {
+    preview?.close();
+    throw error;
+  }
 }
 
 async function driveFetch(url, options = {}) {

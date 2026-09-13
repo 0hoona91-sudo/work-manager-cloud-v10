@@ -100,6 +100,7 @@ for (const name of [
   "mapClone",
   "replaceState",
   "cleanBlock",
+  "cleanAttachmentMetadata",
   "omit",
   "serializeState",
   "deserializeState",
@@ -149,6 +150,7 @@ const state = {
       { id: "root-image", type: "image", driveFileId: "drive-root", objectUrl: "blob:local-only", data: "data:image/png;base64,local-only" },
       { id: "root-file", type: "file", driveFileId: "drive-form", name: "점검표.xlsx", mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", size: 2048, caption: "작성 양식" },
     ],
+    attachments: [{ id: "attachment-1", type: "file", driveFileId: "drive-reference", name: "점검 결과보고서.hwp", mimeType: "application/x-hwp", size: 4096, uploadedAt: "2026-09-13T09:30:00.000Z", data: "base64-must-not-save", objectUrl: "blob:must-not-save" }],
     photos: ["legacy-photo"],
     method: "legacy method",
   }],
@@ -188,6 +190,11 @@ const taskDoc = maps.tasks.get("task-1");
 assert.ok(!Object.hasOwn(taskDoc, "checklist"), "업무 문서에 체크리스트 배열을 중복 저장하면 안 됩니다.");
 assert.ok(!Object.hasOwn(taskDoc, "link"), "업무 문서에 연계규칙을 중복 저장하면 안 됩니다.");
 assert.equal(taskDoc.relatedDocumentTitle, "시설점검 결과 제출 요청", "관련 공문 제목은 해당 업무 문서에 저장해야 합니다.");
+const templateDoc = maps.templates.get("tpl-1");
+assert.equal(templateDoc.attachments[0].driveFileId, "drive-reference", "관련 자료는 업무DB 문서에 Drive 연결정보만 저장해야 합니다.");
+assert.equal(templateDoc.attachments[0].name, "점검 결과보고서.hwp", "관련 자료의 원래 파일명을 저장해야 합니다.");
+assert.ok(!Object.hasOwn(templateDoc.attachments[0], "data"), "관련 자료 bytes를 Firestore에 저장하면 안 됩니다.");
+assert.ok(!Object.hasOwn(templateDoc.attachments[0], "objectUrl"), "관련 자료의 임시 object URL을 Firestore에 저장하면 안 됩니다.");
 for (const block of maps.manualBlocks.values()) {
   assert.ok(!Object.hasOwn(block, "data"), "base64/blob 사진 데이터를 Firestore에 저장하면 안 됩니다.");
   assert.ok(!Object.hasOwn(block, "objectUrl"), "로컬 object URL을 Firestore에 저장하면 안 됩니다.");
@@ -211,6 +218,8 @@ assert.equal(roundTrip.templates[0].methodBlocks[0].driveFileId, "drive-root");
 assert.equal(roundTrip.templates[0].methodBlocks[1].type, "file");
 assert.equal(roundTrip.templates[0].methodBlocks[1].name, "점검표.xlsx");
 assert.equal(roundTrip.templates[0].methodBlocks[1].driveFileId, "drive-form");
+assert.equal(roundTrip.templates[0].attachments[0].driveFileId, "drive-reference", "관련 자료 연결정보가 새로고침 후 유지되어야 합니다.");
+assert.equal(roundTrip.templates[0].attachments[0].name, "점검 결과보고서.hwp", "관련 자료 파일명이 새로고침 후 유지되어야 합니다.");
 assert.equal(roundTrip.settings.holidayApiKey, "device-only");
 assert.equal(roundTrip.settings.uiTheme, "navy", "선택한 V21 네이비 테마가 새로고침 후에도 유지되어야 합니다.");
 assert.equal(roundTrip.settings.designV21Applied, true, "V21 최초 적용 표식이 클라우드 상태에 유지되어야 합니다.");
@@ -233,6 +242,13 @@ documentChanged.tasks[0].relatedDocumentTitle = "시설점검 결과 제출 완�
 const documentDiffs = context.diffMaps(maps, context.serializeState(documentChanged));
 assert.equal(documentDiffs.length, 1, "공문 제목 변경은 해당 업무 문서 한 건만 갱신해야 합니다.");
 assert.deepEqual(Array.from(documentDiffs[0].fields), ["relatedDocumentTitle"]);
+
+const attachmentChanged = JSON.parse(JSON.stringify(state));
+attachmentChanged.templates[0].attachments[0].name = "점검 결과보고서 개정.hwp";
+const attachmentDiffs = context.diffMaps(maps, context.serializeState(attachmentChanged));
+assert.equal(attachmentDiffs.length, 1, "첨부 연결 변경은 업무DB 문서 한 건만 갱신해야 합니다.");
+assert.equal(attachmentDiffs[0].collection, "templates");
+assert.deepEqual(Array.from(attachmentDiffs[0].fields), ["attachments"]);
 
 const photoRemoved = JSON.parse(JSON.stringify(state));
 photoRemoved.templates[0].methodBlocks = photoRemoved.templates[0].methodBlocks.filter((block) => block.id !== "root-image");

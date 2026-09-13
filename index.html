@@ -1453,6 +1453,22 @@ button.db-health-row-v28{cursor:pointer}button.db-health-row-v28:hover{border-co
 @media(max-width:620px){.impact-overlay-v29{padding:8px}.impact-card-v29{max-height:calc(100dvh - 16px);border-radius:14px}.impact-grid-v29{grid-template-columns:minmax(0,1fr)}.impact-actions-v29{align-items:stretch;flex-direction:column-reverse}.impact-actions-v29 .btn{width:100%;min-height:44px}.protection-row-v29{grid-template-columns:auto minmax(0,1fr);min-height:66px}.protection-row-v29 .btn{grid-column:1/-1;grid-row:auto;width:100%}}
 </style>
 
+<style id="app-v30-template-attachments-clone-style">
+/* APP V30: 업무DB 관련 양식/자료와 저장 전 업무DB 복제 초안. */
+.template-attachment-list-v30{display:flex;flex-direction:column;gap:6px}
+.template-attachment-row-v30{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 9px;align-items:center;min-height:54px;padding:8px 9px;border:1px solid #e0e7ef;border-radius:10px;background:#fff}
+.template-attachment-icon-v30{grid-row:1 / span 2;align-self:start;margin-top:2px;font-size:19px}
+.template-attachment-name-v30{min-width:0;color:#263d5b;font-size:13px;font-weight:800;line-height:1.35;overflow-wrap:anywhere}
+.template-attachment-meta-v30{grid-column:2;min-width:0;color:#6d7d91;font-size:10px;line-height:1.35;overflow-wrap:anywhere}
+.template-attachment-actions-v30{grid-column:3;grid-row:1 / span 2;display:flex;gap:5px;align-items:center}
+.template-attachment-empty-v30{padding:14px 9px;border:1px dashed #d7e0ea;border-radius:10px;color:#738297;text-align:center;font-size:12px}
+.template-clone-note-v30{margin:0 0 12px;padding:9px 11px;border-radius:10px;background:var(--accent-softer);color:#586f85;font-size:12px;line-height:1.45}
+@media(max-width:620px){
+  .template-attachment-row-v30{grid-template-columns:auto minmax(0,1fr);min-height:62px;padding:9px}
+  .template-attachment-actions-v30{grid-column:1 / -1;grid-row:auto;justify-content:flex-end}.template-attachment-actions-v30 .btn{min-height:40px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1505,7 +1521,7 @@ button.db-health-row-v28{cursor:pointer}button.db-health-row-v28:hover{border-co
 
     <section id="taskListPage" class="sectionpage">
       <div class="pagehead"><div><h2>수행 업무 목록</h2></div><button class="btn primary" id="newTaskBtn">업무 작성</button></div>
-      <div class="card toolbar"><div class="field grow"><label>통합검색</label><input id="taskSearch" placeholder="업무명, 대분류, 공문, 메모, 방법, 체크리스트 검색"></div><div class="field"><label>필터</label><select id="taskStatusFilter"><option value="all">전체</option><option value="pending">미완료</option><option value="done">완료</option><option value="overdue">기한초과</option></select></div><div class="bulk-actions"><button class="btn danger" id="deleteSelectedTasks" disabled>선택 삭제</button><button class="btn" id="deleteSelectedSeries" disabled>반복 전체 삭제</button><span class="muted" id="selectedTaskCount">0건 선택</span></div></div>
+      <div class="card toolbar"><div class="field grow"><label>통합검색</label><input id="taskSearch" placeholder="업무명, 대분류, 공문, 메모, 방법, 체크리스트, 첨부자료 검색"></div><div class="field"><label>필터</label><select id="taskStatusFilter"><option value="all">전체</option><option value="pending">미완료</option><option value="done">완료</option><option value="overdue">기한초과</option></select></div><div class="bulk-actions"><button class="btn danger" id="deleteSelectedTasks" disabled>선택 삭제</button><button class="btn" id="deleteSelectedSeries" disabled>반복 전체 삭제</button><span class="muted" id="selectedTaskCount">0건 선택</span></div></div>
       <section class="card unified-search-v27" id="unifiedSearchV27" aria-live="polite" hidden></section>
       <div class="tablewrap"><table class="datatable"><thead><tr><th><input type="checkbox" id="selectAllTasks"></th><th>긴급</th><th>구분</th><th>업무명</th><th>진행 월/분기/반기</th><th>일정</th><th>반복</th><th>상태</th><th>비고</th></tr></thead><tbody id="taskTableBody"></tbody></table></div>
     </section>
@@ -1592,7 +1608,7 @@ const DBNAME='TaskManagerLocalDB_v1';
 function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DBNAME,1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('data'))e.target.result.createObjectStore('data')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function readLocalState(){try{const db=await openDb();const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get('state');const saved=await new Promise((res,rej)=>{req.onsuccess=()=>res(req.result||null);req.onerror=()=>rej(req.error)});db.close();return saved}catch(e){console.warn('로컬 데이터 확인 실패',e);return null}}
 async function writeLocalState(snapshot){try{const db=await openDb();const tx=db.transaction('data','readwrite');tx.objectStore('data').put(clone(snapshot),'state');await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){console.warn('기기 캐시 저장 실패',e)}}
-async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260913-32');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
+async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260913-33');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
 async function saveState(meta={}){const snapshot=clone(state);await writeLocalState(snapshot);if(window.cloudSync)await window.cloudSync.save(snapshot,meta)}
 function seed(){state.categories=['소방','시설','행정','교육','회계','인사','복지','기타'];state.owners=['나영훈','관리소장','시설담당','경리담당'];state.holidays=clone(holidaySeed);state.templates=clone(sampleTemplates);state.tasks=clone(sampleTasks);state.selectedCategories=[]}
 
@@ -1702,7 +1718,7 @@ function methodImageHtml(block,cls='method-image'){
   return `<img class="${cls}${block?.driveFileId&&!block?.data?' drive-image-pending':''}" src="${esc(src)}"${drive}>`;
 }
 async function makeMethodImageBlock(file){const id=uid('mb');if(window.cloudSync?.mode==='cloud')return window.cloudSync.createImageBlock(file,id);return{id,type:'image',data:await fileData(file),caption:''}}
-async function makeMethodFileBlock(file){const id=uid('mb');if(window.cloudSync?.mode==='cloud')return window.cloudSync.createFileBlock(file,id);throw new Error('첨부파일은 클라우드 연결 상태에서 Google Drive에 저장할 수 있습니다.')}
+async function makeMethodFileBlock(file,id=uid('mb')){if(window.cloudSync?.mode==='cloud')return window.cloudSync.createFileBlock(file,id);throw new Error('첨부파일은 클라우드 연결 상태에서 Google Drive에 저장할 수 있습니다.')}
 function fileSizeLabelV23(size){const n=Number(size||0);if(!n)return'';if(n<1024)return`${n} B`;if(n<1024*1024)return`${(n/1024).toFixed(n<10240?1:0)} KB`;return`${(n/1024/1024).toFixed(n<10*1024*1024?1:0)} MB`}
 function methodFileHtmlV23(block){const name=block?.name||'첨부파일',meta=[block?.mimeType,fileSizeLabelV23(block?.size)].filter(Boolean).join(' · ');return `<div class="method-file-card-v23"><span class="method-file-icon-v23" aria-hidden="true">📎</span><div class="method-file-copy-v23"><b>${esc(name)}</b>${meta?`<small>${esc(meta)}</small>`:''}${block?.caption?`<span>${esc(block.caption)}</span>`:''}</div>${block?.driveFileId?`<button type="button" class="btn small method-file-download-v23" data-drive-download="${esc(block.driveFileId)}" data-drive-name="${esc(name)}">다운로드</button>`:'<span class="muted">저장 대기</span>'}</div>`}
 function stableGeneratedTaskId(key){return window.cloudSync?.stableTaskId?.(key)||uid('task')}
@@ -2069,7 +2085,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260913-32').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260913-33').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2825,10 +2841,10 @@ function stepEditorHtmlV6(s,i){
   </div>`;
 }
 
-function openDbForm(id=null){
+function openDbForm(id=null,seed=null){
   const orig=id?state.templates.find(x=>x.id===id):null;
-  const t=clone(orig||{category:state.categories[0]||'',name:'',cycle:'monthly',cycleMonths:[],quarter:1,half:'first',dayRule:'unknown',exactDay:null,holidayShift:'prev',checklist:[],methodBlocks:[],keywords:'',notes:'',autoSchedule:true,activeFrom:todayISO(),activeUntil:'',applyPolicy:'pending',weekdays:[3],linkedSteps:[],durationDays:0,deadlineOffset:0});
-  let checks=[...(t.checklist||[])],blocks=clone(t.methodBlocks||[]),steps=clone(t.linkedSteps||[]);
+  const t=clone(orig||seed||{category:state.categories[0]||'',name:'',cycle:'monthly',cycleMonths:[],quarter:1,half:'first',dayRule:'unknown',exactDay:null,holidayShift:'prev',checklist:[],methodBlocks:[],attachments:[],keywords:'',notes:'',autoSchedule:true,activeFrom:todayISO(),activeUntil:'',applyPolicy:'pending',weekdays:[3],linkedSteps:[],durationDays:0,deadlineOffset:0});
+  let checks=[...(t.checklist||[])],blocks=clone(t.methodBlocks||[]),attachments=clone(t.attachments||[]),steps=clone(t.linkedSteps||[]);
   steps.forEach(s=>{if(s.startOffset===undefined)s.startOffset=Number(s.offset||0);if(!s.startMode)s.startMode=s.mode||'business';if(!s.startHolidayShift)s.startHolidayShift=s.holidayShift||'next';if(!s.workType)s.workType='single';if(s.limitDays===undefined)s.limitDays=0;if(!s.limitMode)s.limitMode='calendar';if(!s.limitHolidayShift)s.limitHolidayShift=s.holidayShift||'next';if(!Array.isArray(s.checklist))s.checklist=[]});
   modal(id?'업무 DB 수정':'업무 DB 등록',`<div class="formgrid">
     <div class="field"><label>구분</label><select id="dfCat">${state.categories.map(c=>`<option ${t.category===c?'selected':''}>${esc(c)}</option>`).join('')}</select></div>
@@ -2852,7 +2868,8 @@ function openDbForm(id=null){
     </fieldset>
     <fieldset class="subbox span2"><legend>1단계 주요 체크리스트</legend><div id="dfChecks" class="check-editor"></div><button class="btn small" id="dfAddCheck">＋ 항목</button></fieldset>
     <fieldset class="subbox span2"><legend>연계되는 업무</legend><div class="muted">각 단계별로 시작 시점, 마감/수행기간, 체크리스트를 따로 정합니다. DB에 저장하면 DB 목록에서도 각 단계가 한 줄씩 표시됩니다.</div><div id="dfLinkedSteps" class="db-step-list" style="margin-top:10px"></div><button class="btn small" id="dfAddLinked">＋ 다음 연계업무</button></fieldset>
-    <fieldset class="subbox span2"><legend>업무수행방법·첨부자료 — 원하는 순서로 배치</legend><div class="inline method-add-actions-v23" style="margin-bottom:10px"><button class="btn small" id="addMethodText">＋ 글</button><label class="btn small">＋ 사진<input type="file" id="addMethodImage" accept="image/*" multiple hidden></label><label class="btn small">＋ 파일<input type="file" id="addMethodFile" multiple hidden></label><span class="muted">파일당 최대 50MB · Google Drive 저장</span></div><div id="methodBlockEditor" class="method-block-editor"></div></fieldset>
+    <fieldset class="subbox span2"><legend>업무수행방법 — 글·사진·본문 첨부를 원하는 순서로 배치</legend><div class="inline method-add-actions-v23" style="margin-bottom:10px"><button class="btn small" id="addMethodText">＋ 글</button><label class="btn small">＋ 사진<input type="file" id="addMethodImage" accept="image/*" multiple hidden></label><label class="btn small">＋ 파일<input type="file" id="addMethodFile" multiple hidden></label><span class="muted">파일당 최대 50MB · Google Drive 저장</span></div><div id="methodBlockEditor" class="method-block-editor"></div></fieldset>
+    <fieldset class="subbox span2"><legend>관련 양식 / 자료</legend><div class="inline method-add-actions-v23" style="margin-bottom:10px"><label class="btn small">＋ 자료 추가<input type="file" id="addTemplateAttachmentV30" accept="${TEMPLATE_ATTACHMENT_ACCEPT_V30}" multiple hidden></label><span class="muted">업무 문서 · 파일당 최대 50MB · Google Drive 저장</span></div><input type="hidden" id="dfAttachmentSignatureV30" value="${esc(templateAttachmentSignatureV30(attachments))}"><div id="templateAttachmentEditorV30" class="template-attachment-list-v30"></div></fieldset>
     <div class="field"><label>검색키워드</label><input id="dfKeywords" value="${esc(t.keywords||'')}"></div>
     <div class="field"><label>비고</label><input id="dfNotes" value="${esc(t.notes||'')}"></div>
   </div>`,`<button class="btn" data-close>취소</button>${id?'<button class="btn danger" id="deleteDb">삭제</button>':''}<button class="btn primary" id="saveDb">저장</button>`,'db-form-modal locked-modal');
@@ -2876,6 +2893,12 @@ function openDbForm(id=null){
     $$('[data-mdn]').forEach(x=>x.onclick=()=>{const i=+x.dataset.mdn;[blocks[i+1],blocks[i]]=[blocks[i],blocks[i+1]];rblocks()});
     queueMicrotask(()=>window.cloudSync?.hydrateImages(root));
   }
+  function rattachments(){
+    const root=$('#templateAttachmentEditorV30');if(!root)return;
+    root.innerHTML=attachments.length?attachments.map((file,index)=>templateAttachmentRowHtmlV30(file,index,true)).join(''):'<div class="template-attachment-empty-v30">연결된 관련 양식이나 참고자료가 없습니다.</div>';
+    const signature=$('#dfAttachmentSignatureV30');if(signature)signature.value=templateAttachmentSignatureV30(attachments);
+    $$('[data-template-attachment-remove-v30]',root).forEach(button=>button.onclick=()=>{attachments.splice(Number(button.dataset.templateAttachmentRemoveV30),1);rattachments()});
+  }
   function rcycle(){const v=$('input[name=dfCycle]:checked').value;let h='';if(v==='weekly'){const days=t.weekdays?.length?t.weekdays:[Number(t.weekday??3)];h=`<div class="field"><label>반복 요일 (복수선택 가능)</label><div class="weekday-picks">${[['1','월'],['2','화'],['3','수'],['4','목'],['5','금'],['6','토'],['0','일']].map(([v,l])=>`<label><input type="checkbox" data-dfwd="${v}" ${days.map(Number).includes(Number(v))?'checked':''}>${l}</label>`).join('')}</div></div>`}else if(v==='quarterly')h=`<div class="inline"><label>기준 분기 <select id="dfQuarter"><option>1</option><option>2</option><option>3</option><option>4</option></select></label><label>실시월 <input id="dfMonths" placeholder="예: 3,6,9,12" value="${(t.cycleMonths||[]).join(',')}"></label></div>`;else if(v==='half')h=`<div class="inline"><label>구분 <select id="dfHalf"><option value="first">상반기</option><option value="second">하반기</option></select></label><label>실시월 <input id="dfMonths" placeholder="예: 6,12" value="${(t.cycleMonths||[]).join(',')}"></label></div>`;else if(v==='monthly'||v==='yearly')h=`<div class="inline"><label>실시월(비우면 ${v==='monthly'?'매월':'12월'}) <input id="dfMonths" placeholder="예: 1,4,7,10" value="${(t.cycleMonths||[]).join(',')}"></label></div>`;$('#dfCycleExtra').innerHTML=h;if($('#dfQuarter'))$('#dfQuarter').value=t.quarter||1;if($('#dfHalf'))$('#dfHalf').value=t.half||'first'}
   function bindStepControls(){
     steps.forEach((s,i)=>{
@@ -2892,17 +2915,18 @@ function openDbForm(id=null){
     $$('[data-v6dbrm]').forEach(x=>x.onclick=()=>{steps.splice(Number(x.dataset.v6dbrm),1);rsteps()});
   }
   function rsteps(){const root=$('#dfLinkedSteps');root.innerHTML=steps.map(stepEditorHtmlV6).join('')||'<div class="muted">연계업무가 없으면 비워두면 됩니다.</div>';bindStepControls()}
-  rchecks();rblocks();rcycle();rsteps();$$('input[name=dfCycle]').forEach(x=>x.onchange=rcycle);
+  rchecks();rblocks();rattachments();rcycle();rsteps();$$('input[name=dfCycle]').forEach(x=>x.onchange=rcycle);
   let previousRootCategory=$('#dfCat').value;
   $('#dfCat').onchange=()=>{const next=$('#dfCat').value;steps.forEach((s,i)=>{if(s.inheritRootCategory===true||(!s.templateId&&s.category===previousRootCategory)){s.category=next;s.inheritRootCategory=true;const el=$(`[data-v6cat="${i}"]`);if(el)el.value=next}});previousRootCategory=next};
   $('#dfAddCheck').onclick=()=>{checks.push('');rchecks()};$('#dfAddLinked').onclick=()=>{steps.push({name:'',category:$('#dfCat')?.value||t.category,owner:$('#dfOwner')?.value||t.owner||'',inheritRootCategory:true,inheritRootOwner:true,dynamic:true,basis:'actualEnd',startOffset:0,startMode:'business',startHolidayShift:'next',workType:'single',limitDays:0,limitMode:'calendar',limitHolidayShift:'next',checklist:[]});rsteps()};
   $('#addMethodText').onclick=()=>{blocks.push({id:uid('mb'),type:'text',text:''});rblocks()};$('#addMethodImage').onchange=async e=>{try{for(const f of e.target.files)blocks.push(await makeMethodImageBlock(f));rblocks()}catch(err){toast(err.message||'사진을 저장하지 못했습니다.')}finally{e.target.value=''}};$('#addMethodFile').onchange=async e=>{try{for(const f of e.target.files)blocks.push(await makeMethodFileBlock(f));rblocks();toast('첨부파일을 Google Drive에 저장했습니다.')}catch(err){toast(err.message||'파일을 저장하지 못했습니다.')}finally{e.target.value=''}};
+  $('#addTemplateAttachmentV30').onchange=async e=>{try{for(const file of e.target.files)attachments.push(await makeTemplateAttachmentV30(file));rattachments();toast('관련 자료를 Google Drive에 저장했습니다. 저장 버튼을 눌러 업무DB에 연결하세요.')}catch(err){toast(err.message||'자료를 저장하지 못했습니다.')}finally{e.target.value=''}};
   $('#saveDb').onclick=async()=>{
     const name=$('#dfName').value.trim();if(!name)return toast('업무명을 입력하세요.');
     const cyc=$('input[name=dfCycle]:checked').value,months=($('#dfMonths')?.value||'').split(',').map(x=>Number(x.trim())).filter(x=>x>=1&&x<=12);
     const rootCategory=$('#dfCat').value;
     steps=steps.map(s=>({...s,name:String(s.name||'').trim(),category:s.category||rootCategory,owner:s.owner||t.owner||'',checklist:(s.checklist||[]).map(x=>x.trim()).filter(Boolean),startOffset:Number(s.startOffset||0),limitDays:Number(s.limitDays||0)})).filter(s=>s.name);
-    Object.assign(t,{category:rootCategory,owner:$('#dfOwner')?.value||t.owner||'',name,cycle:cyc,cycleMonths:months,quarter:Number($('#dfQuarter')?.value||0)||null,half:$('#dfHalf')?.value||null,weekdays:$$('[data-dfwd]:checked').map(x=>Number(x.dataset.dfwd)),weekday:Number($('[data-dfwd]:checked')?.dataset.dfwd??t.weekday??1),dayRule:$('input[name=dfDay]:checked').value,exactDay:Number($('#dfExactDay').value)||null,holidayShift:$('#dfShift').value,checklist:checks.map(x=>x.trim()).filter(Boolean),methodBlocks:blocks,method:'',photos:[],keywords:$('#dfKeywords').value,notes:$('#dfNotes').value,autoSchedule:$('#dfAutoSchedule').checked,activeFrom:$('#dfActiveFrom').value||todayISO(),activeUntil:$('#dfActiveUntil').value||'',applyPolicy:$('#dfApplyPolicy').value,durationDays:Number($('#dfDurationDays').value||0),linkedSteps:steps});
+    Object.assign(t,{category:rootCategory,owner:$('#dfOwner')?.value||t.owner||'',name,cycle:cyc,cycleMonths:months,quarter:Number($('#dfQuarter')?.value||0)||null,half:$('#dfHalf')?.value||null,weekdays:$$('[data-dfwd]:checked').map(x=>Number(x.dataset.dfwd)),weekday:Number($('[data-dfwd]:checked')?.dataset.dfwd??t.weekday??1),dayRule:$('input[name=dfDay]:checked').value,exactDay:Number($('#dfExactDay').value)||null,holidayShift:$('#dfShift').value,checklist:checks.map(x=>x.trim()).filter(Boolean),methodBlocks:blocks,attachments:attachments.map(cleanTemplateAttachmentV30),method:'',photos:[],keywords:$('#dfKeywords').value,notes:$('#dfNotes').value,autoSchedule:$('#dfAutoSchedule').checked,activeFrom:$('#dfActiveFrom').value||todayISO(),activeUntil:$('#dfActiveUntil').value||'',applyPolicy:$('#dfApplyPolicy').value,durationDays:Number($('#dfDurationDays').value||0),linkedSteps:steps});
     if(orig)Object.assign(orig,t);else{t.id=uid('tpl');state.templates.push(t)}
     const target=orig||t,[df,dt]=v5DefaultAutoRange();syncTemplateScheduleV5(target,df,dt,t.applyPolicy||'pending');recalcLinks();await saveState();closeModal();renderDbTable();renderTaskTable();renderHome();toast(t.autoSchedule?'DB 저장 · 수행업무 자동 동기화 완료':'업무 DB를 저장했습니다.');
   };
@@ -3271,9 +3295,9 @@ stepEditorHtmlV6=function(s,i){
 };
 
 const openDbFormV8Base=openDbForm;
-openDbForm=function(id=null){
-  openDbFormV8Base(id);
-  const tpl=id?state.templates.find(x=>x.id===id):null;
+openDbForm=function(id=null,seed=null){
+  openDbFormV8Base(id,seed);
+  const tpl=id?state.templates.find(x=>x.id===id):seed;
   const nameField=$('#dfName')?.closest('.field');
   if(nameField&&!$('#dfOwner')){
     nameField.insertAdjacentHTML('afterend',`<div class="field"><label>담당자</label><select id="dfOwner">${ownerOptionHtmlV8(tpl?.owner||state.owners[0]||'',true)}</select><div class="owner-select-hint">자동 생성되는 수행업무의 기본 담당자입니다.</div></div>`);
@@ -3948,7 +3972,7 @@ function bindDbSingleDeleteV12(id){
   };
 }
 const openDbFormV12Base=openDbForm;
-openDbForm=function(id=null){openDbFormV12Base(id);bindDrivePhotoAuthorizationV12();bindDbSingleDeleteV12(id)};
+openDbForm=function(id=null,seed=null){openDbFormV12Base(id,seed);bindDrivePhotoAuthorizationV12();bindDbSingleDeleteV12(id)};
 
 function todayLabelV12(){return new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'}).format(new Date())}
 function renderTodayV12(){
@@ -4913,6 +4937,7 @@ function dbSearchFieldsV27(row){
     {label:row.kind==='step'?'연계업무':'업무명',value:row.name},{label:'대분류',value:row.category},
     {label:'키워드',value:[source?.keywords,referenced?.keywords,row.kind==='root'?row.root?.keywords:'']},
     {label:'메모',value:[row.notes,source?.notes]},{label:'업무방법',value:methodSearchTextV27(source?.methodBlocks)},
+    {label:'첨부자료',value:(source?.attachments||[]).map(file=>file?.name||'')},
     {label:'체크리스트',value:checklistSearchTextV27(source?.checklist)},
     {label:'연계업무',value:row.kind==='root'?(row.root?.linkedSteps||[]).map(step=>step.name):''},
     {label:'진행주기',value:row.cycle},{label:'담당자',value:ownerForDbRefV8(row.ref)}
@@ -5411,7 +5436,7 @@ async function openTemplateVersionsV29(templateId){
 }
 
 const openDbFormV29Base=openDbForm;
-openDbForm=function(id=null){const result=openDbFormV29Base(id);decorateDbProtectionV29(id);return result};
+openDbForm=function(id=null,seed=null){const result=openDbFormV29Base(id,seed);decorateDbProtectionV29(id);return result};
 const openDbDetailV29Base=openDbDetailV6;
 openDbDetailV6=function(ref){const result=openDbDetailV29Base(ref);const [kind,id]=String(ref).split('|');if(kind==='root')decorateTemplateVersionButtonV29(id);return result};
 const openTaskFormV29Base=openTaskForm;
@@ -5444,6 +5469,67 @@ deleteSelectedDbV12=async function(){
 };
 const bindV29Base=bind;
 bind=function(){const result=bindV29Base();const trash=$('#trashOpenV29');if(trash)trash.onclick=()=>openTrashV29();return result};
+
+// ========================= APP V30 — template attachments / clone draft =========================
+const TEMPLATE_ATTACHMENT_EXTENSIONS_V30=new Set(['hwp','hwpx','xls','xlsx','pdf','doc','docx','ppt','pptx','csv','txt']);
+const TEMPLATE_ATTACHMENT_ACCEPT_V30=[...TEMPLATE_ATTACHMENT_EXTENSIONS_V30].map(ext=>`.${ext}`).join(',');
+
+function templateAttachmentExtensionV30(name){const match=String(name||'').trim().toLowerCase().match(/\.([^.]+)$/);return match?.[1]||''}
+function templateAttachmentSignatureV30(files){return JSON.stringify((files||[]).map(file=>[file?.id||'',file?.driveFileId||'',file?.name||'',Number(file?.size||0),file?.mimeType||'']))}
+function cleanTemplateAttachmentV30(file){
+  const source=archiveCloneV29(file||{});
+  return{id:String(source.id||uid('att')),type:'file',name:String(source.name||'첨부파일'),mimeType:String(source.mimeType||'application/octet-stream'),size:Number(source.size||0),driveFileId:String(source.driveFileId||''),uploadedAt:String(source.uploadedAt||''),caption:String(source.caption||'')};
+}
+function templateAttachmentIconV30(file){const ext=templateAttachmentExtensionV30(file?.name);if(ext==='pdf')return'📕';if(['xls','xlsx','csv'].includes(ext))return'📊';if(['ppt','pptx'].includes(ext))return'📙';return'📄'}
+function templateAttachmentRowHtmlV30(file,index=-1,editable=false){
+  const name=file?.name||'첨부파일',meta=[templateAttachmentExtensionV30(name).toUpperCase(),fileSizeLabelV23(file?.size)].filter(Boolean).join(' · ');
+  const actions=file?.driveFileId?`<button type="button" class="btn small" data-drive-open-v30="${esc(file.driveFileId)}" data-drive-name-v30="${esc(name)}" data-drive-mime-v30="${esc(file.mimeType||'')}">열기 / 받기</button>`:'<span class="muted">연결정보 없음</span>';
+  return`<div class="template-attachment-row-v30"><span class="template-attachment-icon-v30" aria-hidden="true">${templateAttachmentIconV30(file)}</span><span class="template-attachment-name-v30">${esc(name)}</span><span class="template-attachment-meta-v30">${esc(meta||'Google Drive 자료')}</span><span class="template-attachment-actions-v30">${actions}${editable?`<button type="button" class="btn small danger" data-template-attachment-remove-v30="${index}">연결 제거</button>`:''}</span></div>`;
+}
+function renderTemplateAttachmentsV30(template){const files=template?.attachments||[];return`<div class="template-attachment-list-v30">${files.length?files.map(file=>templateAttachmentRowHtmlV30(file)).join(''):'<div class="template-attachment-empty-v30">연결된 관련 양식이나 참고자료가 없습니다.</div>'}</div>`}
+async function makeTemplateAttachmentV30(file){
+  const extension=templateAttachmentExtensionV30(file?.name);if(!TEMPLATE_ATTACHMENT_EXTENSIONS_V30.has(extension))throw new Error('HWP, HWPX, XLS, XLSX, PDF, DOC, DOCX, PPT, PPTX, CSV, TXT 파일만 추가할 수 있습니다.');
+  const uploaded=await makeMethodFileBlock(file,uid('att'));return cleanTemplateAttachmentV30({...uploaded,uploadedAt:new Date().toISOString()});
+}
+function bindTemplateAttachmentOpenV30(){
+  if(window.v30TemplateAttachmentOpenBound)return;window.v30TemplateAttachmentOpenBound=true;
+  document.addEventListener('click',async event=>{
+    const button=event.target.closest?.('[data-drive-open-v30]');if(!button)return;event.preventDefault();event.stopPropagation();if(button.disabled)return;
+    const old=button.textContent;button.disabled=true;button.textContent='여는 중…';
+    try{await window.cloudSync?.openDriveFile(button.dataset.driveOpenV30,button.dataset.driveNameV30||'첨부파일',button.dataset.driveMimeV30||'');toast('Google Drive 자료를 열었습니다.')}
+    catch(error){toast(error?.message||'자료를 열지 못했습니다. Drive 연결 상태를 확인해 주세요.')}
+    finally{button.disabled=false;button.textContent=old}
+  });
+}
+
+const TEMPLATE_CLONE_OMIT_FIELDS_V30=['id','autoGeneratedThrough','generatedKey','seriesId','groupId','parentAutoRootId','parentSeriesId','autoSourceTemplateId','dbSourceTemplateId','dbManualRootTemplateId','actualComplete','status','revision','createdAt','updatedAt','deletedAt','archivedSourceDeleted','archivedSourceDeletedAt','archivedSourceTrashId','changeLogs','history','versions','templateVersionV29'];
+function cloneMethodBlocksV30(blocks){return archiveCloneV29(blocks||[]).map(block=>({...block,id:uid('mb')}))}
+function templateCloneDraftV30(source){
+  const draft=archiveCloneV29(source||{});TEMPLATE_CLONE_OMIT_FIELDS_V30.forEach(field=>delete draft[field]);
+  draft.name=`${String(source?.name||'업무DB').trim()} - 복사본`;
+  draft.methodBlocks=cloneMethodBlocksV30(source?.methodBlocks);
+  draft.attachments=(source?.attachments||[]).map(file=>cleanTemplateAttachmentV30({...file,id:uid('att')}));
+  draft.linkedSteps=archiveCloneV29(source?.linkedSteps||[]).map(step=>{const next={...step};['id','ruleId','rootTemplateId','parentId','generatedKey','seriesId','groupId','revision','createdAt','updatedAt'].forEach(field=>delete next[field]);if(next.templateId===source?.id)delete next.templateId;next.methodBlocks=cloneMethodBlocksV30(step?.methodBlocks);return next});
+  return draft;
+}
+function openDbCloneV30(sourceId){const source=state.templates.find(template=>template.id===sourceId);if(!source)return toast('복제할 업무DB를 찾지 못했습니다.');openDbForm(null,templateCloneDraftV30(source))}
+function decorateDbCloneFormV30(id,seed){
+  const root=$('#modalRoot'),footer=$('.modal-foot',root);if(!root||!footer)return;
+  if(seed){const body=$('.modal-body',root);body?.insertAdjacentHTML('afterbegin','<p class="template-clone-note-v30">복제 초안입니다. 아직 Firestore나 수행업무에 저장되지 않았습니다. 내용을 확인한 뒤 저장하세요.</p>')}
+  if(id&&!$('#cloneDbV30',footer)){footer.insertAdjacentHTML('afterbegin','<button type="button" class="btn" id="cloneDbV30">업무DB 복제</button>');$('#cloneDbV30',footer).onclick=()=>openDbCloneV30(id)}
+}
+function decorateDbDetailV30(ref){
+  const[kind,id]=String(ref).split('|');if(kind!=='root')return;const template=state.templates.find(item=>item.id===id),root=$('#modalRoot'),grid=$('.modal-body .formgrid',root),footer=$('.modal-foot',root);if(!template||!grid||!footer)return;
+  grid.insertAdjacentHTML('beforeend',`<div class="span2"><b>관련 양식 / 자료</b><div style="margin-top:7px">${renderTemplateAttachmentsV30(template)}</div></div>`);
+  if(!$('#cloneDbV30',footer)){footer.insertAdjacentHTML('afterbegin','<button type="button" class="btn" id="cloneDbV30">업무DB 복제</button>');$('#cloneDbV30',footer).onclick=()=>openDbCloneV30(id)}
+}
+
+const openDbFormV30Base=openDbForm;
+openDbForm=function(id=null,seed=null){const result=openDbFormV30Base(id,seed);decorateDbCloneFormV30(id,seed);return result};
+const openDbDetailV30Base=openDbDetailV6;
+openDbDetailV6=function(ref){const result=openDbDetailV30Base(ref);decorateDbDetailV30(ref);return result};
+versionSummaryV29=function(snapshot){return `${templatePeriodLabel(snapshot)} · ${snapshot.autoSchedule?'자동생성':'자동생성 안 함'} · 체크리스트 ${(snapshot.checklist||[]).length}개 · 연계 ${(snapshot.linkedSteps||[]).length}단계 · 자료 ${(snapshot.attachments||[]).length}개`};
+bindTemplateAttachmentOpenV30();
 
 </script>
 </body></html>
