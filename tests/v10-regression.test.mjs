@@ -246,7 +246,7 @@ assert.ok(html.includes("간트·달력 대분류"), "대분류가 간트와 달
 
 const taskFormSource = extractLastFunction("taskFormHtml");
 assert.ok(taskFormSource.includes("<label>시작일</label>"), "첫 업무 시작일은 시작일로 간결하게 표시해야 합니다.");
-assert.ok(taskFormSource.includes("<label>종료일</label><select id=\"tfEndType\""), "종료 방식 선택기의 제목은 종료일이어야 합니다.");
+assert.ok(taskFormSource.includes('name="tfEndModeV32"') && taskFormSource.includes("당일 마무리"), "종료일은 간결한 라디오 선택 방식이어야 합니다.");
 assert.ok(taskFormSource.includes('id="tfEndDateField"><input type="date"'), "날짜 직접 선택 칸에 종료일 제목을 중복 표시하면 안 됩니다.");
 assert.ok(taskFormSource.includes('type="hidden" id="tfDeadline"'), "사용자가 입력하는 별도 마감일 필드는 제거해야 합니다.");
 assert.ok(taskFormSource.includes("종료일이 휴일이면"), "휴일 보정 문구는 종료일 기준으로 표시해야 합니다.");
@@ -825,7 +825,8 @@ assert.ok(html.includes("owner:$('#dfOwner')?.value||t.owner||''"), "새 연계 
 assert.ok(html.includes("category:rootCategory,owner:$('#dfOwner')?.value||t.owner||'',name,cycle:cyc"), "업무 DB 저장 시 담당자를 첫 저장 경로에서 함께 보존해야 합니다.");
 assert.ok(!html.includes("const beforeIds=new Set(state.templates.map(x=>x.id))"), "업무 DB 한 번 저장으로 클라우드 저장을 두 번 실행하면 안 됩니다.");
 assert.ok(html.includes("repairLinkedInheritanceV23"), "기존 기본 대분류·미지정 담당자 오류를 한 번 복구해야 합니다.");
-assert.ok(html.includes('id="addMethodFile"'), "업무 DB 폼에 양식 파일 첨부 입력이 있어야 합니다.");
+assert.ok(!extractLastFunction("openDbForm").includes('id="addMethodFile"'), "업무수행방법에는 신규 일반 파일 업로더가 없어야 합니다.");
+assert.match(extractLastFunction("openDbForm"), /b\.type==='file'[\s\S]*methodFileHtmlV23/, "기존 업무수행방법 파일 블록은 계속 표시해야 합니다.");
 assert.ok(html.includes("makeMethodFileBlock"), "업무 DB 파일을 Drive 블록으로 생성해야 합니다.");
 assert.ok(html.includes("data-drive-download"), "업무 DB 상세에서 첨부파일을 내려받을 수 있어야 합니다.");
 assert.ok(html.includes('id="app-v23-theme-drive-style"'), "V23 테마·Drive 첨부 스타일이 있어야 합니다.");

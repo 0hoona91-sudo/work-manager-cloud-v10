@@ -150,21 +150,21 @@ assert.equal(entries[0].occurrences[0].start, "2026-09-14", "holidayShift는 기
 entries = context.annualPlanEntriesV31(2026, [template({ id: "tpl-off", autoSchedule: false }), template({ id: "tpl-none", cycle: "none" })]);
 assert.equal(entries.length, 0, "자동일정 계산 대상이 아닌 업무DB의 일정을 임의 생성하면 안 됩니다.");
 
-assert.match(html, /button\.id='openAnnualPlanV31'/, "업무DB 화면에 연간 업무 진입점이 있어야 합니다.");
+assert.match(html, /home-annual-date-v32[\s\S]*id="openAnnualPlanV31"[\s\S]*id="homeTodayCardV12"/, "HOME 날짜 왼쪽에 연간 업무 진입점이 있어야 합니다.");
 assert.match(html, /data-annual-view-v31="months"[\s\S]*data-annual-view-v31="categories"[\s\S]*data-annual-view-v31="matrix"/, "월별·대분류별·월×대분류 보기를 제공해야 합니다.");
 assert.match(html, /data-annual-db-v31/, "연간표 업무명에서 기존 업무DB 상세로 이동할 수 있어야 합니다.");
 assert.match(html, /건수는 수행업무 회차 수가 아니라 해당 월에 발생하는 업무DB 종류 수/, "월×대분류 건수 기준을 화면에 명시해야 합니다.");
 assert.match(html, /@media\(max-width:760px\)[\s\S]*annual-month-grid-v31[\s\S]*grid-template-columns:minmax\(0,1fr\)/, "모바일은 월별 목록을 한 열로 표시해야 합니다.");
 assert.match(html, /annual-matrix-scroll-v31\{overflow:auto/, "모바일 월×대분류 표는 필요한 경우 가로 스크롤을 허용해야 합니다.");
 
-const annualSource = html.slice(html.lastIndexOf("APP V31 — annual plan / category / month matrix"));
+const annualSource = html.slice(html.lastIndexOf("APP V31 — annual plan / category / month matrix"), html.lastIndexOf("APP V32 — input form / annual entry UX cleanup"));
 assert.doesNotMatch(annualSource, /saveState|onSnapshot|getDocs|getDoc|setDoc|updateDoc|runTransaction|collection\s*\(|state\.tasks|syncTemplateSchedule|ensureAutoSchedules/, "연간계획은 저장·tasks 조회·Rolling 실행 경로를 호출하면 안 됩니다.");
 assert.match(extractLastFunction("annualPlanEntriesV31"), /templateOccurrenceSpecsV5[\s\S]*taskFromDbTemplateV5/, "기존 반복일과 업무 일정 계산 함수를 재사용해야 합니다.");
 assert.match(html, /ROLLING_AUTO_MONTHS_V24=12/, "Rolling 12개월 기능을 유지해야 합니다.");
 assert.match(html, /APP V30 — template attachments \/ clone draft/, "자료 첨부와 업무DB 복제를 유지해야 합니다.");
 assert.match(html, /APP V29 — impact preview \/ trash \/ template versions/, "휴지통과 버전복원을 유지해야 합니다.");
 assert.match(html, /HOME_FOCUS_META_V25/, "HOME 요약을 유지해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-34/, "9단계 서비스워커 캐시를 사용해야 합니다.");
-assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-34'\)/, "9단계 서비스워커 URL을 등록해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-35/, "9.5단계 서비스워커 캐시를 사용해야 합니다.");
+assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-35'\)/, "9.5단계 서비스워커 URL을 등록해야 합니다.");
 
 console.log("PASS stage 9 annual plan and category matrix regression");
