@@ -80,6 +80,6 @@ for (const moduleName of ["firebase-app.js", "firebase-auth.js", "firebase-fires
   assert.match(serviceWorker, new RegExp(moduleName.replace(".", "\\.")), `${moduleName}을 첫 설치 때 미리 캐시해야 합니다.`);
 }
 assert.match(serviceWorker, /cache\.addAll\(FIREBASE_MODULES\)\.catch/, "Firebase CDN 장애가 앱 셸 설치를 막으면 안 됩니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-12-30/, "5단계 통합검색·과거이력 배포 캐시 버전이어야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-31/, "6단계 업무DB 점검 배포 캐시 버전이어야 합니다.");
 
 console.log("PASS cloud/PWA contract: Drive session and file attachment included");

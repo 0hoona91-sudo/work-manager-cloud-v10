@@ -1422,6 +1422,25 @@ body.app-v21 .home-focus-card-v25.urgent b{color:#cb4444!important}
 }
 </style>
 
+<style id="app-v28-db-health-style">
+/* APP V28: 수동 실행 업무DB 건강검진과 선택적 누락 복구. */
+.db-health-modal-v28{width:min(780px,calc(100vw - 28px));max-height:min(86vh,860px)}
+.db-health-summary-v28{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:13px}
+.db-health-stat-v28{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:58px;padding:10px 12px;border:1px solid #e0e7ef;border-radius:11px;background:#f8fafc;color:#53657b}
+.db-health-stat-v28 b{font-size:22px;color:#263d5b}.db-health-stat-v28.error{background:#fff3f2;border-color:#f1cfcb}.db-health-stat-v28.error b{color:#b94139}.db-health-stat-v28.warning{background:#fff9e9;border-color:#f1dfaa}.db-health-stat-v28.warning b{color:#916400}
+.db-health-scope-v28{margin:0 0 14px;padding:9px 11px;border-radius:9px;background:var(--accent-softer);color:#63758b;font-size:12px;line-height:1.5}
+.db-health-group-v28{margin-top:14px}.db-health-group-title-v28{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 7px;color:#344961;font-size:14px}.db-health-group-title-v28 span{font-size:11px;color:#758499}
+.db-health-list-v28{display:flex;flex-direction:column;gap:5px}.db-health-row-v28{width:100%;min-height:48px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 9px;align-items:center;padding:8px 10px;border:1px solid #e0e7ef;border-radius:10px;background:#fff;color:inherit;text-align:left}
+button.db-health-row-v28{cursor:pointer}button.db-health-row-v28:hover{border-color:color-mix(in srgb,var(--accent) 32%,#dce5f1);background:var(--accent-softer)}button.db-health-row-v28:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:1px}
+.db-health-kind-v28{grid-row:1 / span 2;align-self:start;margin-top:1px;padding:3px 7px;border-radius:999px;background:#eef2f7;color:#64748b;font-size:10px;font-weight:850}.db-health-row-v28.error .db-health-kind-v28{background:#ffe8e6;color:#aa3832}.db-health-row-v28.warning .db-health-kind-v28{background:#fff1bf;color:#7a5a00}.db-health-row-v28.info .db-health-kind-v28{background:#eaf1f7;color:#526b82}
+.db-health-name-v28{min-width:0;color:#263d5b;font-size:13px;font-weight:850;overflow-wrap:anywhere}.db-health-message-v28{min-width:0;color:#697a8f;font-size:11px;line-height:1.4;overflow-wrap:anywhere}.db-health-empty-v28{padding:18px 10px;border:1px dashed #d8e1eb;border-radius:10px;color:#6f7f92;text-align:center;font-size:12px}
+.db-health-repair-note-v28{margin-right:auto;color:#68798e;font-size:11px}.db-health-repair-v28{min-height:42px}
+@media(max-width:760px){
+  .db-health-modal-v28{width:calc(100vw - 18px);max-height:calc(100dvh - 18px)}.db-health-summary-v28{gap:5px}.db-health-stat-v28{min-height:54px;display:block;padding:8px 9px}.db-health-stat-v28 span{display:block;font-size:11px}.db-health-stat-v28 b{display:block;margin-top:2px;font-size:20px}
+  .db-health-row-v28{min-height:54px;padding:9px}.db-health-modal-v28 .modal-foot{align-items:stretch;flex-direction:column}.db-health-repair-note-v28{margin:0}.db-health-repair-v28{width:100%}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1506,7 +1525,7 @@ body.app-v21 .home-focus-card-v25.urgent b{color:#cb4444!important}
         <div class="card panel-body"><h3>백업 / 복원</h3><p class="muted">전체 업무 데이터와 비공개 Drive 사진 참조를 JSON으로 저장합니다. 기존 v10 백업도 그대로 불러올 수 있습니다.</p><div class="inline"><button class="btn primary" id="exportBackup">백업 다운로드</button><label class="btn">백업 불러오기<input type="file" id="importBackup" accept="application/json" hidden></label></div></div>
         <div class="card panel-body"><h3>데이터 내보내기</h3><p class="muted">수행업무·업무DB를 CSV로 내려받습니다.</p><div class="inline"><button class="btn" id="exportTaskCsv">수행업무 CSV</button><button class="btn" id="exportDbCsv">업무DB CSV</button></div></div>
         <div class="card panel-body"><h3>국가공휴일 데이터</h3><p class="muted">기본은 키 없이 동작하는 KR 공휴일 서비스를 사용합니다. 공공데이터포털의 한국천문연구원 특일정보 API 키(Decoding)가 있으면 우선 사용합니다.</p><div class="field"><label>공공데이터포털 서비스키 (선택)</label><input id="holidayApiKey" type="password" placeholder="없어도 사용 가능"></div><div class="muted" style="margin-top:8px">서비스키는 이 브라우저에만 저장됩니다.</div></div>
-        <div class="card panel-body"><h3>데이터 점검 / 반복업무 관리</h3><p class="muted">이전 버전에서 1건만 생성된 반복업무를 다시 펼치거나 현재 데이터를 점검합니다.</p><div class="settings-tools"><button class="btn" id="repairRepeatsSetting">반복업무 회차 복구</button></div><div class="inline" style="margin-top:12px;gap:8px"><div class="settings-stat"><span class="muted">수행업무</span><b id="settingsTaskCount">0</b></div><div class="settings-stat"><span class="muted">업무 DB</span><b id="settingsDbCount">0</b></div><div class="settings-stat"><span class="muted">휴일</span><b id="settingsHolidayCount">0</b></div></div></div>
+        <div class="card panel-body"><h3>데이터 점검 / 반복업무 관리</h3><p class="muted">이전 버전에서 1건만 생성된 반복업무를 다시 펼치거나 현재 데이터를 점검합니다.</p><div class="settings-tools"><button class="btn primary" id="dbHealthCheckV28">업무DB 점검</button><button class="btn" id="repairRepeatsSetting">반복업무 회차 복구</button></div><div class="inline" style="margin-top:12px;gap:8px"><div class="settings-stat"><span class="muted">수행업무</span><b id="settingsTaskCount">0</b></div><div class="settings-stat"><span class="muted">업무 DB</span><b id="settingsDbCount">0</b></div><div class="settings-stat"><span class="muted">휴일</span><b id="settingsHolidayCount">0</b></div></div></div>
       </div>
     </section>
   </main>
@@ -2037,7 +2056,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260912-30').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260913-31').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2716,7 +2735,10 @@ function effectiveStepSourceV6(step,root=null){
   };
 }
 function ensureDbLinkedChildrenV5(root,tpl,policy='pending'){
-  const steps=tpl.linkedSteps||[],valid=new Set(),groupId=root.groupId||`dbgrp:${root.generatedKey}`;root.groupId=groupId;
+  const repairOnly=policy==='health-repair';
+  const appendOnly=policy==='append'||repairOnly;
+  const steps=tpl.linkedSteps||[],valid=new Set(),groupId=root.groupId||`dbgrp:${root.generatedKey}`;
+  if(!repairOnly)root.groupId=groupId;
   let prev=root;
   steps.forEach((s,i)=>{
     const key=`dbchain:${root.generatedKey}:${i+2}`;valid.add(key);
@@ -2729,14 +2751,14 @@ function ensureDbLinkedChildrenV5(root,tpl,policy='pending'){
         unconfirmed:false,checklist:(src.checklist||[]).map((text,index)=>({id:stableGeneratedCheckId(childId,index),text,done:false})),notes:src.notes,templateId:s.templateId||null,actualComplete:null,periodLabel:periodFromDate(prev.end||prev.start),
         link:linkDef,repeat:null,manualOverride:false};
       state.tasks.push(child);
-    }else if(policy!=='append'&&effectiveStatus(child)!=='done'){
+    }else if(!appendOnly&&effectiveStatus(child)!=='done'){
       child.parentAutoRootId=root.id;child.groupId=groupId;child.step=i+2;child.category=src.category;child.name=src.name;child.urgent=src.urgent;child.owner=src.owner;child.notes=src.notes;child.templateId=s.templateId||null;
       child.checklist=preserveChecklistV5(child.checklist,src.checklist);
       if(!child.manualOverride)child.link=linkDef;
     }
     prev=child;
   });
-  if(policy!=='append'){
+  if(!appendOnly){
     const stale=state.tasks.filter(x=>x.parentAutoRootId===root.id&&!valid.has(x.generatedKey)&&effectiveStatus(x)!=='done');
     if(stale.length){const ids=new Set(stale.map(x=>x.id));state.tasks=state.tasks.filter(x=>!ids.has(x.id))}
   }
@@ -4977,6 +4999,204 @@ const openDbDetailV27Base=openDbDetailV6;
 openDbDetailV6=function(ref){window.v27DbHistoryLimits.set(ref,DB_HISTORY_BATCH_V27);const result=openDbDetailV27Base(ref);renderDbHistoryV27(ref);return result};
 const renderTaskTableV27Base=renderTaskTable;
 renderTaskTable=function(){const result=renderTaskTableV27Base();renderUnifiedSearchV27();return result};
+
+// ========================= APP V28 — manual DB health / missing repeat repair =========================
+const DB_HEALTH_LABELS_V28={error:'오류',warning:'경고',info:'참고'};
+
+function validIsoDateV28(value){
+  const text=String(value||'');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(text))return false;
+  const parsed=dateOf(text);return!!parsed&&iso(parsed)===text;
+}
+function hasTemplateManualV28(template){
+  if(String(template?.method||'').trim())return true;
+  return(template?.methodBlocks||[]).some(block=>{
+    if(typeof block==='string')return!!block.trim();
+    if(!block)return false;
+    if(block.type==='text')return!!String(block.text||'').trim();
+    return!!(block.driveFileId||block.data||block.url||block.src||block.name||block.caption);
+  });
+}
+function templateWeekdaysV28(template){
+  const listed=Array.isArray(template?.weekdays)?template.weekdays:[];
+  const values=listed.length?listed:[template?.weekday];
+  return[...new Set(values.map(Number).filter(day=>Number.isInteger(day)&&day>=0&&day<=6))];
+}
+function rollingBoundsV28(template,reference=todayISO()){
+  if(template?.activeFrom&&!validIsoDateV28(template.activeFrom))return null;
+  if(template?.activeUntil&&!validIsoDateV28(template.activeUntil))return null;
+  const horizon=rollingAutoTargetV24(reference);
+  const from=template?.activeFrom?v5MaxDate(reference,template.activeFrom):reference;
+  const to=template?.activeUntil?v5MinDate(horizon,template.activeUntil):horizon;
+  return from&&to&&from<=to?{from,to}:null;
+}
+function expectedRollingSpecsV28(template,reference=todayISO()){
+  if(!template?.autoSchedule||!template.cycle||template.cycle==='none')return[];
+  const bounds=rollingBoundsV28(template,reference);if(!bounds)return[];
+  const suppressed=new Set(state.settings?.suppressedAutoKeys||[]);
+  return templateOccurrenceSpecsV5(template,bounds.from,bounds.to).filter(spec=>!suppressed.has(spec.key));
+}
+function healthIssueV28(severity,code,subject,message,links=null){
+  return{severity,code,subject:String(subject||'이름 없는 항목'),message:String(message||''),...(links||{})};
+}
+function autoSourceTemplateIdV28(task,taskById=null){
+  if(task?.autoSourceTemplateId)return task.autoSourceTemplateId;
+  if(!task?.parentAutoRootId)return task?.templateId||'';
+  const root=(taskById||new Map((state.tasks||[]).map(item=>[item.id,item]))).get(task.parentAutoRootId);
+  return root?.autoSourceTemplateId||root?.templateId||'';
+}
+function inspectDbHealthV28(reference=todayISO()){
+  const errors=[],warnings=[],infos=[],missingRoots=[],missingLinks=[],duplicates=[];
+  const templates=state.templates||[],tasks=state.tasks||[],templateById=new Map(templates.map(template=>[template.id,template]));
+  const taskById=new Map(tasks.map(task=>[task.id,task])),generated=new Map();
+  for(const task of tasks){
+    if(!task.dbAuto||!task.generatedKey)continue;
+    if(!generated.has(task.generatedKey))generated.set(task.generatedKey,[]);
+    generated.get(task.generatedKey).push(task);
+  }
+  for(const template of templates){
+    const subject=String(template.name||'').trim()||'이름 없는 업무DB',links={templateId:template.id};
+    if(!String(template.name||'').trim())errors.push(healthIssueV28('error','template-name',subject,'업무명이 없습니다.',links));
+    if(!String(template.category||'').trim())warnings.push(healthIssueV28('warning','template-category',subject,'대분류가 없습니다.',links));
+    if(!String(template.owner||'').trim())warnings.push(healthIssueV28('warning','template-owner',subject,'담당자가 없습니다.',links));
+    const fromInvalid=template.activeFrom&&!validIsoDateV28(template.activeFrom),untilInvalid=template.activeUntil&&!validIsoDateV28(template.activeUntil);
+    if(fromInvalid||untilInvalid||(template.activeFrom&&template.activeUntil&&template.activeFrom>template.activeUntil))errors.push(healthIssueV28('error','active-range',subject,'활성 시작일과 종료일의 형식 또는 순서가 잘못되었습니다.',links));
+
+    let repeatValid=true;
+    if(template.autoSchedule){
+      const supported=['weekly','monthly','quarterly','half','yearly'];
+      if(!supported.includes(template.cycle)){errors.push(healthIssueV28('error','repeat-config',subject,'자동생성 반복주기가 현재 생성 로직에서 성립하지 않습니다.',links));repeatValid=false}
+      if(template.cycle==='weekly'&&!templateWeekdaysV28(template).length){errors.push(healthIssueV28('error','weekly-days',subject,'주간 반복에 유효한 요일 정보가 없습니다.',links));repeatValid=false}
+      const monthCycle=['monthly','quarterly','half','yearly'].includes(template.cycle);
+      if(monthCycle&&!['unknown','exact'].includes(template.dayRule)){errors.push(healthIssueV28('error','day-rule',subject,'월 기준 반복에 유효한 기준일 규칙이 없습니다.',links));repeatValid=false}
+      if(template.cycle==='monthly'&&template.dayRule==='exact'&&(!Number.isInteger(Number(template.exactDay))||Number(template.exactDay)<1||Number(template.exactDay)>31)){errors.push(healthIssueV28('error','monthly-day',subject,'월간 반복에 필요한 기준일이 없습니다.',links));repeatValid=false}
+      if(monthCycle&&template.cycle!=='monthly'&&template.dayRule==='exact'&&(!Number.isInteger(Number(template.exactDay))||Number(template.exactDay)<1||Number(template.exactDay)>31)){errors.push(healthIssueV28('error','repeat-config',subject,'반복업무 기준일이 현재 생성 로직에서 성립하지 않습니다.',links));repeatValid=false}
+      if(Array.isArray(template.cycleMonths)&&template.cycleMonths.some(month=>!Number.isInteger(Number(month))||Number(month)<1||Number(month)>12)){errors.push(healthIssueV28('error','repeat-months',subject,'실시월 정보에 1~12월 이외의 값이 있습니다.',links));repeatValid=false}
+      if(repeatValid&&!fromInvalid&&!untilInvalid){
+        const year=Number(String(reference).slice(0,4))||new Date().getFullYear(),probe={...template,activeFrom:'',activeUntil:''};
+        try{
+          if(!templateOccurrenceSpecsV5(probe,`${year}-01-01`,`${year+1}-12-31`).length){errors.push(healthIssueV28('error','repeat-empty',subject,'현재 생성 로직에서 계산 가능한 반복일이 없습니다.',links));repeatValid=false}
+        }catch(error){errors.push(healthIssueV28('error','repeat-config',subject,'반복일 계산 중 규칙 오류가 확인되었습니다.',links));repeatValid=false}
+      }
+    }
+    for(const [index,step] of (template.linkedSteps||[]).entries()){
+      if(step.templateId&&!templateById.has(step.templateId))errors.push(healthIssueV28('error','linked-template',subject,`${index+2}단계 연계업무가 존재하지 않는 업무DB를 참조합니다.`,links));
+    }
+    if(!(template.checklist||[]).some(item=>String(item?.text??item??'').trim()))infos.push(healthIssueV28('info','checklist-empty',subject,'체크리스트가 없습니다.',links));
+    if(!hasTemplateManualV28(template))infos.push(healthIssueV28('info','manual-empty',subject,'업무방법/매뉴얼이 없습니다.',links));
+
+    if(!template.autoSchedule||!repeatValid||fromInvalid||untilInvalid)continue;
+    let specs=[];try{specs=expectedRollingSpecsV28(template,reference)}catch(error){continue}
+    for(const spec of specs){
+      const roots=(generated.get(spec.key)||[]).filter(task=>autoSourceTemplateIdV28(task,taskById)===template.id&&!task.parentAutoRootId);
+      if(!roots.length){
+        const item={templateId:template.id,key:spec.key,raw:spec.raw,planned:spec.planned,subject};missingRoots.push(item);
+        errors.push(healthIssueV28('error','missing-root',subject,`${fmtDate(spec.planned)} 자동업무가 누락되었습니다.`,links));
+        continue;
+      }
+      const root=roots[0];
+      for(const [index,step] of (template.linkedSteps||[]).entries()){
+        const key=`dbchain:${root.generatedKey}:${index+2}`;
+        if((generated.get(key)||[]).length)continue;
+        const stepSource=effectiveStepSourceV6(step,template);
+        const item={templateId:template.id,rootId:root.id,key,stepIndex:index,subject,stepName:stepSource.name||`연계업무 ${index+2}단계`};missingLinks.push(item);
+        errors.push(healthIssueV28('error','missing-link',subject,`${fmtDate(root.start)} 회차의 ${index+2}단계 “${item.stepName}”가 누락되었습니다.`,links));
+      }
+    }
+  }
+
+  for(const task of tasks){
+    if(!task.dbAuto)continue;
+    const sourceId=autoSourceTemplateIdV28(task,taskById);
+    if(!sourceId||!templateById.has(sourceId))errors.push(healthIssueV28('error','orphan-auto',task.name||'이름 없는 자동업무','연결된 업무DB가 존재하지 않습니다.',{taskId:task.id}));
+    if(task.parentAutoRootId){
+      const root=taskById.get(task.parentAutoRootId),links={taskId:task.id,templateId:templateById.has(sourceId)?sourceId:''};
+      if(!root){errors.push(healthIssueV28('error','broken-root-parent',task.name||'이름 없는 연계업무','자동 연계업무의 루트 부모 연결이 끊어져 있습니다.',links));continue}
+      if(!task.link?.parentId||!taskById.has(task.link.parentId)){errors.push(healthIssueV28('error','broken-link-parent',task.name||'이름 없는 연계업무','바로 이전 연계업무 부모 연결이 끊어져 있습니다.',links));continue}
+      const keyParts=String(task.generatedKey||'').split(':'),stage=Number(task.step||keyParts[keyParts.length-1]);
+      const expectedKey=stage>2?`dbchain:${root.generatedKey}:${stage-1}`:'';
+      const expectedParents=stage===2?[root]:(generated.get(expectedKey)||[]).filter(item=>item.parentAutoRootId===root.id);
+      if(!String(task.generatedKey||'').startsWith(`dbchain:${root.generatedKey}:`)||!expectedParents.some(parent=>parent.id===task.link.parentId))errors.push(healthIssueV28('error','linked-parent-mismatch',task.name||'이름 없는 연계업무','연계업무의 단계 또는 부모 연결이 예상 체인과 일치하지 않습니다.',links));
+    }
+  }
+  for(const [key,items] of generated){
+    if(items.length<2)continue;
+    const first=items[0],item={key,count:items.length,taskIds:items.map(task=>task.id)};duplicates.push(item);
+    warnings.push(healthIssueV28('warning','duplicate-generated',first.name||'이름 없는 자동업무',`같은 generatedKey로 ${items.length}건이 있어 중복이 의심됩니다.`,{templateId:templateById.has(first.autoSourceTemplateId)?first.autoSourceTemplateId:'',taskId:first.id}));
+  }
+  return{reference,errors,warnings,infos,missingRoots,missingLinks,duplicates};
+}
+
+function applyMissingDbRepairV28(report){
+  const createdIds=[],rootCreated=[];let linkedCreated=0;
+  const templateById=new Map((state.templates||[]).map(template=>[template.id,template]));
+  for(const item of report?.missingRoots||[]){
+    const template=templateById.get(item.templateId);if(!template||state.tasks.some(task=>task.dbAuto&&task.generatedKey===item.key))continue;
+    const root=taskFromDbTemplateV5(template,{key:item.key,raw:item.raw,planned:item.planned});
+    state.tasks.push(root);createdIds.push(root.id);rootCreated.push(root.id);
+    const before=new Set(state.tasks.map(task=>task.id));
+    ensureDbLinkedChildrenV5(root,template,'health-repair');
+    const children=state.tasks.filter(task=>!before.has(task.id));children.forEach(task=>createdIds.push(task.id));linkedCreated+=children.length;
+    if(children.length)recalcNewDbChainV24(root,new Set(children.map(task=>task.id)));
+  }
+  const handledRoots=new Set();
+  for(const item of report?.missingLinks||[]){
+    if(handledRoots.has(item.rootId))continue;handledRoots.add(item.rootId);
+    const template=templateById.get(item.templateId),root=state.tasks.find(task=>task.id===item.rootId);if(!template||!root)continue;
+    const before=new Set(state.tasks.map(task=>task.id));
+    ensureDbLinkedChildrenV5(root,template,'health-repair');
+    const children=state.tasks.filter(task=>!before.has(task.id));children.forEach(task=>createdIds.push(task.id));linkedCreated+=children.length;
+    if(children.length)recalcNewDbChainV24(root,new Set(children.map(task=>task.id)));
+  }
+  return{createdIds,rootCreated:rootCreated.length,linkedCreated,total:createdIds.length};
+}
+
+function dbHealthIssueRowV28(issue){
+  const action=issue.templateId?` data-health-template-v28="${esc(issue.templateId)}"`:(issue.taskId?` data-health-task-v28="${esc(issue.taskId)}"`:'');
+  const tag=action?'button':'div';
+  return`<${tag}${action}${action?' type="button"':''} class="db-health-row-v28 ${issue.severity}"><span class="db-health-kind-v28">${DB_HEALTH_LABELS_V28[issue.severity]}</span><span class="db-health-name-v28">${esc(issue.subject)}</span><span class="db-health-message-v28">${esc(issue.message)}</span></${tag}>`;
+}
+function dbHealthGroupV28(title,items){
+  return`<section class="db-health-group-v28"><h4 class="db-health-group-title-v28"><b>${title}</b><span>${items.length}건</span></h4><div class="db-health-list-v28">${items.length?items.map(dbHealthIssueRowV28).join(''):`<div class="db-health-empty-v28">${title} 항목이 없습니다.</div>`}</div></section>`;
+}
+function openDbHealthInspectionV28(message=''){
+  const report=inspectDbHealthV28(),repairCount=report.missingRoots.length+report.missingLinks.length;
+  const body=`${message?`<div class="completion-note complete-ready">${esc(message)}</div>`:''}<div class="db-health-summary-v28"><div class="db-health-stat-v28 error"><span>오류</span><b>${report.errors.length}</b></div><div class="db-health-stat-v28 warning"><span>경고</span><b>${report.warnings.length}</b></div><div class="db-health-stat-v28"><span>참고</span><b>${report.infos.length}</b></div></div><p class="db-health-scope-v28">현재 세션에 동기화된 업무DB와 수행업무를 사용해 점검했습니다. Rolling 범위 ${fmtDate(report.reference)} ~ ${fmtDate(rollingAutoTargetV24(report.reference))} · 점검만으로 데이터는 변경되지 않습니다.</p>${dbHealthGroupV28('오류',report.errors)}${dbHealthGroupV28('경고',report.warnings)}${dbHealthGroupV28('참고',report.infos)}`;
+  const repairLabel=`누락업무 복구 · 자동 ${report.missingRoots.length} · 연계 ${report.missingLinks.length}`;
+  const footer=`<span class="db-health-repair-note-v28">중복 의심 ${report.duplicates.length}건은 자동 삭제하지 않습니다.</span><button class="btn" data-close>닫기</button>${repairCount?`<button class="btn primary db-health-repair-v28" id="repairMissingDbTasksV28">${repairLabel}</button>`:''}`;
+  modal('업무DB 점검 결과',body,footer,'locked-modal db-health-modal-v28');
+  const root=$('#modalRoot');
+  $$('[data-health-template-v28]',root).forEach(button=>button.onclick=()=>openDbForm(button.dataset.healthTemplateV28));
+  $$('[data-health-task-v28]',root).forEach(button=>button.onclick=()=>openChecklist(button.dataset.healthTaskV28));
+  const repair=$('#repairMissingDbTasksV28');
+  if(repair)repair.onclick=async()=>{
+    repair.disabled=true;repair.textContent='누락업무 복구 중…';
+    await restoreMissingDbTasksV28();
+  };
+  return report;
+}
+async function restoreMissingDbTasksV28(){
+  const report=inspectDbHealthV28();
+  if(!report.missingRoots.length&&!report.missingLinks.length){toast('복구할 누락업무가 없습니다.');openDbHealthInspectionV28();return}
+  const result=applyMissingDbRepairV28(report);
+  if(!result.total){toast('다른 동기화로 누락업무가 이미 복구되었습니다.');openDbHealthInspectionV28();return}
+  try{
+    await saveState({reason:`업무DB 점검 누락 복구 · 자동 ${result.rootCreated}회차 · 연계 ${result.linkedCreated}건`});
+    renderTaskTable();renderDbTable();renderSettings();renderHomeFocusV25();
+    toast(`누락업무 ${result.total}건을 추가했습니다.`);
+    openDbHealthInspectionV28(`복구 완료 · 자동 ${result.rootCreated}회차 · 연계 ${result.linkedCreated}건 추가`);
+  }catch(error){
+    const created=new Set(result.createdIds);state.tasks=state.tasks.filter(task=>!created.has(task.id));
+    console.error('누락업무 복구 실패',error);toast('복구 저장에 실패했습니다. 다음 점검에서 다시 시도할 수 있습니다.');openDbHealthInspectionV28();
+  }
+}
+
+const bindV28Base=bind;
+bind=function(){
+  const result=bindV28Base();
+  const button=$('#dbHealthCheckV28');if(button)button.onclick=()=>openDbHealthInspectionV28();
+  return result;
+};
 
 </script>
 </body></html>

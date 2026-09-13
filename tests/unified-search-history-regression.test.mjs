@@ -152,7 +152,7 @@ assert.match(html, /taskListVisibleV6=taskListVisibleV27/, "기존 업무목록 
 assert.match(html, /dbVisibleRowsV10=function\(\)[\s\S]*dbRowMatchesUnifiedSearchV27/, "기존 업무DB 검색 경로를 확장해야 합니다.");
 
 const v27Start = html.indexOf("APP V27 — unified search / DB task history");
-const v27End = html.indexOf("</script>", v27Start);
+const v27End = html.indexOf("APP V28 — manual DB health / missing repeat repair", v27Start);
 const v27Source = html.slice(v27Start, v27End);
 assert.ok(v27Start > 0 && v27End > v27Start, "5단계 코드 범위를 찾을 수 있어야 합니다.");
 assert.doesNotMatch(v27Source, /\bsaveState\b|\bonSnapshot\b|\bgetDocs\b|\bsetDoc\b|\bupdateDoc\b|\brunTransaction\b|\bcollection\s*\(/, "통합검색·과거이력 자체가 Firestore read/write/listener를 추가하면 안 됩니다.");
@@ -161,7 +161,7 @@ assert.match(v27Source, /state\.templates/, "이미 동기화된 업무DB 상태
 assert.match(html, /ROLLING_AUTO_MONTHS_V24=12/, "Rolling 12개월 기능을 유지해야 합니다.");
 assert.match(html, /HOME_FOCUS_META_V25/, "HOME 요약 기능을 유지해야 합니다.");
 assert.match(html, /APP V26 — mobile compact lists/, "모바일 컴팩트 UI를 유지해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-12-30/, "5단계 배포 캐시 버전이어야 합니다.");
-assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260912-30'\)/, "새 서비스워커 URL을 등록해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-31/, "6단계 배포 캐시에서도 통합검색·과거이력이 유지되어야 합니다.");
+assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-31'\)/, "새 서비스워커 URL을 등록해야 합니다.");
 
 console.log("PASS unified search and DB task history regression");
