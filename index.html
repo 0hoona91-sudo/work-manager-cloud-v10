@@ -1441,6 +1441,18 @@ button.db-health-row-v28{cursor:pointer}button.db-health-row-v28:hover{border-co
 }
 </style>
 
+<style id="app-v29-data-protection-style">
+/* APP V29: 저장 전 영향 확인, 복원 가능한 휴지통, 업무DB 버전. */
+.impact-overlay-v29{position:fixed;inset:0;z-index:2500;display:grid;place-items:center;padding:14px;background:rgba(15,28,46,.58)}
+.impact-card-v29{width:min(620px,100%);max-height:calc(100dvh - 28px);overflow:auto;border:1px solid rgba(255,255,255,.35);border-radius:17px;background:#fff;box-shadow:0 28px 90px rgba(14,31,53,.3)}
+.impact-head-v29{padding:15px 18px;background:linear-gradient(105deg,var(--v23-side-start,#294c39),var(--v23-hero-mid,#56856a));color:#fff}.impact-head-v29 h3{margin:0;font-size:17px}.impact-head-v29 p{margin:5px 0 0;color:rgba(255,255,255,.82);font-size:11px;line-height:1.45}
+.impact-body-v29{padding:16px 18px}.impact-grid-v29{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.impact-stat-v29{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:56px;padding:10px 12px;border:1px solid #e0e7ef;border-radius:11px;background:#f8fafc;color:#53657b}.impact-stat-v29 b{color:#263d5b;font-size:21px}.impact-stat-v29.protected{background:#eef7f1;border-color:#cfe4d5}.impact-note-v29{margin:12px 0 0;color:#697a8f;font-size:11px;line-height:1.55}
+.impact-actions-v29{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid #e3e9f0;background:#fafbfd}
+.protection-list-v29{display:flex;flex-direction:column;gap:6px}.protection-row-v29{width:100%;min-height:58px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:9px 10px;border:1px solid #e0e7ef;border-radius:10px;background:#fff;color:inherit;text-align:left}.protection-kind-v29{grid-row:1 / span 2;padding:3px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent-deep);font-size:10px;font-weight:850}.protection-name-v29{min-width:0;color:#263d5b;font-size:13px;font-weight:850;overflow-wrap:anywhere}.protection-meta-v29{grid-column:2;color:#6d7d91;font-size:11px}.protection-row-v29 .btn{grid-column:3;grid-row:1 / span 2;min-height:40px}.protection-empty-v29{padding:22px 10px;border:1px dashed #d7e0ea;border-radius:10px;color:#738297;text-align:center;font-size:12px}
+.version-detail-v29{display:grid;gap:10px}.version-summary-v29{padding:11px 12px;border-radius:10px;background:var(--accent-softer);color:#53677e;font-size:12px;line-height:1.55}.version-reason-v29{color:var(--accent-deep);font-weight:800}
+@media(max-width:620px){.impact-overlay-v29{padding:8px}.impact-card-v29{max-height:calc(100dvh - 16px);border-radius:14px}.impact-grid-v29{grid-template-columns:minmax(0,1fr)}.impact-actions-v29{align-items:stretch;flex-direction:column-reverse}.impact-actions-v29 .btn{width:100%;min-height:44px}.protection-row-v29{grid-template-columns:auto minmax(0,1fr);min-height:66px}.protection-row-v29 .btn{grid-column:1/-1;grid-row:auto;width:100%}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -1526,6 +1538,7 @@ button.db-health-row-v28{cursor:pointer}button.db-health-row-v28:hover{border-co
         <div class="card panel-body"><h3>데이터 내보내기</h3><p class="muted">수행업무·업무DB를 CSV로 내려받습니다.</p><div class="inline"><button class="btn" id="exportTaskCsv">수행업무 CSV</button><button class="btn" id="exportDbCsv">업무DB CSV</button></div></div>
         <div class="card panel-body"><h3>국가공휴일 데이터</h3><p class="muted">기본은 키 없이 동작하는 KR 공휴일 서비스를 사용합니다. 공공데이터포털의 한국천문연구원 특일정보 API 키(Decoding)가 있으면 우선 사용합니다.</p><div class="field"><label>공공데이터포털 서비스키 (선택)</label><input id="holidayApiKey" type="password" placeholder="없어도 사용 가능"></div><div class="muted" style="margin-top:8px">서비스키는 이 브라우저에만 저장됩니다.</div></div>
         <div class="card panel-body"><h3>데이터 점검 / 반복업무 관리</h3><p class="muted">이전 버전에서 1건만 생성된 반복업무를 다시 펼치거나 현재 데이터를 점검합니다.</p><div class="settings-tools"><button class="btn primary" id="dbHealthCheckV28">업무DB 점검</button><button class="btn" id="repairRepeatsSetting">반복업무 회차 복구</button></div><div class="inline" style="margin-top:12px;gap:8px"><div class="settings-stat"><span class="muted">수행업무</span><b id="settingsTaskCount">0</b></div><div class="settings-stat"><span class="muted">업무 DB</span><b id="settingsDbCount">0</b></div><div class="settings-stat"><span class="muted">휴일</span><b id="settingsHolidayCount">0</b></div></div></div>
+        <div class="card panel-body"><h3>데이터 보호</h3><p class="muted">삭제한 업무DB·수행업무를 복원합니다. 휴지통은 이 화면을 열 때만 불러옵니다.</p><button class="btn" id="trashOpenV29">휴지통</button></div>
       </div>
     </section>
   </main>
@@ -1579,7 +1592,7 @@ const DBNAME='TaskManagerLocalDB_v1';
 function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DBNAME,1);r.onupgradeneeded=e=>{if(!e.target.result.objectStoreNames.contains('data'))e.target.result.createObjectStore('data')};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
 async function readLocalState(){try{const db=await openDb();const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get('state');const saved=await new Promise((res,rej)=>{req.onsuccess=()=>res(req.result||null);req.onerror=()=>rej(req.error)});db.close();return saved}catch(e){console.warn('로컬 데이터 확인 실패',e);return null}}
 async function writeLocalState(snapshot){try{const db=await openDb();const tx=db.transaction('data','readwrite');tx.objectStore('data').put(clone(snapshot),'state');await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){console.warn('기기 캐시 저장 실패',e)}}
-async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260911-27');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
+async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260913-32');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
 async function saveState(meta={}){const snapshot=clone(state);await writeLocalState(snapshot);if(window.cloudSync)await window.cloudSync.save(snapshot,meta)}
 function seed(){state.categories=['소방','시설','행정','교육','회계','인사','복지','기타'];state.owners=['나영훈','관리소장','시설담당','경리담당'];state.holidays=clone(holidaySeed);state.templates=clone(sampleTemplates);state.tasks=clone(sampleTasks);state.selectedCategories=[]}
 
@@ -2056,7 +2069,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260913-31').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260913-32').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2374,7 +2387,7 @@ function syncTemplateScheduleV5(t,from,to,policy=t.applyPolicy||'pending'){
   for(const old of [...roots]){
     const inWindow=old.start>=from&&old.start<=to;
     const eligible=policy==='all'||(policy==='future'&&old.start>=todayISO()&&effectiveStatus(old)!=='done')||(policy==='pending'&&effectiveStatus(old)!=='done');
-    if(inWindow&&eligible&&!valid.has(old.generatedKey)&&!old.manualOverride){
+    if(inWindow&&effectiveStatus(old)!=='done'&&eligible&&!valid.has(old.generatedKey)&&!old.manualOverride){
       const ids=new Set([old.id,...state.tasks.filter(x=>x.parentAutoRootId===old.id).map(x=>x.id)]);
       state.tasks=state.tasks.filter(x=>!ids.has(x.id));changes++;
     }
@@ -2384,7 +2397,7 @@ function syncTemplateScheduleV5(t,from,to,policy=t.applyPolicy||'pending'){
     let root=state.tasks.find(x=>x.generatedKey===spec.key);
     if(!root){root=taskFromDbTemplateV5(t,spec);state.tasks.push(root);changes++}
     else{
-      const eligible=policy==='all'||(policy==='future'&&root.start>=todayISO()&&effectiveStatus(root)!=='done')||(policy==='pending'&&effectiveStatus(root)!=='done');
+      const eligible=effectiveStatus(root)!=='done'&&(policy==='all'||(policy==='future'&&root.start>=todayISO())||policy==='pending');
       if(eligible){
         root.category=t.category;root.name=t.name;root.urgent=!!t.urgent;root.owner=t.owner||root.owner;root.notes=t.notes||'';root.unconfirmed=t.dayRule==='unknown';
         root.checklist=preserveChecklistV5(root.checklist,t.checklist||[]);
@@ -2759,7 +2772,7 @@ function ensureDbLinkedChildrenV5(root,tpl,policy='pending'){
     prev=child;
   });
   if(!appendOnly){
-    const stale=state.tasks.filter(x=>x.parentAutoRootId===root.id&&!valid.has(x.generatedKey)&&effectiveStatus(x)!=='done');
+    const stale=state.tasks.filter(x=>x.parentAutoRootId===root.id&&!valid.has(x.generatedKey)&&effectiveStatus(x)!=='done'&&!x.manualOverride&&!x.scheduleOverride);
     if(stale.length){const ids=new Set(stale.map(x=>x.id));state.tasks=state.tasks.filter(x=>!ids.has(x.id))}
   }
 }
@@ -5197,6 +5210,240 @@ bind=function(){
   const button=$('#dbHealthCheckV28');if(button)button.onclick=()=>openDbHealthInspectionV28();
   return result;
 };
+
+// ========================= APP V29 — impact preview / trash / template versions =========================
+const TEMPLATE_VERSION_LIMIT_V29=10;
+window.v29TrashEntries=window.v29TrashEntries||null;
+
+function archiveCloneV29(value){
+  if(value==null)return value;
+  return JSON.parse(JSON.stringify(value,(key,item)=>['data','objectUrl','blobUrl','previewUrl'].includes(key)?undefined:item));
+}
+function sameValueV29(a,b){return JSON.stringify(a)===JSON.stringify(b)}
+function normalizedLinkedScheduleV29(step){
+  return{
+    templateId:step?.templateId||'',name:String(step?.name||''),category:String(step?.category||''),
+    dynamic:step?.dynamic!==false,basis:step?.basis||'actualEnd',startOffset:Number(step?.startOffset??step?.offset??0),
+    startMode:step?.startMode||step?.mode||'business',startHolidayShift:step?.startHolidayShift||step?.holidayShift||'next',
+    workType:step?.workType||'single',limitDays:Number(step?.limitDays||0),limitMode:step?.limitMode||'calendar',
+    limitHolidayShift:step?.limitHolidayShift||step?.holidayShift||'next'
+  };
+}
+function templateScheduleSignatureV29(template){
+  const t=template||{};
+  return{
+    autoSchedule:!!t.autoSchedule,activeFrom:t.activeFrom||'',activeUntil:t.activeUntil||'',applyPolicy:t.applyPolicy||'pending',
+    cycle:t.cycle||'none',cycleMonths:[...(t.cycleMonths||[])].map(Number).sort((a,b)=>a-b),quarter:Number(t.quarter||0),half:t.half||'',
+    weekdays:[...(t.weekdays||[])].map(Number).sort((a,b)=>a-b),weekday:Number(t.weekday??-1),dayRule:t.dayRule||'',exactDay:Number(t.exactDay||0),
+    holidayShift:t.holidayShift||'prev',durationDays:Number(t.durationDays||0),deadlineOffset:Number(t.deadlineOffset||0),
+    linkedSteps:(t.linkedSteps||[]).map(normalizedLinkedScheduleV29)
+  };
+}
+function scheduleAffectingTemplateChangeV29(before,after){return !sameValueV29(templateScheduleSignatureV29(before),templateScheduleSignatureV29(after))}
+function taskScheduleShapeV29(task){
+  return archiveCloneV29({id:task?.id,generatedKey:task?.generatedKey,parentAutoRootId:task?.parentAutoRootId||'',start:task?.start||'',end:task?.end||'',deadline:task?.deadline||'',link:task?.link||null,name:task?.name||'',category:task?.category||'',owner:task?.owner||''});
+}
+function templateDraftFromFormV29(original){
+  const draft=archiveCloneV29(original||{}),cycle=$('input[name=dfCycle]:checked')?.value||draft.cycle||'none';
+  draft.name=$('#dfName')?.value.trim()||draft.name||'';draft.category=$('#dfCat')?.value||draft.category||'';draft.owner=$('#dfOwner')?.value||draft.owner||'';
+  draft.autoSchedule=!!$('#dfAutoSchedule')?.checked;draft.activeFrom=$('#dfActiveFrom')?.value||todayISO();draft.activeUntil=$('#dfActiveUntil')?.value||'';draft.applyPolicy=$('#dfApplyPolicy')?.value||'pending';
+  draft.cycle=cycle;draft.cycleMonths=($('#dfMonths')?.value||'').split(',').map(value=>Number(value.trim())).filter(value=>value>=1&&value<=12);
+  draft.quarter=Number($('#dfQuarter')?.value||0)||null;draft.half=$('#dfHalf')?.value||null;draft.weekdays=$$('[data-dfwd]:checked').map(input=>Number(input.dataset.dfwd));draft.weekday=Number($('[data-dfwd]:checked')?.dataset.dfwd??draft.weekday??1);
+  draft.dayRule=$('input[name=dfDay]:checked')?.value||draft.dayRule||'unknown';draft.exactDay=Number($('#dfExactDay')?.value)||null;draft.holidayShift=$('#dfShift')?.value||'prev';draft.durationDays=Number($('#dfDurationDays')?.value||0);
+  const stepInputs=$$('[data-v6q]');
+  draft.linkedSteps=stepInputs.map((input,index)=>{
+    const prior=archiveCloneV29(draft.linkedSteps?.[index]||{}),read=(name,fallback='')=>$(`[data-v6${name}="${index}"]`)?.value??fallback;
+    return{...prior,name:input.value.trim(),category:read('cat',prior.category||draft.category),owner:$(`[data-v8stepowner="${index}"]`)?.value||prior.owner||draft.owner||'',dynamic:read('dyn','true')!=='false',basis:read('basis',prior.basis||'actualEnd'),startOffset:Number(read('startoff',prior.startOffset||0)),startMode:read('startmode',prior.startMode||'business'),startHolidayShift:read('startshift',prior.startHolidayShift||'next'),workType:read('worktype',prior.workType||'single'),limitDays:Number(read('limit',prior.limitDays||0)),limitMode:read('limitmode',prior.limitMode||'calendar'),limitHolidayShift:read('limitshift',prior.limitHolidayShift||'next')};
+  }).filter(step=>step.name);
+  return draft;
+}
+function formSignatureV29(root){
+  return JSON.stringify($$('input,select,textarea',root).filter(element=>element.type!=='file').map(element=>({id:element.id||'',name:element.name||'',type:element.type||element.tagName,value:element.value,checked:!!element.checked,marker:[...element.attributes].filter(attr=>attr.name.startsWith('data-v6')||attr.name.startsWith('data-df')).map(attr=>[attr.name,attr.value])})));
+}
+function taskBelongsToTemplateV29(task,templateId){return task?.autoSourceTemplateId===templateId||task?.dbManualRootTemplateId===templateId||task?.dbSourceTemplateId===templateId||task?.templateId===templateId}
+function previewTemplateImpactV29(current,draft){
+  const templateId=current?.id||draft?.id,originalTasks=state.tasks,originalTemplates=state.templates,originalSettings=state.settings;
+  const belongs=task=>task?.autoSourceTemplateId===templateId||task?.dbManualRootTemplateId===templateId||task?.dbSourceTemplateId===templateId||task?.templateId===templateId;
+  const beforeTasks=archiveCloneV29(originalTasks),beforeRelevant=beforeTasks.filter(belongs);
+  try{
+    state.tasks=archiveCloneV29(originalTasks);state.templates=archiveCloneV29(originalTemplates);state.settings=archiveCloneV29(originalSettings||{});
+    const index=state.templates.findIndex(template=>template.id===templateId);if(index>=0)state.templates[index]=archiveCloneV29({...draft,id:templateId});else state.templates.push(archiveCloneV29({...draft,id:templateId}));
+    const target=state.templates.find(template=>template.id===templateId),[from,to]=v5DefaultAutoRange();syncTemplateScheduleV5(target,from,to,target.applyPolicy||'pending');recalcLinks();
+    const afterRelevant=state.tasks.filter(belongs),beforeMap=new Map(beforeRelevant.map(task=>[task.id,task])),afterMap=new Map(afterRelevant.map(task=>[task.id,task])),changed=new Set();
+    for(const id of new Set([...beforeMap.keys(),...afterMap.keys()]))if(!beforeMap.has(id)||!afterMap.has(id)||!sameValueV29(taskScheduleShapeV29(beforeMap.get(id)),taskScheduleShapeV29(afterMap.get(id))))changed.add(id);
+    const kindCount=linked=>[...changed].filter(id=>!!(afterMap.get(id)||beforeMap.get(id))?.parentAutoRootId===linked).length;
+    return{
+      autoTasks:kindCount(false),linkedTasks:kindCount(true),added:[...afterMap.keys()].filter(id=>!beforeMap.has(id)).length,removed:[...beforeMap.keys()].filter(id=>!afterMap.has(id)).length,
+      completedProtected:new Set(beforeRelevant.filter(task=>effectiveStatus(task)==='done').map(task=>task.id)).size,
+      manualProtected:new Set(beforeRelevant.filter(task=>effectiveStatus(task)!=='done'&&(task.manualOverride||task.scheduleOverride)).map(task=>task.id)).size
+    };
+  }finally{state.tasks=originalTasks;state.templates=originalTemplates;state.settings=originalSettings}
+}
+function showTemplateImpactV29(impact,onApply,title='변경 영향'){
+  document.querySelector('.impact-overlay-v29')?.remove();
+  const overlay=document.createElement('div');overlay.className='impact-overlay-v29';overlay.innerHTML=`<div class="impact-card-v29" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="impact-head-v29"><h3>${esc(title)}</h3><p>기존 반복·연계 계산 결과를 저장 전에 미리 확인합니다.</p></div><div class="impact-body-v29"><div class="impact-grid-v29"><div class="impact-stat-v29"><span>향후 자동업무 영향</span><b>${impact.autoTasks}</b></div><div class="impact-stat-v29"><span>연계업무 영향</span><b>${impact.linkedTasks}</b></div><div class="impact-stat-v29 protected"><span>완료업무 보호</span><b>${impact.completedProtected}</b></div><div class="impact-stat-v29 protected"><span>수동일정 보호</span><b>${impact.manualProtected}</b></div></div><p class="impact-note-v29">새로 생성 ${impact.added}건 · 생성대상 제외 ${impact.removed}건. 미리보기와 취소만으로는 저장되지 않습니다.</p></div><div class="impact-actions-v29"><button class="btn" id="cancelTemplateImpactV29">취소</button><button class="btn primary" id="applyTemplateImpactV29">변경 적용</button></div></div>`;
+  document.body.appendChild(overlay);$('#cancelTemplateImpactV29',overlay).onclick=()=>overlay.remove();$('#applyTemplateImpactV29',overlay).onclick=async()=>{const button=$('#applyTemplateImpactV29',overlay);button.disabled=true;button.textContent='적용 중…';try{await onApply();overlay.remove()}catch(error){console.error('업무DB 변경 적용 실패',error);button.disabled=false;button.textContent='변경 적용';toast(error.message||'변경을 저장하지 못했습니다.')}};
+  return overlay;
+}
+async function saveTemplateVersionSnapshotV29(template,reason='업무DB 수정 전'){
+  if(!template?.id||!window.cloudSync?.saveTemplateVersion)return null;
+  return window.cloudSync.saveTemplateVersion(template.id,archiveCloneV29(template),{reason,clientTime:new Date().toISOString()});
+}
+function decorateTemplateVersionButtonV29(templateId){
+  const footer=$('#modalRoot .modal-foot');if(!footer||!templateId||$('#templateVersionsV29',footer))return;
+  footer.insertAdjacentHTML('afterbegin','<button class="btn" id="templateVersionsV29">이전 버전</button>');$('#templateVersionsV29',footer).onclick=()=>openTemplateVersionsV29(templateId);
+}
+function decorateDbProtectionV29(id){
+  const button=$('#saveDb'),originalSave=button?.onclick,current=id?state.templates.find(template=>template.id===id):null,root=$('#modalRoot .modal');if(!button||!originalSave||!root)return;
+  const initialForm=formSignatureV29(root),before=current?archiveCloneV29(current):null;
+  if(id){decorateTemplateVersionButtonV29(id);const remove=$('#deleteDb');if(remove)remove.onclick=()=>deleteDbTemplateV6(id,true)}
+  button.onclick=async()=>{
+    const dirty=formSignatureV29(root)!==initialForm;if(!dirty&&current){closeModal();toast('변경된 내용이 없습니다.');return}
+    const draft=templateDraftFromFormV29(before||{}),apply=async()=>{if(before)await saveTemplateVersionSnapshotV29(before,'업무DB 수정 전');return originalSave.call(button)};
+    if(before&&scheduleAffectingTemplateChangeV29(before,draft)){const impact=previewTemplateImpactV29(before,draft);showTemplateImpactV29(impact,apply);return}
+    await apply();
+  };
+}
+
+function taskIdsForDbDeletionV29(rootIds){
+  const ids=rootIds instanceof Set?rootIds:new Set(rootIds||[]),remove=new Set();
+  for(const task of state.tasks||[])if(ids.has(task.autoSourceTemplateId)||ids.has(task.dbManualRootTemplateId)||ids.has(task.dbSourceTemplateId)||ids.has(task.templateId))remove.add(task.id);
+  let changed=true;while(changed){changed=false;for(const task of state.tasks||[])if((task.parentAutoRootId&&remove.has(task.parentAutoRootId))||(task.link?.parentId&&remove.has(task.link.parentId))){if(!remove.has(task.id)){remove.add(task.id);changed=true}}}
+  return remove;
+}
+function templateTrashEntryV29(rootIds){
+  const ids=rootIds instanceof Set?rootIds:new Set(rootIds||[]),taskIds=taskIdsForDbDeletionV29(ids),templates=(state.templates||[]).filter(template=>ids.has(template.id));
+  const inbound=[];(state.templates||[]).forEach(template=>(template.linkedSteps||[]).forEach((step,index)=>{if(ids.has(step.templateId)&&!ids.has(template.id))inbound.push({templateId:template.id,stepIndex:index,linkedTemplateId:step.templateId})}));
+  return{id:uid('trash'),kind:'template',name:templates.length===1?(templates[0].name||'이름 없는 업무DB'):`업무DB ${templates.length}개`,deletedAt:new Date().toISOString(),snapshot:archiveCloneV29({templates,tasks:(state.tasks||[]).filter(task=>taskIds.has(task.id)),inbound})};
+}
+function taskDeletionIdsV29(ids){
+  const remove=new Set(ids||[]),groups=new Set((state.tasks||[]).filter(task=>remove.has(task.id)).map(task=>task.groupId).filter(Boolean));
+  let changed=true;while(changed){changed=false;for(const task of state.tasks||[])if(task.link?.parentId&&remove.has(task.link.parentId)&&(!task.groupId||groups.has(task.groupId))&&!remove.has(task.id)){remove.add(task.id);changed=true}}
+  return remove;
+}
+function taskTrashEntryV29(ids,{templateFlags=[]}={}){
+  const remove=taskDeletionIdsV29(ids),tasks=(state.tasks||[]).filter(task=>remove.has(task.id)),suppressedKeys=[];
+  for(const task of tasks){const root=task.parentAutoRootId?state.tasks.find(item=>item.id===task.parentAutoRootId):task;if(root?.dbAuto&&root.generatedKey&&!suppressedKeys.includes(root.generatedKey))suppressedKeys.push(root.generatedKey)}
+  return{id:uid('trash'),kind:'task',name:tasks.length===1?(tasks[0].name||'이름 없는 수행업무'):`수행업무 ${tasks.length}건`,deletedAt:new Date().toISOString(),snapshot:archiveCloneV29({tasks,suppressedKeys,templateFlags})};
+}
+function rememberTrashV29(entry){if(Array.isArray(window.v29TrashEntries))window.v29TrashEntries=[entry,...window.v29TrashEntries.filter(item=>item.id!==entry.id)]}
+async function deleteTemplateIdsV29(rootIds){
+  const ids=rootIds instanceof Set?rootIds:new Set(rootIds||[]);if(!ids.size)return null;
+  const entry=templateTrashEntryV29(ids),backup={templates:archiveCloneV29(state.templates),tasks:archiveCloneV29(state.tasks),settings:archiveCloneV29(state.settings)};
+  await window.cloudSync.saveTrashEntry(entry);
+  try{
+    const affected=taskIdsForDbDeletionV29(ids);for(const task of state.tasks)if(affected.has(task.id)&&effectiveStatus(task)==='done')task.archivedSourceTrashId=entry.id;
+    const result=removeDbTemplatesV12(ids);await saveState({reason:`휴지통 이동 · 업무DB ${result.templates}개`});rememberTrashV29(entry);return result;
+  }catch(error){state.templates=backup.templates;state.tasks=backup.tasks;state.settings=backup.settings;await window.cloudSync.removeTrashEntry(entry.id).catch(()=>{});throw error}
+}
+async function deleteTaskIdsV29(ids,{templateFlags=[]}={}){
+  const entry=taskTrashEntryV29(ids,{templateFlags});if(!entry.snapshot.tasks.length)return null;
+  const backup={templates:archiveCloneV29(state.templates),tasks:archiveCloneV29(state.tasks),settings:archiveCloneV29(state.settings)},remove=new Set(entry.snapshot.tasks.map(task=>task.id));
+  await window.cloudSync.saveTrashEntry(entry);
+  try{
+    const suppressed=new Set(state.settings.suppressedAutoKeys||[]);entry.snapshot.suppressedKeys.forEach(key=>suppressed.add(key));state.settings.suppressedAutoKeys=[...suppressed];
+    templateFlags.forEach(flag=>{const template=state.templates.find(item=>item.id===flag.id);if(template)template.autoSchedule=false});state.tasks=state.tasks.filter(task=>!remove.has(task.id));selectedTaskIdsV2.clear();recalcLinks();await saveState({reason:`휴지통 이동 · 수행업무 ${remove.size}건`});rememberTrashV29(entry);renderTaskTable();renderHome();return{removed:remove.size};
+  }catch(error){state.templates=backup.templates;state.tasks=backup.tasks;state.settings=backup.settings;await window.cloudSync.removeTrashEntry(entry.id).catch(()=>{});throw error}
+}
+function restoreConnectionFieldsV29(current,saved,trashId=''){
+  const fields=['dbAuto','dbManual','autoSourceTemplateId','parentAutoRootId','dbManualRootTemplateId','dbManualSourceStage','dbSourceTemplateId','templateId','groupId','link','seriesId','parentSeriesId','generatedKey','step','repeat'];
+  for(const field of fields){if(Object.prototype.hasOwnProperty.call(saved,field))current[field]=archiveCloneV29(saved[field]);else delete current[field]}
+  delete current.archivedSourceDeleted;delete current.archivedSourceDeletedAt;if(!trashId||current.archivedSourceTrashId===trashId)delete current.archivedSourceTrashId;return current;
+}
+async function restoreTemplateTrashV29(entry){
+  const snapshot=entry?.snapshot||{},templates=snapshot.templates||[],tasks=snapshot.tasks||[];
+  const templateCollision=templates.find(saved=>state.templates.some(current=>current.id===saved.id));if(templateCollision)throw new Error(`같은 ID의 업무DB가 이미 있어 복원할 수 없습니다: ${templateCollision.name||templateCollision.id}`);
+  const taskCollision=tasks.find(saved=>{const current=state.tasks.find(task=>task.id===saved.id);return current&&current.archivedSourceTrashId!==entry.id});if(taskCollision)throw new Error(`같은 ID의 수행업무가 이미 있어 복원할 수 없습니다: ${taskCollision.name||taskCollision.id}`);
+  templates.forEach(saved=>state.templates.push(archiveCloneV29(saved)));
+  tasks.forEach(saved=>{const current=state.tasks.find(task=>task.id===saved.id);if(current)restoreConnectionFieldsV29(current,saved,entry.id);else state.tasks.push(archiveCloneV29(saved))});
+  for(const link of snapshot.inbound||[]){const template=state.templates.find(item=>item.id===link.templateId),step=template?.linkedSteps?.[link.stepIndex];if(step&&!step.templateId)step.templateId=link.linkedTemplateId}
+  recalcLinks();return{templates:templates.length,tasks:tasks.length};
+}
+async function restoreTaskTrashV29(entry){
+  const snapshot=entry?.snapshot||{},tasks=snapshot.tasks||[],collision=tasks.find(saved=>state.tasks.some(current=>current.id===saved.id));if(collision)throw new Error(`같은 ID의 수행업무가 이미 있어 복원할 수 없습니다: ${collision.name||collision.id}`);
+  tasks.forEach(saved=>state.tasks.push(archiveCloneV29(saved)));const restoredKeys=new Set(snapshot.suppressedKeys||[]);state.settings.suppressedAutoKeys=(state.settings.suppressedAutoKeys||[]).filter(key=>!restoredKeys.has(key));
+  for(const flag of snapshot.templateFlags||[]){const template=state.templates.find(item=>item.id===flag.id);if(template)template.autoSchedule=!!flag.autoSchedule}
+  recalcLinks();return{tasks:tasks.length};
+}
+async function restoreTrashEntryV29(entry){
+  if(!confirm(`“${entry.name}”을 원래 ID와 연결정보로 복원할까요?`))return;
+  const backup={templates:archiveCloneV29(state.templates),tasks:archiveCloneV29(state.tasks),settings:archiveCloneV29(state.settings)};
+  try{
+    if(entry.kind==='template')await restoreTemplateTrashV29(entry);else await restoreTaskTrashV29(entry);await saveState({reason:`휴지통 복원 · ${entry.name}`});
+  }catch(error){state.templates=backup.templates;state.tasks=backup.tasks;state.settings=backup.settings;console.error('휴지통 복원 실패',error);toast(error.message||'복원하지 못했습니다.');return}
+  try{await window.cloudSync.removeTrashEntry(entry.id);window.v29TrashEntries=(window.v29TrashEntries||[]).filter(item=>item.id!==entry.id)}catch(error){console.warn('복원된 휴지통 항목 정리 실패',error);toast('데이터는 복원됐지만 휴지통 항목 정리는 다음 접속에서 다시 시도해 주세요.')}
+  renderTaskTable();renderDbTable();renderHome();renderSettings();openTrashV29(true);toast('휴지통 항목을 복원했습니다.');
+}
+async function openTrashV29(useCache=false){
+  modal('휴지통','<div class="protection-empty-v29">휴지통을 불러오는 중…</div>','<button class="btn primary" data-close>닫기</button>','locked-modal');
+  try{
+    if(!useCache||!Array.isArray(window.v29TrashEntries))window.v29TrashEntries=await window.cloudSync.listTrashEntries();
+    const list=window.v29TrashEntries||[],body=$('#modalRoot .modal-body');if(!body)return;
+    body.innerHTML=`<p class="muted">업무DB와 수행업무 삭제 snapshot만 표시합니다. 자동 영구삭제는 하지 않습니다.</p><div class="protection-list-v29">${list.length?list.map(entry=>`<div class="protection-row-v29"><span class="protection-kind-v29">${entry.kind==='template'?'업무DB':'수행업무'}</span><span class="protection-name-v29">${esc(entry.name)}</span><span class="protection-meta-v29">삭제 ${esc(formatVersionTimeV29(entry.deletedAt))}</span><button class="btn small" data-trash-restore-v29="${esc(entry.id)}">복원</button></div>`).join(''):'<div class="protection-empty-v29">복원할 항목이 없습니다.</div>'}</div>`;
+    $$('[data-trash-restore-v29]',body).forEach(button=>button.onclick=()=>{const entry=list.find(item=>item.id===button.dataset.trashRestoreV29);if(entry)restoreTrashEntryV29(entry)});
+  }catch(error){const body=$('#modalRoot .modal-body');if(body)body.innerHTML=`<div class="protection-empty-v29">${esc(error.message||'휴지통을 불러오지 못했습니다.')}</div>`}
+}
+
+function formatVersionTimeV29(value){if(!value)return'-';const date=new Date(value);return Number.isNaN(date.getTime())?String(value):new Intl.DateTimeFormat('ko-KR',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).format(date)}
+function versionSummaryV29(snapshot){return `${templatePeriodLabel(snapshot)} · ${snapshot.autoSchedule?'자동생성':'자동생성 안 함'} · 체크리스트 ${(snapshot.checklist||[]).length}개 · 연계 ${(snapshot.linkedSteps||[]).length}단계`}
+async function applyTemplateVersionRestoreV29(version,confirmed=false){
+  const target=archiveCloneV29(version?.snapshot),current=state.templates.find(template=>template.id===(target?.id||version?.versionTemplateId));if(!current||!target)throw new Error('복원할 업무DB 또는 버전 snapshot을 찾지 못했습니다.');
+  const apply=async()=>{
+    const backup={templates:archiveCloneV29(state.templates),tasks:archiveCloneV29(state.tasks),settings:archiveCloneV29(state.settings)};
+    try{
+      await saveTemplateVersionSnapshotV29(current,'버전 복원 직전');Object.assign(current,target,{id:current.id});const [from,to]=v5DefaultAutoRange();syncTemplateScheduleV5(current,from,to,current.applyPolicy||'pending');recalcLinks();await saveState({reason:`업무DB 이전 버전 복원 · ${current.name}`});closeModal();renderDbTable();renderTaskTable();renderHome();toast('선택한 업무DB 버전으로 복원했습니다.');
+    }catch(error){state.templates=backup.templates;state.tasks=backup.tasks;state.settings=backup.settings;throw error}
+  };
+  if(!confirmed&&scheduleAffectingTemplateChangeV29(current,target)){showTemplateImpactV29(previewTemplateImpactV29(current,target),apply,'버전 복원 영향');return}
+  return apply();
+}
+function openTemplateVersionDetailV29(version){
+  const snapshot=version.snapshot||{};modal('업무DB 이전 버전',`<div class="version-detail-v29"><div><b>${esc(snapshot.name||'이름 없는 업무DB')}</b></div><div class="version-summary-v29"><span class="version-reason-v29">${esc(version.reason||'업무DB 수정 전')}</span><br>${esc(formatVersionTimeV29(version.clientTime))}<br>${esc(versionSummaryV29(snapshot))}</div><p class="muted">복원하면 현재 업무DB 상태를 먼저 새 버전으로 보존합니다. 과거 수행업무는 삭제하거나 다시 생성하지 않습니다.</p></div>`,`<button class="btn" data-close>취소</button><button class="btn primary" id="restoreTemplateVersionV29">이 버전으로 복원</button>`,'small locked-modal');
+  $('#restoreTemplateVersionV29').onclick=()=>{if(confirm('이 버전의 업무DB 설정으로 복원할까요?'))applyTemplateVersionRestoreV29(version)};
+}
+async function openTemplateVersionsV29(templateId){
+  modal('이전 버전','<div class="protection-empty-v29">이전 버전을 불러오는 중…</div>','<button class="btn primary" data-close>닫기</button>','locked-modal');
+  try{
+    const versions=(await window.cloudSync.listTemplateVersions(templateId)).slice(0,TEMPLATE_VERSION_LIMIT_V29),body=$('#modalRoot .modal-body');if(!body)return;
+    body.innerHTML=`<p class="muted">이 기능 적용 이후 실제로 저장한 변경 전 상태를 최근 ${TEMPLATE_VERSION_LIMIT_V29}개까지 보관합니다.</p><div class="protection-list-v29">${versions.length?versions.map(version=>`<button class="protection-row-v29" data-template-version-v29="${esc(version.id)}"><span class="protection-kind-v29">버전</span><span class="protection-name-v29">${esc(formatVersionTimeV29(version.clientTime))}</span><span class="protection-meta-v29">${esc(version.reason||'업무DB 수정 전')} · ${esc(versionSummaryV29(version.snapshot||{}))}</span><span class="btn small">보기</span></button>`).join(''):'<div class="protection-empty-v29">아직 저장된 이전 버전이 없습니다.</div>'}</div>`;
+    $$('[data-template-version-v29]',body).forEach(button=>button.onclick=()=>{const version=versions.find(item=>item.id===button.dataset.templateVersionV29);if(version)openTemplateVersionDetailV29(version)});
+  }catch(error){const body=$('#modalRoot .modal-body');if(body)body.innerHTML=`<div class="protection-empty-v29">${esc(error.message||'이전 버전을 불러오지 못했습니다.')}</div>`}
+}
+
+const openDbFormV29Base=openDbForm;
+openDbForm=function(id=null){const result=openDbFormV29Base(id);decorateDbProtectionV29(id);return result};
+const openDbDetailV29Base=openDbDetailV6;
+openDbDetailV6=function(ref){const result=openDbDetailV29Base(ref);const [kind,id]=String(ref).split('|');if(kind==='root')decorateTemplateVersionButtonV29(id);return result};
+const openTaskFormV29Base=openTaskForm;
+openTaskForm=function(id=null){
+  const result=openTaskFormV29Base(id),button=$('#deleteTask'),task=id?state.tasks.find(item=>item.id===id):null;if(!button||!task)return result;
+  button.onclick=async()=>{
+    try{
+      if(task.seriesId&&confirm('이 업무는 반복 일정입니다. 반복 전체를 휴지통으로 이동할까요?\n[확인]=전체 / [취소]=이 회차만')){
+        const series=new Set([task.seriesId]),groups=new Set(state.tasks.filter(item=>series.has(item.seriesId)).map(item=>item.groupId).filter(Boolean)),ids=state.tasks.filter(item=>series.has(item.seriesId)||series.has(item.parentSeriesId)||groups.has(item.groupId)).map(item=>item.id),templateIds=[...new Set(state.tasks.filter(item=>ids.includes(item.id)).map(item=>item.autoSourceTemplateId).filter(Boolean))],flags=templateIds.map(templateId=>({id:templateId,autoSchedule:!!state.templates.find(template=>template.id===templateId)?.autoSchedule}));
+        await deleteTaskIdsV29(ids,{templateFlags:flags});
+      }else await deleteTaskIdsV29([task.id]);
+      closeModal();toast('수행업무를 휴지통으로 이동했습니다.');
+    }catch(error){console.error('수행업무 휴지통 이동 실패',error);toast(error.message||'삭제하지 못했습니다.')}
+  };return result;
+};
+deleteTasksByIdsV2=async function(ids){try{const result=await deleteTaskIdsV29(ids);if(result)toast(`${result.removed}건을 휴지통으로 이동했습니다.`)}catch(error){console.error('선택업무 휴지통 이동 실패',error);toast(error.message||'삭제하지 못했습니다.')}};
+deleteSeriesV2=async function(){
+  const selected=state.tasks.filter(task=>selectedTaskIdsV2.has(task.id)),series=new Set(selected.map(task=>task.seriesId).filter(Boolean));if(!series.size)return;
+  const groups=new Set(state.tasks.filter(task=>series.has(task.seriesId)).map(task=>task.groupId).filter(Boolean)),ids=state.tasks.filter(task=>series.has(task.seriesId)||series.has(task.parentSeriesId)||groups.has(task.groupId)).map(task=>task.id),templateIds=[...new Set(state.tasks.filter(task=>ids.includes(task.id)).map(task=>task.autoSourceTemplateId).filter(Boolean))];
+  const message=templateIds.length?'선택한 반복업무는 업무DB에서 자동 생성됩니다. 자동생성을 중지하고 반복 묶음을 휴지통으로 이동할까요?':`선택한 ${series.size}개 반복 묶음을 휴지통으로 이동할까요?`;if(!confirm(message))return;
+  const flags=templateIds.map(id=>({id,autoSchedule:!!state.templates.find(template=>template.id===id)?.autoSchedule}));try{const result=await deleteTaskIdsV29(ids,{templateFlags:flags});if(result)toast(`${result.removed}건을 휴지통으로 이동했습니다.`)}catch(error){console.error('반복업무 휴지통 이동 실패',error);toast(error.message||'삭제하지 못했습니다.')}
+};
+deleteDbTemplateV6=async function(id,ask=true){
+  const template=state.templates.find(item=>item.id===id);if(!template)return;if(ask&&!confirm(`“${template.name}” 업무DB를 휴지통으로 이동할까요?\n연결된 미완료 수행업무도 함께 이동되고 완료 이력은 보존됩니다.`))return;
+  try{const result=await deleteTemplateIdsV29(new Set([id]));selectedDbRefsV10.delete(`root|${id}`);for(const ref of [...selectedDbRefsV10])if(ref.startsWith(`step|${id}|`))selectedDbRefsV10.delete(ref);closeModal();renderDbTable();renderTaskTable();renderHome();renderSettings();toast(`업무DB를 휴지통으로 이동했습니다. 수행업무 ${result?.removed||0}건 · 완료이력 ${result?.preserved||0}건 보존`)}catch(error){console.error('업무DB 휴지통 이동 실패',error);toast(error.message||'삭제하지 못했습니다.')}
+};
+deleteSelectedDbV12=async function(){
+  const rootIds=dbRootIdsFromRefsV12(selectedDbRefsV10);if(!rootIds.size)return toast('삭제할 업무DB를 선택하세요.');if(!confirm(`${rootIds.size}개의 업무DB를 휴지통으로 이동할까요?\n연결된 미완료 수행업무도 함께 이동되고 완료 이력은 보존됩니다.`))return;
+  try{const result=await deleteTemplateIdsV29(rootIds);selectedDbRefsV10.clear();renderDbTable();renderTaskTable();renderHome();renderSettings();toast(`DB ${result?.templates||0}개를 휴지통으로 이동했습니다.`)}catch(error){console.error('업무DB 일괄 휴지통 이동 실패',error);toast(error.message||'삭제하지 못했습니다.')}
+};
+const bindV29Base=bind;
+bind=function(){const result=bindV29Base();const trash=$('#trashOpenV29');if(trash)trash.onclick=()=>openTrashV29();return result};
 
 </script>
 </body></html>

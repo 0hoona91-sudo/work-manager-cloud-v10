@@ -26,9 +26,11 @@ for (const collection of [
 }
 
 assert.match(cloud, /runTransaction\(/, "문서 충돌 처리를 위한 Firestore 트랜잭션을 사용해야 합니다.");
-assert.doesNotMatch(cloud, /\bgetDocs\b/, "초기 데이터와 실시간 listener를 같은 세션에서 중복 조회하면 안 됩니다.");
+const startupSync = cloud.slice(cloud.indexOf("export async function bootstrapCloud"), cloud.indexOf("function stage7LocalData"));
+assert.doesNotMatch(startupSync, /\bgetDocs\b/, "초기 데이터와 실시간 listener를 같은 세션에서 중복 조회하면 안 됩니다.");
 assert.match(cloud, /if \(coreReadyPromise\) return coreReadyPromise;/, "핵심 listener 초기화는 세션에서 한 번만 실행해야 합니다.");
-assert.match(cloud, /for \(const name of DATA_COLLECTIONS\)[\s\S]*onSnapshot\(collection\(db, name\)/, "핵심 컬렉션의 최초 listener 스냅샷을 초기 데이터로 재사용해야 합니다.");
+assert.match(cloud, /for \(const name of DATA_COLLECTIONS\)[\s\S]*const source[\s\S]*onSnapshot\(source/, "핵심 컬렉션의 최초 listener 스냅샷을 초기 데이터로 재사용해야 합니다.");
+assert.match(cloud, /name === "meta"[\s\S]*where\(documentId\(\), "==", "schema"\)/, "필요 시 조회하는 meta 보조 문서는 앱 시작 listener에서 제외해야 합니다.");
 assert.match(cloud, /cachedOffline[\s\S]*navigator\.onLine === false/, "오프라인에서는 준비된 Firestore 캐시로 앱을 열 수 있어야 합니다.");
 assert.match(cloud, /!initialLoad\.serverConfirmed[\s\S]*기존 클라우드 데이터는 변경되지 않습니다/, "빈 오프라인 캐시를 새 클라우드로 오인하면 안 됩니다.");
 assert.match(cloud, /function loadChangeLogs\(\)[\s\S]*limit\(CHANGE_LOG_LIMIT\)/, "변경이력은 화면에서 요청할 때만 제한 조회해야 합니다.");
@@ -80,6 +82,6 @@ for (const moduleName of ["firebase-app.js", "firebase-auth.js", "firebase-fires
   assert.match(serviceWorker, new RegExp(moduleName.replace(".", "\\.")), `${moduleName}을 첫 설치 때 미리 캐시해야 합니다.`);
 }
 assert.match(serviceWorker, /cache\.addAll\(FIREBASE_MODULES\)\.catch/, "Firebase CDN 장애가 앱 셸 설치를 막으면 안 됩니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-31/, "6단계 업무DB 점검 배포 캐시 버전이어야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-32/, "7단계 데이터 보호 배포 캐시 버전이어야 합니다.");
 
 console.log("PASS cloud/PWA contract: Drive session and file attachment included");

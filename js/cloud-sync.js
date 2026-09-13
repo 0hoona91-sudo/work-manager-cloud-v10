@@ -13,8 +13,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 import {
   collection,
+  deleteDoc,
   deleteField,
   doc,
+  documentId,
+  getDocs,
   increment,
   initializeFirestore,
   limit,
@@ -25,6 +28,8 @@ import {
   query,
   runTransaction,
   serverTimestamp,
+  setDoc,
+  where,
   writeBatch,
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 import { appConfig, firebaseConfig } from "./firebase-config.js?v=20260905-1";
@@ -88,6 +93,10 @@ const driveObjectUrls = new Map();
 const DRIVE_TOKEN_SESSION_KEY = "workManagerDriveSessionV23";
 const DRIVE_TOKEN_LIFETIME_MS = 50 * 60 * 1000;
 const MAX_DRIVE_FILE_BYTES = 50 * 1024 * 1024;
+const STAGE7_LOCAL_KEY = "workManagerStage7AuxV29";
+const STAGE7_TRASH_TYPE = "stage7Trash";
+const STAGE7_VERSION_TYPE = "stage7TemplateVersion";
+const TEMPLATE_VERSION_LIMIT = 10;
 
 function rememberDriveAccessToken(token, user = currentUser) {
   driveAccessToken = String(token || "");
@@ -609,6 +618,11 @@ function controller() {
     hydrateImages,
     ensureDriveAccess,
     loadChangeLogs,
+    saveTrashEntry,
+    listTrashEntries,
+    removeTrashEntry,
+    saveTemplateVersion,
+    listTemplateVersions,
     flush,
   };
 }
@@ -669,7 +683,12 @@ function subscribeRealtime() {
     resolveReady({ serverConfirmed });
   };
   for (const name of DATA_COLLECTIONS) {
-    const off = onSnapshot(collection(db, name), { includeMetadataChanges: true }, (snapshot) => {
+    // meta에는 필요 시에만 읽는 휴지통/버전 문서도 저장한다. 핵심 listener는
+    // 스키마 문서 한 건만 구독해 앱 시작 시 보조 데이터를 읽지 않는다.
+    const source = name === "meta"
+      ? query(collection(db, name), where(documentId(), "==", "schema"))
+      : collection(db, name);
+    const off = onSnapshot(source, { includeMetadataChanges: true }, (snapshot) => {
       const changed = applySnapshotChanges(name, snapshot);
       if (!snapshot.metadata.hasPendingWrites) firstSnapshot.add(name);
       if (!snapshot.metadata.hasPendingWrites && !snapshot.metadata.fromCache && !serverReady.has(name)) {
@@ -712,6 +731,111 @@ function loadChangeLogs() {
   });
   unsubscribeAll.push(off);
   return historyReadyPromise;
+}
+
+function stage7LocalData() {
+  try {
+    const value = JSON.parse(localStorage.getItem(STAGE7_LOCAL_KEY) || "null");
+    return value && typeof value === "object"
+      ? { trash: Array.isArray(value.trash) ? value.trash : [], versions: Array.isArray(value.versions) ? value.versions : [] }
+      : { trash: [], versions: [] };
+  } catch {
+    return { trash: [], versions: [] };
+  }
+}
+
+function saveStage7LocalData(value) {
+  try { localStorage.setItem(STAGE7_LOCAL_KEY, JSON.stringify(value)); } catch {}
+}
+
+function stage7MetaId(type, id) {
+  return docId(type, id);
+}
+
+async function saveTrashEntry(entry) {
+  const value = plain({ ...entry, recordType: STAGE7_TRASH_TYPE });
+  if (!value.id) throw new Error("휴지통 항목 ID가 없습니다.");
+  if (localOnly) {
+    const data = stage7LocalData();
+    data.trash = [value, ...data.trash.filter((item) => item.id !== value.id)];
+    saveStage7LocalData(data);
+    return clone(value);
+  }
+  await setDoc(doc(db, "meta", stage7MetaId("trash", value.id)), { ...value, createdAt: serverTimestamp() });
+  return clone(value);
+}
+
+async function listTrashEntries() {
+  if (localOnly) return stage7LocalData().trash.map((item) => clone(item)).sort((a, b) => String(b.deletedAt || "").localeCompare(String(a.deletedAt || "")));
+  const snapshot = await getDocs(query(collection(db, "meta"), where("recordType", "==", STAGE7_TRASH_TYPE)));
+  return snapshot.docs
+    .map((item) => withoutSyncFields(item.data()))
+    .sort((a, b) => String(b.deletedAt || "").localeCompare(String(a.deletedAt || "")));
+}
+
+async function removeTrashEntry(id) {
+  if (localOnly) {
+    const data = stage7LocalData();
+    data.trash = data.trash.filter((item) => item.id !== id);
+    saveStage7LocalData(data);
+    return;
+  }
+  await deleteDoc(doc(db, "meta", stage7MetaId("trash", id)));
+}
+
+async function saveTemplateVersion(templateId, snapshot, metadata = {}) {
+  if (!templateId || !snapshot) throw new Error("저장할 업무DB 버전 정보가 없습니다.");
+  const clientTime = metadata.clientTime || new Date().toISOString();
+  const id = metadata.id || `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  const value = plain({
+    id,
+    recordType: STAGE7_VERSION_TYPE,
+    versionTemplateId: templateId,
+    clientTime,
+    reason: metadata.reason || "업무DB 수정 전",
+    snapshot,
+  });
+  if (localOnly) {
+    const data = stage7LocalData();
+    data.versions = [value, ...data.versions.filter((item) => item.id !== id)]
+      .sort((a, b) => String(b.clientTime || "").localeCompare(String(a.clientTime || "")));
+    const own = data.versions.filter((item) => item.versionTemplateId === templateId).slice(TEMPLATE_VERSION_LIMIT);
+    const remove = new Set(own.map((item) => item.id));
+    data.versions = data.versions.filter((item) => !remove.has(item.id));
+    saveStage7LocalData(data);
+    return clone(value);
+  }
+  await setDoc(doc(db, "meta", stage7MetaId("template-version", `${templateId}-${id}`)), { ...value, createdAt: serverTimestamp() });
+  try {
+    const versions = await getDocs(query(collection(db, "meta"), where("versionTemplateId", "==", templateId)));
+    const older = versions.docs
+      .map((item) => ({ ref: item.ref, data: item.data() }))
+      .sort((a, b) => String(b.data.clientTime || "").localeCompare(String(a.data.clientTime || "")))
+      .slice(TEMPLATE_VERSION_LIMIT);
+    if (older.length) {
+      const batch = writeBatch(db);
+      older.forEach((item) => batch.delete(item.ref));
+      await batch.commit();
+    }
+  } catch (error) {
+    // 버전 본문 저장은 완료됐다. 정리 실패는 다음 저장 때 다시 시도한다.
+    console.warn("Template version trim", error);
+  }
+  return clone(value);
+}
+
+async function listTemplateVersions(templateId) {
+  if (!templateId) return [];
+  if (localOnly) return stage7LocalData().versions
+    .filter((item) => item.versionTemplateId === templateId)
+    .sort((a, b) => String(b.clientTime || "").localeCompare(String(a.clientTime || "")))
+    .slice(0, TEMPLATE_VERSION_LIMIT)
+    .map((item) => clone(item));
+  const snapshot = await getDocs(query(collection(db, "meta"), where("versionTemplateId", "==", templateId)));
+  return snapshot.docs
+    .map((item) => withoutSyncFields(item.data()))
+    .sort((a, b) => String(b.clientTime || "").localeCompare(String(a.clientTime || "")))
+    .slice(0, TEMPLATE_VERSION_LIMIT);
 }
 
 function stopRealtime() {

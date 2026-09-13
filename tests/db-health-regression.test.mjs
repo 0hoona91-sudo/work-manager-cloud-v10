@@ -218,7 +218,7 @@ assert.match(extractLastFunction("applyMissingDbRepairV28"), /taskFromDbTemplate
 assert.doesNotMatch(extractLastFunction("inspectDbHealthV28"), /saveState|onSnapshot|getDocs|getDoc|setDoc|updateDoc|runTransaction|collection\s*\(/, "점검 함수는 read 전용이며 Firestore 호출이나 저장을 하면 안 됩니다.");
 assert.doesNotMatch(extractLastFunction("applyMissingDbRepairV28"), /saveState|onSnapshot|getDocs|getDoc|setDoc|updateDoc|runTransaction|collection\s*\(/, "메모리 복구 계산은 직접 Firestore를 호출하면 안 됩니다.");
 const v28Start = html.indexOf("APP V28 — manual DB health / missing repeat repair");
-const v28End = html.indexOf("</script>", v28Start);
+const v28End = html.indexOf("APP V29 — impact preview / trash / template versions", v28Start);
 const v28Source = html.slice(v28Start, v28End);
 assert.ok(v28Start > 0 && v28End > v28Start, "6단계 코드 범위를 찾을 수 있어야 합니다.");
 assert.doesNotMatch(v28Source, /onSnapshot|getDocs|getDoc|setDoc|updateDoc|runTransaction|collection\s*\(/, "6단계는 새 조회·listener를 직접 만들지 않아야 합니다.");
@@ -230,7 +230,7 @@ assert.match(html, /ROLLING_AUTO_MONTHS_V24=12/, "Rolling 12개월 기능을 유
 assert.match(html, /APP V27 — unified search \/ DB task history/, "통합검색과 과거 수행이력을 유지해야 합니다.");
 assert.match(html, /APP V26 — mobile compact lists/, "모바일 컴팩트 화면을 유지해야 합니다.");
 assert.match(html, /HOME_FOCUS_META_V25/, "HOME 요약을 유지해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-31/, "6단계 배포 캐시 버전이어야 합니다.");
-assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-31'\)/, "6단계 서비스워커 URL을 등록해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-32/, "7단계 배포 캐시 버전이어야 합니다.");
+assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-32'\)/, "7단계 서비스워커 URL을 등록해야 합니다.");
 
 console.log("PASS manual DB health and missing repeat repair regression");

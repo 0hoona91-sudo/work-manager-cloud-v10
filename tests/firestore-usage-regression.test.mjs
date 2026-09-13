@@ -105,6 +105,8 @@ const sandbox = {
   friendlyError(error) { return error?.message || "error"; },
   scheduleRemoteApply() { remoteApplyCount += 1; },
   collection(_db, name) { return { kind: "collection", name }; },
+  documentId() { return "__name__"; },
+  where(field, op, value) { return { kind: "where", field, op, value }; },
   orderBy(field, direction) { return { kind: "orderBy", field, direction }; },
   limit(count) { return { kind: "limit", count }; },
   query(base, ...clauses) { return { kind: "query", name: base.name, clauses }; },
@@ -146,6 +148,8 @@ const readyTwo = context.subscribeRealtime();
 assert.equal(readyOne, readyTwo, "초기화가 반복되어도 같은 준비 Promise를 재사용해야 합니다.");
 assert.equal(registrations.length, collections.length, "핵심 컬렉션마다 listener는 한 개만 등록해야 합니다.");
 assert.ok(registrations.every((entry) => entry.source.name !== "changeLogs"), "변경이력은 첫 화면에서 선조회하면 안 됩니다.");
+const metaListener = registrations.find((entry) => entry.source.name === "meta");
+assert.deepEqual(metaListener.source.clauses.find((item) => item.kind === "where"), { kind: "where", field: "__name__", op: "==", value: "schema" }, "meta listener는 스키마 문서만 읽고 필요 시 조회하는 휴지통·버전 문서를 시작 시 읽으면 안 됩니다.");
 
 function snapshot({ fromCache = false, pending = false, changes = [] } = {}) {
   return {
