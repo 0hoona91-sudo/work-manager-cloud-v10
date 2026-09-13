@@ -1469,6 +1469,24 @@ button.db-health-row-v28{cursor:pointer}button.db-health-row-v28:hover{border-co
 }
 </style>
 
+<style id="app-v31-annual-plan-style">
+/* APP V31: 현재 업무DB 반복설정으로만 계산하는 읽기 전용 연간계획. */
+.annual-plan-toolbar-v31{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;margin-bottom:12px;padding:12px}
+.annual-year-control-v31{display:flex;align-items:center;gap:6px}.annual-year-control-v31 .btn{min-width:42px}.annual-year-control-v31 select{min-width:112px;min-height:38px;padding:8px 10px;border:1px solid #cbd7e8;border-radius:8px;background:#fff;color:#263d5b;font-weight:850;text-align:center}
+.annual-view-tabs-v31{display:flex;gap:5px;margin-left:auto;padding:4px;border-radius:11px;background:#edf2f6}.annual-view-tabs-v31 .btn{min-height:38px;border-color:transparent;background:transparent}.annual-view-tabs-v31 .btn.active{border-color:#cedbe5;background:#fff;color:var(--accent-deep);box-shadow:0 2px 8px rgba(31,55,78,.08)}
+.annual-plan-note-v31{margin:0 0 12px;padding:10px 12px;border-radius:10px;background:var(--accent-softer);color:#5e7187;font-size:12px;line-height:1.5}
+.annual-month-grid-v31{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.annual-month-card-v31{min-width:0;overflow:hidden;border:1px solid #dfe7ef;border-radius:13px;background:#fff}.annual-month-head-v31{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;border-bottom:1px solid #e7edf3;background:#f8fafc}.annual-month-head-v31 h3{margin:0;color:#263d5b;font-size:15px}.annual-month-head-v31 span{color:#708196;font-size:11px;font-weight:750}
+.annual-entry-list-v31{display:flex;flex-direction:column;gap:0}.annual-entry-v31{padding:10px 11px;border-top:1px solid #edf1f5}.annual-entry-v31:first-child{border-top:0}.annual-entry-top-v31{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:7px;align-items:center}.annual-category-badge-v31{padding:3px 7px;border:1px solid color-mix(in srgb,var(--annual-category-color,#9bc8a8) 55%,#dce5ed);border-radius:999px;background:color-mix(in srgb,var(--annual-category-color,#9bc8a8) 22%,#fff);color:#455c6f;font-size:10px;font-weight:850;white-space:nowrap}.annual-db-link-v31{min-width:0;padding:3px 0;border:0;background:transparent;color:#263d5b;font-size:13px;font-weight:850;text-align:left;overflow-wrap:anywhere;cursor:pointer}.annual-db-link-v31:hover{text-decoration:underline}.annual-count-v31{color:#718196;font-size:10px;white-space:nowrap}.annual-repeat-v31{margin-top:4px;color:#687b90;font-size:11px;line-height:1.45}.annual-date-toggle-v31{margin-top:5px;padding:2px 0;border:0;background:transparent;color:var(--accent-deep);font-size:11px;font-weight:800;cursor:pointer}.annual-date-list-v31{display:flex;flex-direction:column;gap:3px;margin:6px 0 0;padding:7px 9px;border-radius:8px;background:#f6f8fb;color:#596d83;font-size:11px;line-height:1.4}.annual-empty-v31{padding:22px 10px;color:#7a899a;font-size:12px;text-align:center}
+.annual-category-grid-v31{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.annual-category-card-v31{min-width:0;padding:13px;border:1px solid #dfe7ef;border-radius:13px;background:#fff}.annual-category-title-v31{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 8px}.annual-category-title-v31 h3{margin:0;color:#263d5b;font-size:15px}.annual-category-title-v31 span{color:#718196;font-size:11px}.annual-category-row-v31{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;padding:9px 0;border-top:1px solid #edf1f5}.annual-category-row-v31:first-of-type{border-top:0}.annual-category-row-v31 .annual-repeat-v31{grid-column:1/-1;margin:0}.annual-months-v31{color:#6d7f93;font-size:11px;white-space:nowrap}
+.annual-matrix-scroll-v31{overflow:auto;border:1px solid #dfe7ef;border-radius:13px;background:#fff;-webkit-overflow-scrolling:touch}.annual-matrix-v31{width:100%;min-width:920px;border-collapse:collapse}.annual-matrix-v31 th,.annual-matrix-v31 td{padding:9px 7px;border-right:1px solid #e8edf2;border-bottom:1px solid #e8edf2;text-align:center;font-size:12px}.annual-matrix-v31 th{position:sticky;top:0;background:#f5f8fa;color:#52677d;font-weight:850}.annual-matrix-v31 th:first-child,.annual-matrix-v31 td:first-child{position:sticky;left:0;z-index:1;min-width:116px;background:#f8fafc;text-align:left}.annual-matrix-v31 th:first-child{z-index:2}.annual-matrix-v31 tr:last-child td{border-bottom:0}.annual-matrix-v31 th:last-child,.annual-matrix-v31 td:last-child{border-right:0}.annual-cell-v31{width:100%;min-height:38px;border:0;border-radius:8px;background:var(--accent-softer);color:var(--accent-deep);font-weight:900;cursor:pointer}.annual-cell-v31:hover{filter:brightness(.97)}.annual-cell-empty-v31{color:#b3bdc8}.annual-matrix-help-v31{margin:9px 2px 0;color:#718196;font-size:11px}
+.annual-cell-list-v31{display:flex;flex-direction:column;gap:7px}.annual-cell-row-v31{padding:10px;border:1px solid #e0e7ef;border-radius:10px;background:#fff}.annual-cell-row-v31 .annual-entry-top-v31{grid-template-columns:auto minmax(0,1fr)}.annual-cell-dates-v31{margin-top:6px;color:#60748a;font-size:11px;line-height:1.55}
+@media(max-width:1050px){.annual-month-grid-v31{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+  .annual-plan-toolbar-v31{align-items:stretch;gap:8px}.annual-year-control-v31{width:100%}.annual-year-control-v31 select{flex:1;min-height:44px}.annual-year-control-v31 .btn{min-height:44px}.annual-plan-category-v31{width:100%}.annual-plan-category-v31 select{width:100%;min-height:44px}.annual-view-tabs-v31{width:100%;margin-left:0}.annual-view-tabs-v31 .btn{flex:1;min-width:0;min-height:44px;padding:8px 5px;font-size:11px}
+  .annual-month-grid-v31,.annual-category-grid-v31{grid-template-columns:minmax(0,1fr)}.annual-month-card-v31{border-radius:11px}.annual-entry-v31{min-height:72px;padding:11px 10px}.annual-entry-top-v31{grid-template-columns:auto minmax(0,1fr)}.annual-count-v31{grid-column:2}.annual-db-link-v31{font-size:14px;line-height:1.4}.annual-date-toggle-v31{min-height:38px}.annual-matrix-v31{min-width:880px}.annual-matrix-v31 th,.annual-matrix-v31 td{font-size:12px}.annual-cell-v31{min-height:42px}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -2085,7 +2103,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260913-33').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260913-34').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -5530,6 +5548,96 @@ const openDbDetailV30Base=openDbDetailV6;
 openDbDetailV6=function(ref){const result=openDbDetailV30Base(ref);decorateDbDetailV30(ref);return result};
 versionSummaryV29=function(snapshot){return `${templatePeriodLabel(snapshot)} · ${snapshot.autoSchedule?'자동생성':'자동생성 안 함'} · 체크리스트 ${(snapshot.checklist||[]).length}개 · 연계 ${(snapshot.linkedSteps||[]).length}단계 · 자료 ${(snapshot.attachments||[]).length}개`};
 bindTemplateAttachmentOpenV30();
+
+// ========================= APP V31 — annual plan / category / month matrix =========================
+window.v31AnnualPlan=window.v31AnnualPlan||{year:Number(todayISO().slice(0,4)),category:'all',view:'months'};
+
+function annualPlanEntriesV31(year,templates=state.templates){
+  const selectedYear=Number(year);if(!Number.isInteger(selectedYear)||selectedYear<1900||selectedYear>2200)return[];
+  const from=`${selectedYear}-01-01`,to=`${selectedYear}-12-31`,grouped=new Map();
+  for(const template of templates||[]){
+    if(!template?.id||!template.autoSchedule||!template.cycle||template.cycle==='none')continue;
+    let specs=[];try{specs=templateOccurrenceSpecsV5(template,from,to)}catch(error){console.warn('연간 업무 계산 제외',template?.name,error);continue}
+    for(const spec of specs){
+      const task=taskFromDbTemplateV5(template,spec),start=task.start||spec.planned||'';
+      if(Number(start.slice(0,4))!==selectedYear)continue;
+      const month=Number(start.slice(5,7));if(month<1||month>12)continue;
+      const key=`${template.id}|${month}`;
+      if(!grouped.has(key))grouped.set(key,{template,templateId:template.id,month,category:String(template.category||'').trim()||'미지정',occurrences:[]});
+      grouped.get(key).occurrences.push({key:spec.key,raw:spec.raw,start,end:task.end||start,deadline:task.deadline||task.end||start});
+    }
+  }
+  return[...grouped.values()].map(entry=>({...entry,occurrences:entry.occurrences.sort((a,b)=>a.start.localeCompare(b.start)||String(a.key).localeCompare(String(b.key)))})).sort((a,b)=>a.month-b.month||a.category.localeCompare(b.category,'ko')||String(a.template?.name||'').localeCompare(String(b.template?.name||''),'ko'));
+}
+function annualRepeatLabelV31(template){
+  const weekdays=['일','월','화','수','목','금','토'];let base='';
+  if(template?.cycle==='weekly'){
+    const order=[1,2,3,4,5,6,0],days=[...new Set((template.weekdays?.length?template.weekdays:[template.weekday]).map(Number).filter(day=>day>=0&&day<=6))].sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+    base=days.length?`매주 ${days.map(day=>weekdays[day]).join('/')}요일`:templatePeriodLabel(template);
+  }else base=templatePeriodLabel(template);
+  const day=template?.cycle==='weekly'?'':template?.dayRule==='unknown'?'해당 월 마지막 근무일':template?.exactDay?`${Number(template.exactDay)}일`:'';
+  const shift=template?.holidayShift==='keep'?'휴일에도 그대로':template?.holidayShift==='next'?'휴일이면 다음 근무일':'휴일이면 전 근무일';
+  return[base,day,shift].filter(Boolean).join(' · ');
+}
+function annualActiveRangeV31(template){const from=template?.activeFrom?fmtDate(template.activeFrom):'시작일 없음',until=template?.activeUntil?fmtDate(template.activeUntil):'계속';return`${from} ~ ${until}`}
+function annualOccurrenceTextV31(item){let text=fmtDate(item.start);if(item.end&&item.end!==item.start)text+=` ~ ${fmtDate(item.end)}`;if(item.deadline&&item.deadline!==(item.end||item.start))text+=` · 기한 ${fmtDate(item.deadline)}`;return text}
+function annualMatrixCountV31(entries,month,category){return new Set((entries||[]).filter(entry=>entry.month===Number(month)&&entry.category===category).map(entry=>entry.templateId)).size}
+function annualSafeColorV31(value){return/^#[0-9a-f]{6}$/i.test(String(value||''))?String(value):'#9bc8a8'}
+function annualCategoryBadgeV31(category){const color=annualSafeColorV31(state.settings?.categoryColors?.[category]);return`<span class="annual-category-badge-v31" style="--annual-category-color:${color}">${esc(category)}</span>`}
+function annualEntryHtmlV31(entry,token){
+  const target=`annualDatesV31-${token}`,count=entry.occurrences.length;
+  return`<article class="annual-entry-v31"><div class="annual-entry-top-v31">${annualCategoryBadgeV31(entry.category)}<button type="button" class="annual-db-link-v31" data-annual-db-v31="${esc(entry.templateId)}">${esc(entry.template?.name||'이름 없는 업무DB')}</button><span class="annual-count-v31">${count}회</span></div><div class="annual-repeat-v31">${esc(annualRepeatLabelV31(entry.template))}<br>${esc(annualActiveRangeV31(entry.template))}</div><button type="button" class="annual-date-toggle-v31" data-annual-dates-v31="${target}" data-annual-date-count-v31="${count}" aria-expanded="false">예정일 ${count}회 보기</button><div class="annual-date-list-v31" id="${target}" hidden>${entry.occurrences.map(item=>`<span>${esc(annualOccurrenceTextV31(item))}</span>`).join('')}</div></article>`;
+}
+function annualMonthlyViewV31(entries){
+  return`<div class="annual-month-grid-v31">${Array.from({length:12},(_,index)=>{const month=index+1,items=entries.filter(entry=>entry.month===month);return`<section class="annual-month-card-v31"><div class="annual-month-head-v31"><h3>${month}월</h3><span>업무DB ${items.length}종</span></div><div class="annual-entry-list-v31">${items.length?items.map((entry,itemIndex)=>annualEntryHtmlV31(entry,`${month}-${itemIndex}`)).join(''):'<div class="annual-empty-v31">계획된 업무 없음</div>'}</div></section>`}).join('')}</div>`;
+}
+function annualCategoryViewV31(entries){
+  const groups=new Map();
+  for(const entry of entries){if(!groups.has(entry.category))groups.set(entry.category,new Map());const templates=groups.get(entry.category);if(!templates.has(entry.templateId))templates.set(entry.templateId,{template:entry.template,templateId:entry.templateId,months:[]});templates.get(entry.templateId).months.push(entry.month)}
+  if(!groups.size)return'<div class="card annual-empty-v31">해당 연도에 계획된 업무가 없습니다.</div>';
+  return`<div class="annual-category-grid-v31">${[...groups.entries()].sort(([a],[b])=>a.localeCompare(b,'ko')).map(([category,templates])=>`<section class="annual-category-card-v31"><div class="annual-category-title-v31"><h3>${annualCategoryBadgeV31(category)}</h3><span>${templates.size}종</span></div>${[...templates.values()].sort((a,b)=>String(a.template?.name||'').localeCompare(String(b.template?.name||''),'ko')).map(item=>`<div class="annual-category-row-v31"><button type="button" class="annual-db-link-v31" data-annual-db-v31="${esc(item.templateId)}">${esc(item.template?.name||'이름 없는 업무DB')}</button><span class="annual-months-v31">${[...new Set(item.months)].sort((a,b)=>a-b).map(month=>`${month}월`).join(' · ')}</span><div class="annual-repeat-v31">${esc(annualRepeatLabelV31(item.template))}<br>${esc(annualActiveRangeV31(item.template))}</div></div>`).join('')}</section>`).join('')}</div>`;
+}
+function annualMatrixViewV31(entries){
+  const categories=[...new Set(entries.map(entry=>entry.category))].sort((a,b)=>a.localeCompare(b,'ko'));
+  if(!categories.length)return'<div class="card annual-empty-v31">해당 연도에 계획된 업무가 없습니다.</div>';
+  return`<div class="annual-matrix-scroll-v31"><table class="annual-matrix-v31"><thead><tr><th>대분류</th>${Array.from({length:12},(_,index)=>`<th>${index+1}월</th>`).join('')}</tr></thead><tbody>${categories.map(category=>`<tr><td>${annualCategoryBadgeV31(category)}</td>${Array.from({length:12},(_,index)=>{const month=index+1,count=annualMatrixCountV31(entries,month,category);return`<td>${count?`<button type="button" class="annual-cell-v31" data-annual-cell-month-v31="${month}" data-annual-cell-category-v31="${esc(category)}" aria-label="${month}월 ${esc(category)} 업무DB ${count}종 보기">${count}</button>`:'<span class="annual-cell-empty-v31">-</span>'}</td>`}).join('')}</tr>`).join('')}</tbody></table></div><p class="annual-matrix-help-v31">건수는 수행업무 회차 수가 아니라 해당 월에 발생하는 업무DB 종류 수입니다. 숫자를 누르면 실제 예정일을 확인할 수 있습니다.</p>`;
+}
+function bindAnnualPlanItemsV31(root=document){
+  $$('[data-annual-db-v31]',root).forEach(button=>button.onclick=()=>openDbDetailV6(`root|${button.dataset.annualDbV31}`));
+  $$('[data-annual-dates-v31]',root).forEach(button=>button.onclick=()=>{const target=document.getElementById(button.dataset.annualDatesV31);if(!target)return;target.hidden=!target.hidden;const open=!target.hidden;button.setAttribute('aria-expanded',String(open));button.textContent=open?'예정일 접기':`예정일 ${button.dataset.annualDateCountV31}회 보기`});
+  $$('[data-annual-cell-month-v31]',root).forEach(button=>button.onclick=()=>openAnnualCellV31(Number(button.dataset.annualCellMonthV31),button.dataset.annualCellCategoryV31));
+}
+function openAnnualCellV31(month,category){
+  const year=window.v31AnnualPlan.year,items=annualPlanEntriesV31(year).filter(entry=>entry.month===Number(month)&&entry.category===category);
+  modal(`${year}년 ${month}월 · ${esc(category)}`,`<div class="annual-cell-list-v31">${items.map(entry=>`<div class="annual-cell-row-v31"><div class="annual-entry-top-v31">${annualCategoryBadgeV31(entry.category)}<button type="button" class="annual-db-link-v31" data-annual-db-v31="${esc(entry.templateId)}">${esc(entry.template?.name||'이름 없는 업무DB')}</button></div><div class="annual-repeat-v31">${esc(annualRepeatLabelV31(entry.template))}</div><div class="annual-cell-dates-v31">${entry.occurrences.map(item=>esc(annualOccurrenceTextV31(item))).join('<br>')}</div></div>`).join('')||'<div class="annual-empty-v31">계획된 업무 없음</div>'}</div>`,`<button class="btn primary" data-close>닫기</button>`,'locked-modal');bindAnnualPlanItemsV31($('#modalRoot'));
+}
+function renderAnnualPlanV31(){
+  ensureAnnualPlanUiV31();const config=window.v31AnnualPlan,year=Number(config.year)||Number(todayISO().slice(0,4)),allEntries=annualPlanEntriesV31(year),categories=[...new Set(allEntries.map(entry=>entry.category))].sort((a,b)=>a.localeCompare(b,'ko'));
+  if(config.category!=='all'&&!categories.includes(config.category))config.category='all';config.year=year;
+  const yearSelect=$('#annualYearV31');if(yearSelect){yearSelect.innerHTML=Array.from({length:21},(_,index)=>year-10+index).map(value=>`<option value="${value}" ${value===year?'selected':''}>${value}년</option>`).join('')}
+  const categorySelect=$('#annualCategoryV31');if(categorySelect){categorySelect.innerHTML=`<option value="all">전체 대분류</option>${categories.map(category=>`<option value="${esc(category)}" ${config.category===category?'selected':''}>${esc(category)}</option>`).join('')}`;categorySelect.value=config.category}
+  $$('[data-annual-view-v31]').forEach(button=>{const active=button.dataset.annualViewV31===config.view;button.classList.toggle('active',active);button.setAttribute('aria-pressed',String(active))});
+  const entries=config.category==='all'?allEntries:allEntries.filter(entry=>entry.category===config.category),root=$('#annualPlanContentV31');if(!root)return;
+  const uniqueTemplates=new Set(entries.map(entry=>entry.templateId)).size,totalOccurrences=entries.reduce((sum,entry)=>sum+entry.occurrences.length,0);
+  $('#annualPlanSummaryV31').textContent=`${year}년 · 업무DB ${uniqueTemplates}종 · 예정 회차 ${totalOccurrences}회`;
+  root.innerHTML=config.view==='categories'?annualCategoryViewV31(entries):config.view==='matrix'?annualMatrixViewV31(entries):annualMonthlyViewV31(entries);bindAnnualPlanItemsV31(root);
+  $('#annualPrevV31').onclick=()=>{config.year=year-1;renderAnnualPlanV31()};$('#annualNextV31').onclick=()=>{config.year=year+1;renderAnnualPlanV31()};yearSelect.onchange=()=>{config.year=Number(yearSelect.value);renderAnnualPlanV31()};categorySelect.onchange=()=>{config.category=categorySelect.value;renderAnnualPlanV31()};$$('[data-annual-view-v31]').forEach(button=>button.onclick=()=>{config.view=button.dataset.annualViewV31;renderAnnualPlanV31()});$('#annualBackV31').onclick=()=>showPage('dbPage');
+}
+function ensureAnnualPlanUiV31(){
+  const main=$('.main');if(!main)return;
+  if(!$('#annualPlanPage'))$('#dbPage').insertAdjacentHTML('afterend',`<section id="annualPlanPage" class="sectionpage annual-plan-v31"><div class="pagehead"><div><h2>연간 업무</h2><p class="muted" id="annualPlanSummaryV31"></p></div><button type="button" class="btn" id="annualBackV31">업무 DB로</button></div><div class="card annual-plan-toolbar-v31"><div class="annual-year-control-v31"><button type="button" class="btn" id="annualPrevV31" aria-label="이전 연도">‹</button><select id="annualYearV31" aria-label="연간 업무 기준 연도"></select><button type="button" class="btn" id="annualNextV31" aria-label="다음 연도">›</button></div><div class="field annual-plan-category-v31"><label>대분류</label><select id="annualCategoryV31"></select></div><div class="annual-view-tabs-v31" role="group" aria-label="연간 업무 보기 방식"><button type="button" class="btn active" data-annual-view-v31="months" aria-pressed="true">월별</button><button type="button" class="btn" data-annual-view-v31="categories" aria-pressed="false">대분류별</button><button type="button" class="btn" data-annual-view-v31="matrix" aria-pressed="false">월 × 대분류</button></div></div><p class="annual-plan-note-v31">현재 활성 업무DB의 반복설정을 브라우저에서 계산한 계획표입니다. 수행업무·완료상태와 분리되며, 열람이나 연도 이동으로 업무가 생성되지 않습니다.</p><div id="annualPlanContentV31"></div></section>`);
+  let button=$('#openAnnualPlanV31');if(!button){button=document.createElement('button');button.type='button';button.id='openAnnualPlanV31';button.className='btn';button.textContent='연간 업무'}
+  const tools=$('#dbPage .db-register-tools'),head=$('#dbPage .pagehead');if(tools&&button.parentElement!==tools)tools.insertBefore(button,tools.firstChild);else if(!button.parentElement&&head)head.insertBefore(button,$('#newDbBtn'));
+  button.onclick=()=>showPage('annualPlanPage');
+}
+
+const renderDbTableV31Base=renderDbTable;
+renderDbTable=function(){const result=renderDbTableV31Base();ensureAnnualPlanUiV31();if($('#annualPlanPage')?.classList.contains('active'))renderAnnualPlanV31();return result};
+const showPageV31Base=showPage;
+showPage=function(id){ensureAnnualPlanUiV31();const result=showPageV31Base(id);if(id==='annualPlanPage'){renderAnnualPlanV31();$('.navbtn[data-page="dbPage"]')?.classList.add('active')}return result};
+const bindV31Base=bind;
+bind=function(){const result=bindV31Base();ensureAnnualPlanUiV31();return result};
+ensureAnnualPlanUiV31();
 
 </script>
 </body></html>

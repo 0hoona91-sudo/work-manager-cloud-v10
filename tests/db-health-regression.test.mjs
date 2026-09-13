@@ -230,7 +230,7 @@ assert.match(html, /ROLLING_AUTO_MONTHS_V24=12/, "Rolling 12개월 기능을 유
 assert.match(html, /APP V27 — unified search \/ DB task history/, "통합검색과 과거 수행이력을 유지해야 합니다.");
 assert.match(html, /APP V26 — mobile compact lists/, "모바일 컴팩트 화면을 유지해야 합니다.");
 assert.match(html, /HOME_FOCUS_META_V25/, "HOME 요약을 유지해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-33/, "8단계 배포 캐시 버전이어야 합니다.");
-assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-33'\)/, "8단계 서비스워커 URL을 등록해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-34/, "9단계 배포 캐시 버전이어야 합니다.");
+assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-34'\)/, "9단계 서비스워커 URL을 등록해야 합니다.");
 
 console.log("PASS manual DB health and missing repeat repair regression");
