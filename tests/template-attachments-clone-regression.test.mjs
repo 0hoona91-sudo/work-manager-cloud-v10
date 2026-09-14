@@ -146,6 +146,6 @@ const archived = sandbox.archiveCloneV29(source);
 assert.equal(archived.attachments[0].driveFileId, "drive-form", "휴지통·버전 snapshot에는 첨부 연결정보를 보존해야 합니다.");
 assert.equal("data" in archived.attachments[0], false, "휴지통·버전 snapshot에는 파일 bytes를 복제하면 안 됩니다.");
 assert.match(html, /versionSummaryV29=function\(snapshot\)[\s\S]*snapshot\.attachments/, "버전 화면에서 첨부 연결 개수를 확인할 수 있어야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-36/, "9.5단계 서비스워커 캐시에서도 자료 첨부·복제를 유지해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-14-37/, "최신 Cloud UX 서비스워커 캐시에서도 자료 첨부·복제를 유지해야 합니다.");
 
 console.log("PASS stage 8 template attachments and clone draft regression");

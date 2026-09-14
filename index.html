@@ -1495,6 +1495,20 @@ button.db-health-row-v28{cursor:pointer}button.db-health-row-v28:hover{border-co
 @media(max-width:620px){.home-annual-date-v32{align-items:stretch;flex-direction:column}.home-annual-date-v32>.btn{width:100%;min-height:44px}.home-annual-date-v32 .home-date-card-v12{width:100%!important;min-width:0!important}.schedule-grid-v20{grid-template-columns:minmax(0,1fr)!important}.task-start-field-v32,.task-end-choice-v32,.task-end-options-v32{grid-column:1!important}.task-end-mode-v32{min-height:46px}.task-end-inline-v32{flex-wrap:wrap}.task-end-inline-v32 .date-entry-v20{width:100%;flex-basis:100%}.task-end-option-v32{align-items:stretch;flex-direction:column}.task-end-option-v32 select{width:100%}}
 </style>
 
+<style id="app-v33-cloud-ux-fixes-style">
+/* APP V33: Cloud 데이터 흐름은 유지하고 보기·접힘·날짜 입력 UX만 보강한다. */
+.date-entry-v20::after{display:none!important}
+.date-entry-v20>.date-picker-v20{width:1px!important;height:1px!important;min-width:0!important;right:22px!important;top:50%!important;pointer-events:none!important;overflow:hidden!important}
+.date-picker-button-v33{position:absolute;right:2px;top:2px;bottom:2px;z-index:3;width:40px;min-width:40px;margin:0;padding:0;border:0;border-left:1px solid rgba(74,91,112,.11);border-radius:0 8px 8px 0;background:transparent;color:#52667d;display:grid;place-items:center;font:inherit;cursor:pointer;touch-action:manipulation}
+.date-picker-button-v33:hover{background:rgba(76,103,133,.07)}.date-picker-button-v33:focus-visible{outline:3px solid color-mix(in srgb,var(--accent,#668d75) 30%,transparent);outline-offset:-3px}.date-picker-button-v33:disabled{cursor:not-allowed;opacity:.42}
+.screen-composition-options-v33,.home-summary-options-v33{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px}.screen-composition-options-v33 label,.home-summary-options-v33 label{display:flex;align-items:center;gap:8px;min-height:42px;padding:8px 10px;border:1px solid #e2e8ef;border-radius:10px;background:#f8fafc;font-weight:750}.screen-composition-options-v33 input,.home-summary-options-v33 input{width:18px;height:18px;margin:0}
+.home-summary-config-v33{display:flex;align-items:flex-start;flex-direction:column;gap:8px;margin:12px 0 2px}.home-summary-config-v33>.btn{align-self:flex-end}.home-summary-panel-v33{width:100%;padding:12px 14px;border:1px solid color-mix(in srgb,var(--accent,#668d75) 22%,#dce5ee);border-radius:12px;background:var(--accent-softer,#f2f7f4)}.home-summary-panel-v33[hidden]{display:none!important}.home-summary-panel-v33>strong{display:block;color:#314b67}.home-summary-card-hidden-v33{display:none!important}body.app-v21 #kpis.home-focus-grid-v25.home-focus-preferences-v33{grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr))!important}
+.home-section-toggle-v33{flex:0 0 auto;min-height:34px;padding:6px 10px;border:1px solid #dce4ec;border-radius:9px;background:#fff;color:#52667d;font-size:12px;font-weight:800;cursor:pointer;touch-action:manipulation}.home-section-toggle-v33:hover{background:#f3f7fa}.home-section-toggle-v33:focus-visible{outline:3px solid color-mix(in srgb,var(--accent,#668d75) 28%,transparent);outline-offset:2px}.home-section-collapsed-v33>.panel-body,.home-section-collapsed-v33>.listbox{display:none!important}.home-section-collapsed-v33{min-height:0!important}.gantt-panel-title-v20>.home-section-toggle-v33{margin-left:auto}
+.mobile-ui-v17 .side{grid-template-columns:repeat(var(--nav-count-v33,7),minmax(0,1fr))!important}.navbtn[hidden]{display:none!important}
+@media(max-width:760px){.screen-composition-options-v33,.home-summary-options-v33{grid-template-columns:1fr}.home-summary-config-v33>.btn{width:100%;min-height:44px}.home-section-toggle-v33{min-height:40px}.mobile-ui-v17 .gantt-card-v3 .home-section-toggle-v33{display:none!important}}
+@media(max-width:420px){.mobile-ui-v17 .side{gap:1px!important}.mobile-ui-v17 .navbtn,.mobile-ui-v17 .navbtn[data-page="settingsPage"]{font-size:8.5px!important;padding-left:0!important;padding-right:0!important}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -2123,7 +2137,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260913-36').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260914-37').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -2441,7 +2455,7 @@ function syncTemplateScheduleV5(t,from,to,policy=t.applyPolicy||'pending'){
   for(const old of [...roots]){
     const inWindow=old.start>=from&&old.start<=to;
     const eligible=policy==='all'||(policy==='future'&&old.start>=todayISO()&&effectiveStatus(old)!=='done')||(policy==='pending'&&effectiveStatus(old)!=='done');
-    if(inWindow&&effectiveStatus(old)!=='done'&&eligible&&!valid.has(old.generatedKey)&&!old.manualOverride){
+    if(inWindow&&effectiveStatus(old)!=='done'&&eligible&&!valid.has(old.generatedKey)&&!old.manualOverride&&!old.scheduleOverride){
       const ids=new Set([old.id,...state.tasks.filter(x=>x.parentAutoRootId===old.id).map(x=>x.id)]);
       state.tasks=state.tasks.filter(x=>!ids.has(x.id));changes++;
     }
@@ -2453,9 +2467,10 @@ function syncTemplateScheduleV5(t,from,to,policy=t.applyPolicy||'pending'){
     else{
       const eligible=effectiveStatus(root)!=='done'&&(policy==='all'||(policy==='future'&&root.start>=todayISO())||policy==='pending');
       if(eligible){
-        root.category=t.category;root.name=t.name;root.urgent=!!t.urgent;root.owner=t.owner||root.owner;root.notes=t.notes||'';root.unconfirmed=t.dayRule==='unknown';
+        root.category=t.category;root.name=t.name;root.urgent=!!t.urgent;root.owner=t.owner||root.owner;root.notes=t.notes||'';
         root.checklist=preserveChecklistV5(root.checklist,t.checklist||[]);
-        if(!root.manualOverride){
+        if(!root.manualOverride&&!root.scheduleOverride){
+          root.unconfirmed=t.dayRule==='unknown';
           root.start=spec.planned;root.end=addDays(spec.planned,Math.max(0,Number(t.durationDays||0)));root.deadline=addDays(spec.planned,Number(t.deadlineOffset||0));
         }
       }
@@ -3548,8 +3563,9 @@ function checksFromTaskFormV9(t){
 function saveDbAutoOccurrenceV9(t){
   return async()=>{
     const oldStart=t.start,oldEnd=t.end||t.start,oldDeadline=t.deadline||oldEnd;
-    let start=$('#tfStart').value||oldStart||todayISO();
-    const un=$('#tfUnconfirmed')?.checked||false;
+    const requestedStart=$('#tfStart').value||oldStart||todayISO(),manualDateChanged=requestedStart!==oldStart;
+    let start=requestedStart,un=$('#tfUnconfirmed')?.checked||false;
+    if(manualDateChanged)un=false;
     if(un)start=shiftWorkday(endOfMonth(Number(start.slice(0,4)),Number(start.slice(5,7))),'prev');
     const rule={type:$('#tfEndType').value,date:$('#tfEndDate').value,days:Number($('#tfAfterDays').value||0),includeHolidays:$('#tfIncludeHolidays').checked,shift:$('#tfHolidayShift').value};
     let end=calcEnd(start,rule),deadline=$('#tfDeadline').value||end;
@@ -3594,7 +3610,7 @@ changeTaskStartV5=function(t,newStart){
   if(!t?.dbAuto)return changeTaskStartV9Base(t,newStart);
   if(!newStart||newStart===t.start)return;
   const old=t.start,dur=Math.max(0,Math.round((dateOf(t.end||old)-dateOf(old))/86400000)||0),dueOff=Math.max(0,Math.round((dateOf(t.deadline||t.end||old)-dateOf(old))/86400000)||0);
-  t.start=newStart;t.end=addDays(newStart,dur);t.deadline=addDays(newStart,dueOff);t.periodLabel=periodFromDate(newStart);t.manualOverride=true;t.scheduleOverride=true;
+  t.start=newStart;t.end=addDays(newStart,dur);t.deadline=addDays(newStart,dueOff);t.periodLabel=periodFromDate(newStart);t.unconfirmed=false;t.manualOverride=true;t.scheduleOverride=true;
   if(t.parentAutoRootId&&t.link)t.link.dynamic=false;
   recalcLinks();saveState();renderTaskTable();renderHome();toast('현재 회차를 이동하고 이후 연계업무를 다시 계산했습니다.');
 };
@@ -4455,11 +4471,13 @@ function upgradeDateInputV20(input){
   input.type='text';input.inputMode='numeric';input.autocomplete='off';input.placeholder='YYYY-MM-DD 또는 YYYYMMDD';
   input.dataset.dateInputV20='true';input.classList.add('date-text-v20');input.value=normalizeCompactDateV20(initial)||initial;
   const picker=document.createElement('input');picker.type='date';picker.className='date-picker-v20';picker.dataset.dateProxyV20='true';picker.tabIndex=-1;picker.value=normalizeCompactDateV20(input.value);picker.disabled=input.disabled;picker.setAttribute('aria-label','달력에서 날짜 선택');wrapper.appendChild(picker);
+  const pickerButton=document.createElement('button');pickerButton.type='button';pickerButton.className='date-picker-button-v33';pickerButton.disabled=input.disabled;pickerButton.setAttribute('aria-label','달력에서 날짜 선택');pickerButton.innerHTML='<span aria-hidden="true">📅</span>';wrapper.appendChild(pickerButton);
   const normalize=()=>{const normalized=normalizeCompactDateV20(input.value);if(normalized){input.value=normalized;picker.value=normalized;input.classList.remove('is-invalid-v20');return true}if(!input.value.trim()){picker.value='';input.classList.remove('is-invalid-v20');return true}input.classList.add('is-invalid-v20');return false};
   input.oninput=function(event){if(/^\d{8}$/.test(input.value.trim()))normalize();else input.classList.remove('is-invalid-v20');previousInput?.call(input,event)};
   input.onchange=function(event){normalize();previousChange?.call(input,event)};
   input.onblur=function(event){normalize();previousBlur?.call(input,event)};
   picker.onchange=()=>{if(!picker.value)return;input.value=picker.value;input.classList.remove('is-invalid-v20');input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}))};
+  pickerButton.onclick=()=>{if(input.disabled||picker.disabled)return;try{picker.focus({preventScroll:true});if(typeof picker.showPicker==='function')picker.showPicker();else picker.click()}catch(error){try{picker.click()}catch(fallbackError){console.warn('날짜 선택기를 열지 못했습니다.',fallbackError)}}};
   return input;
 }
 function enhanceDateInputsV20(root=document){
@@ -5668,7 +5686,7 @@ function setupTaskEndUiV32(id=null){
   const sync=()=>{
     const mode=endType.value;
     radios.forEach(input=>input.checked=input.value===mode);
-    if(dateField){dateField.hidden=false;dateField.classList.remove('hidden');dateField.classList.toggle('is-inactive-v32',mode!=='date');$$('input',dateField).forEach(input=>input.disabled=mode!=='date')}
+    if(dateField){dateField.hidden=false;dateField.classList.remove('hidden');dateField.classList.toggle('is-inactive-v32',mode!=='date');$$('input',dateField).forEach(input=>input.disabled=mode!=='date');const pickerButton=$('.date-picker-button-v33',dateField);if(pickerButton)pickerButton.disabled=mode!=='date'}
     if(afterField){afterField.hidden=false;afterField.classList.remove('hidden');afterField.classList.toggle('is-inactive-v32',mode!=='after');$$('input',afterField).forEach(input=>input.disabled=mode!=='after')}
     if(options)options.hidden=mode==='same';if(includeRow)includeRow.hidden=mode!=='after';if(shiftRow)shiftRow.hidden=mode==='same';
     if(include)include.disabled=mode!=='after';if(shift)shift.disabled=mode==='same';options?.classList.remove('is-disabled-v20');
@@ -5683,6 +5701,129 @@ function setupTaskWorkTypeV32(id=null){
 }
 const openTaskFormV32Base=openTaskForm;
 openTaskForm=function(id=null){const result=openTaskFormV32Base(id);setupTaskEndUiV32(id);setupTaskWorkTypeV32(id);return result};
+
+// ========================= APP V33 — Cloud UX preferences / task views / date safeguards =========================
+const UI_PREFERENCES_KEY_V33='workManagerCloudUiPreferencesV33';
+const UI_PREFERENCES_DEFAULTS_V33={
+  navVisibility:{tasks:true,db:true,holidays:true,history:true},
+  homeSections:{},
+  homeSummaryCards:{today:true,overdue:true,week:true,urgent:true}
+};
+function loadUiPreferencesV33(){
+  let saved={};try{saved=JSON.parse(localStorage.getItem(UI_PREFERENCES_KEY_V33)||'{}')||{}}catch(error){saved={}}
+  return{
+    navVisibility:{...UI_PREFERENCES_DEFAULTS_V33.navVisibility,...(saved.navVisibility||{})},
+    homeSections:{...(saved.homeSections||{})},
+    homeSummaryCards:{...UI_PREFERENCES_DEFAULTS_V33.homeSummaryCards,...(saved.homeSummaryCards||{})}
+  };
+}
+function saveUiPreferencesV33(){try{localStorage.setItem(UI_PREFERENCES_KEY_V33,JSON.stringify(window.v33UiPreferences))}catch(error){console.warn('화면 설정을 이 브라우저에 저장하지 못했습니다.',error)}}
+window.v33UiPreferences=loadUiPreferencesV33();
+window.v33TaskView=window.v33TaskView==='completed'?'completed':'active';
+
+function ensureTaskNavigationV33(){
+  const active=$('.navbtn[data-page="taskListPage"][data-task-view-v33="active"]')||$('.navbtn[data-page="taskListPage"]');if(!active)return;
+  active.dataset.taskViewV33='active';active.id=active.id||'activeTaskNavV33';
+  let completed=$('#completedTaskNavV33');
+  if(!completed){completed=active.cloneNode(true);completed.id='completedTaskNavV33';completed.dataset.taskViewV33='completed';completed.classList.remove('active');active.after(completed)}
+  syncTaskNavigationV33();
+}
+function syncTaskNavigationV33(){
+  const mobile=document.documentElement.classList.contains('mobile-ui-v17'),labels={active:mobile?'진행':'진행(예정) 업무',completed:mobile?'완료':'완료된 업무'},icons={active:'▶',completed:'✓'};
+  $$('[data-task-view-v33]').forEach(button=>{const mode=button.dataset.taskViewV33,full=mode==='completed'?'완료된 업무':'진행(예정) 업무';button.setAttribute('aria-label',full);let icon=$('.nav-icon',button),text=$('span:last-child',button);if(!icon||!text){button.innerHTML=`<span class="nav-icon">${icons[mode]}</span><span>${labels[mode]}</span>`;icon=$('.nav-icon',button);text=$('span:last-child',button)}icon.textContent=icons[mode];text.textContent=labels[mode]});
+}
+function currentTaskViewV33(){return window.v25HomeFocusKey?'active':(window.v33TaskView==='completed'?'completed':'active')}
+function syncTaskViewUiV33(){
+  ensureTaskNavigationV33();const mode=currentTaskViewV33(),activePage=$('#taskListPage')?.classList.contains('active');
+  $$('[data-task-view-v33]').forEach(button=>{const selected=activePage&&button.dataset.taskViewV33===mode;button.classList.toggle('active',selected);if(selected)button.setAttribute('aria-current','page');else button.removeAttribute('aria-current')});
+  const title=$('#taskListPage .pagehead h2');if(title)title.textContent=mode==='completed'?'완료된 업무':'진행(예정) 업무';
+}
+function openTaskViewV33(mode){
+  window.v33TaskView=mode==='completed'?'completed':'active';if(window.v25HomeFocusKey)clearHomeFocusV25();
+  const filter=$('#taskStatusFilter');if(filter)filter.value='all';showPage('taskListPage');
+}
+function bindTaskNavigationV33(){ensureTaskNavigationV33();$$('[data-task-view-v33]').forEach(button=>button.onclick=()=>openTaskViewV33(button.dataset.taskViewV33));syncTaskViewUiV33()}
+
+const taskListVisibleV33Base=taskListVisibleV27;
+function taskListVisibleV33(){
+  const rows=taskListVisibleV33Base(),completed=currentTaskViewV33()==='completed';
+  return rows.filter(task=>(effectiveStatus(task)==='done')===completed);
+}
+taskListVisibleV27=taskListVisibleV33;
+taskListVisibleV6=taskListVisibleV33;
+
+function applyNavigationPreferencesV33(){
+  ensureTaskNavigationV33();const prefs=window.v33UiPreferences.navVisibility;
+  $$('[data-task-view-v33]').forEach(button=>button.hidden=prefs.tasks===false);
+  const targets={db:'dbPage',holidays:'holidayPage',history:'historyPage'};
+  Object.entries(targets).forEach(([key,page])=>$$(`.navbtn[data-page="${page}"]`).forEach(button=>button.hidden=prefs[key]===false));
+  $$('.navbtn[data-page="homePage"],.navbtn[data-page="settingsPage"]').forEach(button=>button.hidden=false);
+  const side=$('.side'),visible=$$('.side .navbtn').filter(button=>!button.hidden).length;if(side)side.style.setProperty('--nav-count-v33',String(Math.max(2,visible)));
+  syncTaskNavigationV33();syncTaskViewUiV33();
+}
+function ensureScreenCompositionV33(){
+  const grid=$('#settingsPage .settings-grid');if(!grid)return;let card=$('#screenCompositionV33');
+  if(!card){grid.insertAdjacentHTML('afterbegin',`<div class="card panel-body" id="screenCompositionV33"><h3>화면 구성</h3><p class="muted">이 브라우저에서 사용할 메뉴를 선택합니다. HOME과 설정/백업은 항상 표시됩니다.</p><div class="screen-composition-options-v33"><label><input type="checkbox" data-nav-pref-v33="tasks"> 진행/완료 업무</label><label><input type="checkbox" data-nav-pref-v33="db"> 업무 DB</label><label><input type="checkbox" data-nav-pref-v33="holidays"> 휴일 DB</label><label><input type="checkbox" data-nav-pref-v33="history"> 변경이력</label></div></div>`);card=$('#screenCompositionV33')}
+  $$('[data-nav-pref-v33]',card).forEach(input=>{const key=input.dataset.navPrefV33;input.checked=window.v33UiPreferences.navVisibility[key]!==false;input.onchange=()=>{window.v33UiPreferences.navVisibility[key]=input.checked;saveUiPreferencesV33();applyNavigationPreferencesV33()}});
+}
+
+const HOME_SECTION_META_V33={
+  gantt:{selector:'.gantt-card-v3'},calendar:{selector:'.calendar-card-v3'},overdue:{selector:'#overduePanel'},period:{selector:'#periodSummaryCard'}
+};
+function hasHomeSectionPreferenceV33(key){return Object.prototype.hasOwnProperty.call(window.v33UiPreferences.homeSections,key)}
+function bindMobileGanttPreferenceV33(){
+  const button=$('#mobileGanttToggleV26');if(!button)return;
+  button.onclick=()=>{const next=!window.v26MobileGanttOpen;window.v33UiPreferences.homeSections.gantt=next;saveUiPreferencesV33();applyHomeSectionPreferencesV33();if(next)requestAnimationFrame(()=>$('#ganttSelected')?.click())};
+}
+function ensureHomeSectionControlsV33(){
+  for(const[key,meta]of Object.entries(HOME_SECTION_META_V33)){const card=$(meta.selector),title=$('.panel-title',card);if(!card||!title)continue;card.dataset.homeSectionV33=key;let button=$(`[data-home-section-toggle-v33="${key}"]`,title);if(!button){button=document.createElement('button');button.type='button';button.className='home-section-toggle-v33';button.dataset.homeSectionToggleV33=key;title.appendChild(button)}button.onclick=()=>{const expanded=card.classList.contains('home-section-collapsed-v33');window.v33UiPreferences.homeSections[key]=expanded;saveUiPreferencesV33();applyHomeSectionPreferencesV33()}}
+  bindMobileGanttPreferenceV33();
+}
+function applyHomeSectionPreferencesV33(){
+  const mobile=isMobileUiV17();
+  for(const[key,meta]of Object.entries(HOME_SECTION_META_V33)){const card=$(meta.selector);if(!card)continue;const expanded=hasHomeSectionPreferenceV33(key)?window.v33UiPreferences.homeSections[key]:(key==='gantt'&&mobile?!!window.v26MobileGanttOpen:true);card.classList.toggle('home-section-collapsed-v33',!expanded);const button=$(`[data-home-section-toggle-v33="${key}"]`,card);if(button){button.textContent=expanded?'접기':'펼치기';button.setAttribute('aria-expanded',String(!!expanded))}if(key==='gantt'&&mobile)window.v26MobileGanttOpen=!!expanded}
+  applyMobileGanttStateV26();bindMobileGanttPreferenceV33();
+}
+
+function ensureHomeSummaryPreferencesV33(){
+  const root=$('#kpis');if(!root)return;let controls=$('#homeSummaryConfigV33');
+  if(!controls){controls=document.createElement('div');controls.id='homeSummaryConfigV33';controls.className='home-summary-config-v33';controls.innerHTML=`<button type="button" class="btn" id="homeSummarySettingsToggleV33" aria-expanded="false">표시 설정</button><div class="home-summary-panel-v33" id="homeSummaryPanelV33" hidden><strong>HOME 요약카드</strong><div class="home-summary-options-v33">${Object.entries(HOME_FOCUS_META_V25).map(([key,meta])=>`<label><input type="checkbox" data-home-summary-pref-v33="${key}"> ${meta.label}</label>`).join('')}</div></div>`}
+  if(controls.nextElementSibling!==root)root.before(controls);
+  const toggle=$('#homeSummarySettingsToggleV33',controls),panel=$('#homeSummaryPanelV33',controls);toggle.onclick=()=>{panel.hidden=!panel.hidden;toggle.setAttribute('aria-expanded',String(!panel.hidden));toggle.textContent=panel.hidden?'표시 설정':'표시 설정 닫기'};
+  $$('[data-home-summary-pref-v33]',controls).forEach(input=>{const key=input.dataset.homeSummaryPrefV33;input.checked=window.v33UiPreferences.homeSummaryCards[key]!==false;input.onchange=()=>{window.v33UiPreferences.homeSummaryCards[key]=input.checked;saveUiPreferencesV33();applyHomeSummaryPreferencesV33()}});
+}
+function applyHomeSummaryPreferencesV33(){
+  const root=$('#kpis');if(!root)return;root.classList.add('home-focus-preferences-v33');let visible=0;
+  $$('[data-home-focus-v25]',root).forEach(card=>{const show=window.v33UiPreferences.homeSummaryCards[card.dataset.homeFocusV25]!==false;card.classList.toggle('home-summary-card-hidden-v33',!show);if(show)visible++});root.hidden=visible===0;
+}
+function applyCloudUiPreferencesV33(){ensureTaskNavigationV33();applyNavigationPreferencesV33();ensureScreenCompositionV33();ensureHomeSectionControlsV33();applyHomeSectionPreferencesV33();ensureHomeSummaryPreferencesV33();applyHomeSummaryPreferencesV33()}
+
+function setupManualDateConfirmationV33(id=null){
+  const task=id?state.tasks.find(item=>item.id===id):null;if(!task?.dbAuto)return;const input=$('#tfStart'),unconfirmed=$('#tfUnconfirmed');if(!input||!unconfirmed)return;
+  if(task.manualOverride||task.scheduleOverride)unconfirmed.checked=false;
+  const confirmDate=()=>{if(input.value&&input.value!==task.start)unconfirmed.checked=false};input.addEventListener('input',confirmDate);input.addEventListener('change',confirmDate);
+}
+
+const syncMobileNavigationV33Base=syncMobileNavigationV17;
+syncMobileNavigationV17=function(){const result=syncMobileNavigationV33Base();syncTaskNavigationV33();applyNavigationPreferencesV33();return result};
+const openHomeFocusV33Base=openHomeFocusV25;
+openHomeFocusV25=function(key){window.v33TaskView='active';return openHomeFocusV33Base(key)};
+const openTaskFormV33Base=openTaskForm;
+openTaskForm=function(id=null){const result=openTaskFormV33Base(id);setupManualDateConfirmationV33(id);return result};
+const renderTaskTableV33Base=renderTaskTable;
+renderTaskTable=function(){const result=renderTaskTableV33Base();syncTaskViewUiV33();return result};
+const renderHomeV33Base=renderHome;
+renderHome=function(){const result=renderHomeV33Base();ensureHomeSectionControlsV33();applyHomeSectionPreferencesV33();ensureHomeSummaryPreferencesV33();applyHomeSummaryPreferencesV33();return result};
+const renderSettingsV33Base=renderSettings;
+renderSettings=function(){const result=renderSettingsV33Base();ensureScreenCompositionV33();applyNavigationPreferencesV33();return result};
+const showPageV33Base=showPage;
+showPage=function(id){if(id==='taskListPage'&&window.v25HomeFocusKey)window.v33TaskView='active';const result=showPageV33Base(id);applyCloudUiPreferencesV33();syncTaskViewUiV33();return result};
+const bindV33Base=bind;
+bind=function(){ensureTaskNavigationV33();const result=bindV33Base();bindTaskNavigationV33();applyCloudUiPreferencesV33();return result};
+window.addEventListener('resize',()=>requestAnimationFrame(applyCloudUiPreferencesV33));
+window.addEventListener('orientationchange',()=>requestAnimationFrame(applyCloudUiPreferencesV33));
+window.addEventListener('popstate',()=>requestAnimationFrame(syncTaskViewUiV33));
+ensureTaskNavigationV33();applyCloudUiPreferencesV33();
 
 </script>
 </body></html>

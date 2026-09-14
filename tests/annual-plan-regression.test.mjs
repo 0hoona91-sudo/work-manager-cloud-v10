@@ -164,7 +164,7 @@ assert.match(html, /ROLLING_AUTO_MONTHS_V24=12/, "Rolling 12개월 기능을 유
 assert.match(html, /APP V30 — template attachments \/ clone draft/, "자료 첨부와 업무DB 복제를 유지해야 합니다.");
 assert.match(html, /APP V29 — impact preview \/ trash \/ template versions/, "휴지통과 버전복원을 유지해야 합니다.");
 assert.match(html, /HOME_FOCUS_META_V25/, "HOME 요약을 유지해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-36/, "9.5단계 서비스워커 캐시를 사용해야 합니다.");
-assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-36'\)/, "9.5단계 서비스워커 URL을 등록해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-14-37/, "최신 Cloud UX 서비스워커 캐시를 사용해야 합니다.");
+assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260914-37'\)/, "최신 Cloud UX 서비스워커 URL을 등록해야 합니다.");
 
 console.log("PASS stage 9 annual plan and category matrix regression");

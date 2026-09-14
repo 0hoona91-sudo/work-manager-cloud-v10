@@ -125,7 +125,7 @@ assert.match(html, /APP V29 — impact preview \/ trash \/ template versions/, "
 assert.match(html, /APP V30 — template attachments \/ clone draft/, "관련자료와 업무DB 복제 기능을 유지해야 합니다.");
 assert.match(html, /APP V31 — annual plan \/ category \/ month matrix/, "기존 연간 업무 계산·화면 기능을 유지해야 합니다.");
 assert.match(html, /@media\(max-width:620px\)[\s\S]*home-annual-date-v32\{align-items:stretch;flex-direction:column\}/, "모바일 HOME 버튼과 날짜 영역은 가로 넘침 없이 세로 배치해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-13-36/, "9.5단계 서비스워커 캐시 버전을 사용해야 합니다.");
-assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260913-36'\)/, "9.5단계 서비스워커 URL을 등록해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-14-37/, "최신 Cloud UX 서비스워커 캐시 버전을 사용해야 합니다.");
+assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260914-37'\)/, "최신 Cloud UX 서비스워커 URL을 등록해야 합니다.");
 
 console.log("PASS stage 9.5 task/database input UX cleanup regression");
