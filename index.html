@@ -4105,14 +4105,24 @@ const renderHomeV13Base=renderHome;
 renderHome=function(){ensureGanttFilterSettingsV13();syncGanttControlsV13();const result=renderHomeV13Base();syncGanttControlsV13();return result};
 
 // ========================= APP V15 — 관련 공문 기록 / 모바일 조작 안정화 =========================
-let relatedDocumentSaveTimerV15=null;
+let relatedDocumentSaveTimerV15=null,relatedDocumentDirtyV35=false,relatedDocumentComposingV35=false;
 function scheduleRelatedDocumentSaveV15(){
   clearTimeout(relatedDocumentSaveTimerV15);
-  relatedDocumentSaveTimerV15=setTimeout(()=>{relatedDocumentSaveTimerV15=null;saveState()},550);
+  relatedDocumentDirtyV35=true;
+  relatedDocumentSaveTimerV15=setTimeout(()=>{
+    relatedDocumentSaveTimerV15=null;if(!relatedDocumentDirtyV35)return;
+    relatedDocumentDirtyV35=false;saveState({reason:'관련 공문 제목 변경'}).catch(error=>console.error('관련 공문 제목 저장 실패',error));
+  },550);
 }
 function captureRelatedDocumentV15(task){
   const input=$('#relatedDocumentTitleV15');
-  if(input)task.relatedDocumentTitle=String(input.value||'').trim();
+  if(input){const value=String(input.value||'');if(task.relatedDocumentTitle!==value){task.relatedDocumentTitle=value;relatedDocumentDirtyV35=true}}
+}
+function flushRelatedDocumentV35(task,options){
+  const save=options?.save!==false,reason=options?.reason||'관련 공문 제목 변경';
+  captureRelatedDocumentV15(task);clearTimeout(relatedDocumentSaveTimerV15);relatedDocumentSaveTimerV15=null;
+  if(!relatedDocumentDirtyV35)return Promise.resolve();relatedDocumentDirtyV35=false;
+  return save?saveState({reason}):Promise.resolve();
 }
 openChecklist=function(id){
   const t=state.tasks.find(x=>x.id===id);if(!t)return;
@@ -4347,6 +4357,8 @@ modal=function(title,body,footer='',cls=''){
 };
 const closeModalV18Base=closeModal;
 closeModal=function(){
+  const input=$('#relatedDocumentTitleV15'),task=input?.dataset.relatedTaskV35?state.tasks.find(item=>item.id===input.dataset.relatedTaskV35):null;
+  if(task)void flushRelatedDocumentV35(task).catch(error=>console.error('관련 공문 제목 마감 저장 실패',error));
   setAppModalOpenV18(false);
   return closeModalV18Base();
 };
@@ -4419,33 +4431,44 @@ renderHome=function(){
 openChecklist=function(id){
   const t=state.tasks.find(x=>x.id===id);if(!t)return;
   const checks=t.checklist||[],doneCount=checks.filter(c=>c.done).length,allDone=canCompleteTaskV18(t),alreadyDone=effectiveStatus(t)==='done';
-  const body=`<div class="completion-note ${allDone?'complete-ready':''}" aria-live="polite">${checklistMessageV18(t,checks,doneCount,allDone)}</div>
+  const body=`<div class="completion-note ${allDone?'complete-ready':''}" id="checklistProgressV35" aria-live="polite">${checklistMessageV18(t,checks,doneCount,allDone)}</div>
     <div class="checklist-modal">${checks.length?checks.map(c=>`<label class="checkitem"><input type="checkbox" data-check="${c.id}" ${c.done?'checked':''} ${alreadyDone?'disabled':''}><span class="text">${esc(c.text)}</span></label>`).join(''):'<div class="muted">등록된 체크리스트가 없습니다.</div>'}</div>
-    <div class="related-document-v15"><label for="relatedDocumentTitleV15">관련 공문 제목 <span class="muted" style="display:inline">(선택)</span></label><input id="relatedDocumentTitleV15" maxlength="300" autocomplete="off" value="${esc(t.relatedDocumentTitle||'')}" placeholder="예: 정기감사 자료 제출 요청"><span class="muted">자동 저장되며 업무목록 검색에서 공문 제목으로 찾을 수 있습니다.</span></div>
+    <div class="related-document-v15"><label for="relatedDocumentTitleV15">관련 공문 제목 <span class="muted" style="display:inline">(선택)</span></label><input id="relatedDocumentTitleV15" data-related-task-v35="${esc(t.id)}" maxlength="300" autocomplete="off" value="${esc(t.relatedDocumentTitle||'')}" placeholder="예: 정기감사 자료 제출 요청"><span class="muted">자동 저장되며 업무목록 검색에서 공문 제목으로 찾을 수 있습니다.</span></div>
     <div class="muted checklist-schedule-v18">일정 ${fmtDate(t.start)} ~ ${fmtDate(t.end||t.start)}${t.actualComplete?` · 완료 ${fmtDate(t.actualComplete)}`:''}</div>`;
   const completeLabel=alreadyDone?'완료됨':'업무 완료';
   modal(`${t.urgent?'● ':''}${esc(t.name)}`,body,`<button class="btn" data-edit-task="${id}">내용 수정</button><button class="btn primary" id="completeTask" ${(allDone&&!alreadyDone)?'':'disabled'}>${completeLabel}</button>`,'small checklist-task-modal-v18');
   const docInput=$('#relatedDocumentTitleV15');
   if(docInput){
-    docInput.oninput=()=>{t.relatedDocumentTitle=docInput.value;scheduleRelatedDocumentSaveV15()};
-    docInput.onchange=()=>{captureRelatedDocumentV15(t);clearTimeout(relatedDocumentSaveTimerV15);relatedDocumentSaveTimerV15=null;saveState({reason:'관련 공문 제목 변경'})};
+    relatedDocumentComposingV35=false;
+    docInput.oncompositionstart=()=>{relatedDocumentComposingV35=true};
+    docInput.oncompositionend=()=>{relatedDocumentComposingV35=false;captureRelatedDocumentV15(t);scheduleRelatedDocumentSaveV15()};
+    docInput.oninput=event=>{if(event.isComposing||relatedDocumentComposingV35)return;captureRelatedDocumentV15(t);scheduleRelatedDocumentSaveV15()};
+    const commitDocument=()=>{relatedDocumentComposingV35=false;void flushRelatedDocumentV35(t).catch(error=>console.error('관련 공문 제목 저장 실패',error))};
+    docInput.onchange=commitDocument;docInput.onblur=commitDocument;
   }
   $$('[data-check]').forEach(input=>input.onchange=async()=>{
-    captureRelatedDocumentV15(t);clearTimeout(relatedDocumentSaveTimerV15);relatedDocumentSaveTimerV15=null;
+    relatedDocumentComposingV35=false;flushRelatedDocumentV35(t,{save:false});
     const item=t.checklist.find(value=>value.id===input.dataset.check);if(!item)return;
     const previous=item.done;item.done=input.checked;
-    openChecklist(id);
+    syncChecklistProgressV35(t);
     try{await saveState({reason:'체크리스트 변경'})}
-    catch(error){item.done=previous;openChecklist(id);toast('체크 상태를 저장하지 못했습니다. 다시 시도해 주세요.')}
+    catch(error){item.done=previous;input.checked=previous;syncChecklistProgressV35(t);toast('체크 상태를 저장하지 못했습니다. 다시 시도해 주세요.')}
   });
-  $('[data-edit-task]').onclick=()=>{captureRelatedDocumentV15(t);scheduleRelatedDocumentSaveV15();openTaskForm(id)};
+  $('[data-edit-task]').onclick=async()=>{relatedDocumentComposingV35=false;try{await flushRelatedDocumentV35(t)}catch(error){toast('관련 공문 제목을 저장하지 못했습니다.');return}openTaskForm(id)};
   const complete=$('#completeTask');
-  if(complete&&!complete.disabled)complete.onclick=async()=>{
-    captureRelatedDocumentV15(t);clearTimeout(relatedDocumentSaveTimerV15);relatedDocumentSaveTimerV15=null;
+  if(complete)complete.onclick=async()=>{
+    if(complete.disabled)return;
+    relatedDocumentComposingV35=false;flushRelatedDocumentV35(t,{save:false});
     complete.disabled=true;complete.textContent='저장 중…';
     await persistTaskStatusV18(t,'done',{closeAfter:true});
   };
 };
+
+function syncChecklistProgressV35(task){
+  const checks=task?.checklist||[],doneCount=checks.filter(item=>item.done).length,allDone=canCompleteTaskV18(task),alreadyDone=effectiveStatus(task)==='done';
+  const note=$('#checklistProgressV35');if(note){note.classList.toggle('complete-ready',allDone);note.textContent=checklistMessageV18(task,checks,doneCount,allDone)}
+  const complete=$('#completeTask');if(complete){complete.disabled=!allDone||alreadyDone;complete.textContent=alreadyDone?'완료됨':'업무 완료'}
+}
 
 const renderTaskTableV18Base=renderTaskTable;
 renderTaskTable=function(){
@@ -5900,8 +5923,11 @@ function sortDbRowsV34(rows){
   rows.forEach(row=>{const key=String(row?.root?.id||row?.ref||groups.length);let group=byRoot.get(key);if(!group){group={key,rows:[]};byRoot.set(key,group);groups.push(group)}group.rows.push(row)});
   return stableSortV34(groups,(a,b)=>compareDbGroupsV34(a,b)).flatMap(group=>group.rows);
 }
-const taskListVisibleV34Base=taskListVisibleV33;
-function taskListVisibleV34(){return sortTaskRowsV34(taskListVisibleV34Base())}
+const taskListVisibleV34Base=taskListVisibleV33Base;
+function taskListVisibleV34(){
+  const completed=currentTaskViewV33()==='completed';
+  return sortTaskRowsV34(taskListVisibleV34Base().filter(task=>isTaskCompletedV34(task)===completed));
+}
 taskListVisibleV27=taskListVisibleV34;taskListVisibleV6=taskListVisibleV34;
 const dbVisibleRowsV34Base=dbVisibleRowsV10;
 dbVisibleRowsV10=function(){return sortDbRowsV34(dbVisibleRowsV34Base())};
