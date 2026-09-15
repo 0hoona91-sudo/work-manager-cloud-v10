@@ -1509,6 +1509,20 @@ button.db-health-row-v28{cursor:pointer}button.db-health-row-v28:hover{border-co
 @media(max-width:420px){.mobile-ui-v17 .side{gap:1px!important}.mobile-ui-v17 .navbtn,.mobile-ui-v17 .navbtn[data-page="settingsPage"]{font-size:8.5px!important;padding-left:0!important;padding-right:0!important}}
 </style>
 
+<style id="app-v34-compact-home-sort-style">
+/* APP V34: 모바일 HOME 날짜 높이 보정과 데스크톱 메모리 정렬. */
+.desktop-sortable-v34{cursor:pointer;user-select:none}.desktop-sortable-v34:hover{color:var(--accent-deep)!important}.table-sort-indicator-v34{display:inline-block;margin-left:4px;color:var(--accent-deep);font-size:10px;vertical-align:1px}
+@media(max-width:620px){
+  body.app-v21.mobile-ui-v17 .home-heading-v12{gap:6px!important;margin-bottom:8px!important}
+  body.app-v21.mobile-ui-v17 .home-annual-date-v32{gap:6px!important}
+  body.app-v21.mobile-ui-v17 .home-annual-date-v32>.btn{min-height:40px!important;padding-top:8px!important;padding-bottom:8px!important}
+  body.app-v21.mobile-ui-v17 .home-annual-date-v32 .home-date-card-v12{flex:0 0 auto!important;height:auto!important;min-height:0!important;grid-template-columns:34px minmax(0,1fr)!important;gap:8px!important;padding:7px 10px!important;align-items:center!important}
+  body.app-v21.mobile-ui-v17 .home-date-icon-v12{width:34px!important;height:34px!important;border-radius:10px!important;font-size:19px!important}
+  body.app-v21.mobile-ui-v17 .home-date-caption-v12{margin-bottom:1px!important;font-size:10px!important;line-height:1.2!important}
+  body.app-v21.mobile-ui-v17 .home-date-value-v12{font-size:13px!important;line-height:1.3!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -2137,7 +2151,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260914-37').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260915-38').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -4347,10 +4361,11 @@ async function persistTaskStatusV18(task,next,{closeAfter=false}={}){
   const previous={status:task.status||'planned',actualComplete:task.actualComplete||null};
   applyTaskStatusFieldsV18(task,next);
   recalcLinks();
+  /* 상태 탭 이동과 HOME 집계는 네트워크 왕복을 기다리지 않고 즉시 반영한다. 저장 실패 시 아래 catch에서 원복한다. */
+  renderTaskTable();renderHome();
   try{
     await saveState({reason:next==='done'?'업무 완료 처리':'업무 상태 변경'});
     if(closeAfter)closeModal();
-    renderTaskTable();renderHome();
     toast(next==='done'?'업무를 완료했습니다.':'업무 상태를 저장했습니다.');
     return true;
   }catch(error){
@@ -5824,6 +5839,91 @@ window.addEventListener('resize',()=>requestAnimationFrame(applyCloudUiPreferenc
 window.addEventListener('orientationchange',()=>requestAnimationFrame(applyCloudUiPreferencesV33));
 window.addEventListener('popstate',()=>requestAnimationFrame(syncTaskViewUiV33));
 ensureTaskNavigationV33();applyCloudUiPreferencesV33();
+
+// ========================= APP V34 — compact HOME / completion priority / desktop sorting =========================
+function isTaskCompletedV34(task){return!!task&&(task.status==='done'||!!task.actualComplete)}
+const effectiveStatusV34Base=effectiveStatus;
+effectiveStatus=function(task){return isTaskCompletedV34(task)?'done':effectiveStatusV34Base(task)};
+
+window.v34TableSort=window.v34TableSort||{task:null,db:null};
+function desktopTableSortEnabledV34(){return typeof isMobileUiV17!=='function'||!isMobileUiV17()}
+function stableSortV34(rows,compare){
+  return rows.map((value,index)=>({value,index})).sort((a,b)=>compare(a.value,b.value)||a.index-b.index).map(item=>item.value);
+}
+function compareSortValueV34(a,b,direction='asc'){
+  const emptyA=a===null||a===undefined||a==='',emptyB=b===null||b===undefined||b==='';
+  if(emptyA||emptyB)return emptyA===emptyB?0:(emptyA?1:-1);
+  const result=typeof a==='number'&&typeof b==='number'?a-b:String(a).localeCompare(String(b),'ko',{numeric:true,sensitivity:'base'});
+  return direction==='desc'?-result:result;
+}
+function taskSortValuesV34(task,key){
+  if(key==='name')return[task.name||''];
+  if(key==='owner')return[task.owner||''];
+  if(key==='category')return[task.category||''];
+  if(key==='schedule')return[task.start||'',task.deadline||task.end||task.start||''];
+  if(key==='status')return[{planned:1,prep:2,progress:3,hold:4,overdue:5,done:6}[effectiveStatus(task)]||99,task.name||''];
+  return[];
+}
+function compareTaskRowsV34(a,b,sort=window.v34TableSort.task){
+  if(!sort)return 0;const av=taskSortValuesV34(a,sort.key),bv=taskSortValuesV34(b,sort.key);
+  for(let index=0;index<Math.max(av.length,bv.length);index++){const result=compareSortValueV34(av[index],bv[index],sort.direction);if(result)return result}
+  return 0;
+}
+function sortTaskRowsV34(rows){return!window.v34TableSort.task||!desktopTableSortEnabledV34()?rows:stableSortV34(rows,(a,b)=>compareTaskRowsV34(a,b))}
+
+function dbPeriodSortValuesV34(template={}){
+  const cycle=template.cycle||'none',months=[...new Set((template.cycleMonths||[]).map(Number).filter(month=>month>=1&&month<=12))].sort((a,b)=>a-b);
+  let representative=months[0]||0;
+  if(!representative&&cycle==='quarterly')representative=(Math.max(1,Math.min(4,Number(template.quarter)||1))-1)*3+1;
+  if(!representative&&cycle==='half')representative=(template.half==='second'||template.half==='하반기')?7:1;
+  if(!representative&&cycle==='yearly')representative=12;
+  if(!representative&&['weekly','monthly'].includes(cycle))representative=1;
+  const cycleOrder={weekly:1,monthly:2,quarterly:3,half:4,yearly:5,none:6}[cycle]||99;
+  return[representative||99,cycleOrder,Number(template.quarter)||0,(template.half==='second'||template.half==='하반기')?2:1];
+}
+function dbGroupSortValuesV34(row,key){
+  const root=row?.root||{},representative={name:root.name||row?.name||'',category:root.category||row?.category||'',owner:root.owner||''};
+  if(key==='name')return[representative.name];
+  if(key==='owner')return[representative.owner];
+  if(key==='category')return[representative.category];
+  if(key==='period')return[...dbPeriodSortValuesV34(root),representative.name];
+  return[];
+}
+function compareDbGroupsV34(a,b,sort=window.v34TableSort.db){
+  if(!sort)return 0;const av=dbGroupSortValuesV34(a.rows[0],sort.key),bv=dbGroupSortValuesV34(b.rows[0],sort.key);
+  for(let index=0;index<Math.max(av.length,bv.length);index++){const result=compareSortValueV34(av[index],bv[index],sort.direction);if(result)return result}
+  return 0;
+}
+function sortDbRowsV34(rows){
+  if(!window.v34TableSort.db||!desktopTableSortEnabledV34())return rows;
+  const groups=[],byRoot=new Map();
+  rows.forEach(row=>{const key=String(row?.root?.id||row?.ref||groups.length);let group=byRoot.get(key);if(!group){group={key,rows:[]};byRoot.set(key,group);groups.push(group)}group.rows.push(row)});
+  return stableSortV34(groups,(a,b)=>compareDbGroupsV34(a,b)).flatMap(group=>group.rows);
+}
+const taskListVisibleV34Base=taskListVisibleV33;
+function taskListVisibleV34(){return sortTaskRowsV34(taskListVisibleV34Base())}
+taskListVisibleV27=taskListVisibleV34;taskListVisibleV6=taskListVisibleV34;
+const dbVisibleRowsV34Base=dbVisibleRowsV10;
+dbVisibleRowsV10=function(){return sortDbRowsV34(dbVisibleRowsV34Base())};
+
+const TASK_SORT_HEADERS_V34={2:['category','대분류'],3:['name','업무명'],4:['owner','담당자'],6:['schedule','일정(시작일, 같으면 종료·마감일)'],8:['status','상태']};
+const DB_SORT_HEADERS_V34={2:['category','대분류'],3:['name','업무명'],4:['owner','담당자'],5:['period','진행월·분기·반기·수행주기']};
+function toggleTableSortV34(scope,key){
+  const current=window.v34TableSort[scope];window.v34TableSort[scope]={key,direction:current?.key===key&&current.direction==='asc'?'desc':'asc'};
+  if(scope==='task')renderTaskTable();else renderDbTable();
+}
+function decorateDesktopSortHeadersV34(scope,selector,definitions){
+  const headers=$$(`${selector} thead th`),enabled=desktopTableSortEnabledV34(),current=window.v34TableSort[scope];
+  headers.forEach(header=>{header.classList.remove('desktop-sortable-v34');header.removeAttribute('data-sort-key-v34');header.removeAttribute('aria-sort');header.removeAttribute('title');header.ondblclick=null;$('.table-sort-indicator-v34',header)?.remove()});
+  if(!enabled)return;
+  Object.entries(definitions).forEach(([index,[key,label]])=>{const header=headers[Number(index)];if(!header)return;header.classList.add('desktop-sortable-v34');header.dataset.sortKeyV34=key;header.title=`${label} 더블클릭 정렬`;header.setAttribute('aria-sort',current?.key===key?(current.direction==='asc'?'ascending':'descending'):'none');header.ondblclick=event=>{if(!desktopTableSortEnabledV34())return;event.preventDefault();toggleTableSortV34(scope,key)};if(current?.key===key)header.insertAdjacentHTML('beforeend',`<span class="table-sort-indicator-v34" aria-hidden="true">${current.direction==='asc'?'▲':'▼'}</span>`)})
+}
+const renderTaskTableV34Base=renderTaskTable;
+renderTaskTable=function(){const result=renderTaskTableV34Base();decorateDesktopSortHeadersV34('task','#taskListPage',TASK_SORT_HEADERS_V34);return result};
+const renderDbTableV34Base=renderDbTable;
+renderDbTable=function(){const result=renderDbTableV34Base();decorateDesktopSortHeadersV34('db','#dbPage',DB_SORT_HEADERS_V34);return result};
+window.addEventListener('resize',()=>requestAnimationFrame(()=>{decorateDesktopSortHeadersV34('task','#taskListPage',TASK_SORT_HEADERS_V34);decorateDesktopSortHeadersV34('db','#dbPage',DB_SORT_HEADERS_V34)}));
+window.addEventListener('orientationchange',()=>requestAnimationFrame(()=>{decorateDesktopSortHeadersV34('task','#taskListPage',TASK_SORT_HEADERS_V34);decorateDesktopSortHeadersV34('db','#dbPage',DB_SORT_HEADERS_V34)}));
 
 </script>
 </body></html>

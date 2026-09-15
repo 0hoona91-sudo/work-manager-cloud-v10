@@ -161,7 +161,7 @@ assert.match(v27Source, /state\.templates/, "이미 동기화된 업무DB 상태
 assert.match(html, /ROLLING_AUTO_MONTHS_V24=12/, "Rolling 12개월 기능을 유지해야 합니다.");
 assert.match(html, /HOME_FOCUS_META_V25/, "HOME 요약 기능을 유지해야 합니다.");
 assert.match(html, /APP V26 — mobile compact lists/, "모바일 컴팩트 UI를 유지해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-14-37/, "최신 Cloud UX 배포 캐시에서도 통합검색·과거이력이 유지되어야 합니다.");
-assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260914-37'\)/, "최신 Cloud UX 서비스워커 URL을 등록해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-15-38/, "최신 Cloud UX 배포 캐시에서도 통합검색·과거이력이 유지되어야 합니다.");
+assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260915-38'\)/, "최신 Cloud UX 서비스워커 URL을 등록해야 합니다.");
 
 console.log("PASS unified search and DB task history regression");

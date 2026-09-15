@@ -162,7 +162,7 @@ assert.doesNotMatch(cloud.slice(cloud.indexOf("function controller()"), cloud.in
 assert.match(rules, /match \/meta\/\{id\}[\s\S]*allow read, create, update, delete: if isOwner\(\)/, "현재 인증 소유자만 기존 meta 보조 문서를 사용할 수 있어야 합니다.");
 assert.match(html, /effectiveStatus\(old\)!=='done'[\s\S]*!old\.manualOverride/, "완료업무와 manualOverride 루트 삭제 보호를 유지해야 합니다.");
 assert.match(html, /effectiveStatus\(x\)!=='done'&&!x\.manualOverride&&!x\.scheduleOverride/, "완료·수동 연계업무 삭제 보호를 유지해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-14-37/, "최신 Cloud UX 서비스워커 캐시에서도 데이터 보호 기능을 유지해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-15-38/, "최신 Cloud UX 서비스워커 캐시에서도 데이터 보호 기능을 유지해야 합니다.");
 assert.match(html, /cloud-sync\.js\?v=20260913-33/, "새 클라우드 동기화 모듈 URL을 사용해야 합니다.");
 
 console.log("PASS stage 7 impact preview, trash restore, and template version regression");

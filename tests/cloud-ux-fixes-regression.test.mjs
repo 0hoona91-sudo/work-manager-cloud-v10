@@ -136,7 +136,7 @@ assert.match(html, /grid-template-columns:repeat\(var\(--nav-count-v33,7\)/, "�
 assert.match(html, /ROLLING_AUTO_MONTHS_V24=12/, "Rolling 12개월 기능을 유지해야 합니다.");
 assert.match(html, /APP V29 — impact preview \/ trash \/ template versions/, "휴지통·버전·영향 미리보기 계층을 유지해야 합니다.");
 assert.match(html, /APP V30 — template attachments \/ clone draft/, "Drive 관련자료와 업무DB 복제를 유지해야 합니다.");
-assert.match(serviceWorker, /work-manager-v10-shell-2026-09-14-37/, "최신 Cloud UX 서비스워커 캐시를 사용해야 합니다.");
-assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260914-37'\)/, "최신 서비스워커 URL을 등록해야 합니다.");
+assert.match(serviceWorker, /work-manager-v10-shell-2026-09-15-38/, "최신 Cloud UX 서비스워커 캐시를 사용해야 합니다.");
+assert.match(html, /navigator\.serviceWorker\.register\('\.\/sw\.js\?v=20260915-38'\)/, "최신 서비스워커 URL을 등록해야 합니다.");
 
 console.log("PASS Cloud UX preferences, task views, and date safeguards regression");
