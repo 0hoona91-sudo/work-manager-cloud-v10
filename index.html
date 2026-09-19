@@ -2157,7 +2157,7 @@ bind=function(){bindV2Original();const cm=$('#homeCalendarMonth');if(cm)cm.oncha
 const migrateStateV2Original=migrateStateV2;
 migrateStateV2=function(){migrateStateV2Original();state.settings=state.settings||{};state.settings.calendarMonth=state.settings.calendarMonth||todayISO().slice(0,7);const n=repairLegacyRepeatsV3();if(n)console.info('V3 repeat repair:',n)};
 
-(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260915-38').catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
+(async()=>{try{await loadState();migrateStateV2();initSelectors();bind();bindCloudUi();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings();await window.cloudSync?.activate({onRemote:()=>{renderCategoryMulti();renderHome();renderTaskTable();renderDbTable();renderHolidays();renderHistory();renderSettings()}});if('serviceWorker'in navigator&&location.protocol==='https:')navigator.serviceWorker.register('./sw.js?v=20260919-40',{updateViaCache:'none'}).then(reg=>reg.update()).catch(console.warn)}catch(err){console.error('앱 시작 실패',err)}})();
 
 // ========================= APP V4 OVERRIDES =========================
 function ganttWindowV4(selectedStart,selectedEnd,scale){
@@ -4359,7 +4359,13 @@ modal=function(title,body,footer='',cls=''){
 const closeModalV18Base=closeModal;
 closeModal=function(){
   const input=$('#relatedDocumentTitleV15'),task=input?.dataset.relatedTaskV35?state.tasks.find(item=>item.id===input.dataset.relatedTaskV35):null;
-  if(task)void flushRelatedDocumentV35(task).catch(error=>console.error('관련 공문 제목 마감 저장 실패',error));
+  if(task){
+    void flushRelatedDocumentV35(task).catch(error=>console.error('관련 공문 제목 마감 저장 실패',error));
+    if($('#modalRoot .checklist-task-modal-v18')&&effectiveStatus(task)!=='done'){
+      captureChecklistDialogV36(task);
+      void queueChecklistSaveV36(task).catch(error=>console.error('체크리스트 마감 저장 실패',error));
+    }
+  }
   setAppModalOpenV18(false);
   return closeModalV18Base();
 };
@@ -4429,6 +4435,23 @@ renderHome=function(){
   return result;
 };
 
+let checklistSaveQueueV36=Promise.resolve();
+function captureChecklistDialogV36(task){
+  if(!task)return task;
+  const root=$('#modalRoot .checklist-task-modal-v18')||$('#modalRoot');
+  $('[data-check]',root).forEach(input=>{
+    const item=task.checklist?.find(value=>value.id===input.dataset.check);
+    if(item)item.done=!!input.checked;
+  });
+  return task;
+}
+function queueChecklistSaveV36(task){
+  captureChecklistDialogV36(task);
+  const run=checklistSaveQueueV36.catch(()=>{}).then(()=>saveState({reason:'체크리스트 변경'}));
+  checklistSaveQueueV36=run;
+  return run;
+}
+
 openChecklist=function(id){
   const t=state.tasks.find(x=>x.id===id);if(!t)return;
   const checks=t.checklist||[],doneCount=checks.filter(c=>c.done).length,allDone=canCompleteTaskV18(t),alreadyDone=effectiveStatus(t)==='done';
@@ -4447,21 +4470,40 @@ openChecklist=function(id){
     const commitDocument=()=>{relatedDocumentComposingV35=false;void flushRelatedDocumentV35(t).catch(error=>console.error('관련 공문 제목 저장 실패',error))};
     docInput.onchange=commitDocument;docInput.onblur=commitDocument;
   }
-  $$('[data-check]').forEach(input=>input.onchange=async()=>{
+  $('[data-check]').forEach(input=>input.onchange=()=>{
     relatedDocumentComposingV35=false;flushRelatedDocumentV35(t,{save:false});
-    const item=t.checklist.find(value=>value.id===input.dataset.check);if(!item)return;
-    const previous=item.done;item.done=input.checked;
+    captureChecklistDialogV36(t);
     syncChecklistProgressV35(t);
-    try{await saveState({reason:'체크리스트 변경'})}
-    catch(error){item.done=previous;input.checked=previous;syncChecklistProgressV35(t);toast('체크 상태를 저장하지 못했습니다. 다시 시도해 주세요.')}
+    return queueChecklistSaveV36(t).catch(error=>{
+      console.error('체크리스트 저장 실패',error);
+      toast('체크 상태 저장이 지연되고 있습니다. 잠시 후 다시 확인해 주세요.');
+    });
   });
-  $('[data-edit-task]').onclick=async()=>{relatedDocumentComposingV35=false;try{await flushRelatedDocumentV35(t)}catch(error){toast('관련 공문 제목을 저장하지 못했습니다.');return}openTaskForm(id)};
+  $('[data-edit-task]').onclick=async()=>{
+    relatedDocumentComposingV35=false;flushRelatedDocumentV35(t,{save:false});
+    captureChecklistDialogV36(t);
+    try{
+      await queueChecklistSaveV36(t);
+      await flushRelatedDocumentV35(t);
+    }catch(error){toast('입력 내용을 저장하지 못했습니다. 다시 시도해 주세요.');return}
+    openTaskForm(id);
+  };
   const complete=$('#completeTask');
   if(complete)complete.onclick=async()=>{
-    if(complete.disabled)return;
     relatedDocumentComposingV35=false;flushRelatedDocumentV35(t,{save:false});
+    captureChecklistDialogV36(t);syncChecklistProgressV35(t);
+    if(!canCompleteTaskV18(t)){toast('체크리스트를 먼저 모두 완료해 주세요.');return}
+    if(effectiveStatus(t)==='done')return;
     complete.disabled=true;complete.textContent='저장 중…';
-    await persistTaskStatusV18(t,'done',{closeAfter:true});
+    try{
+      await queueChecklistSaveV36(t);
+      const saved=await persistTaskStatusV18(t,'done',{closeAfter:true});
+      if(!saved&&complete.isConnected){complete.disabled=false;complete.textContent='업무 완료'}
+    }catch(error){
+      console.error('체크리스트 완료 저장 실패',error);
+      if(complete.isConnected){complete.disabled=false;complete.textContent='업무 완료'}
+      toast('체크 상태를 저장하지 못했습니다. 다시 시도해 주세요.');
+    }
   };
 };
 
