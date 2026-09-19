@@ -2267,7 +2267,8 @@ function v5EnsureSettings(){
   // DB 반복업무는 비용 예측이 쉬운 Rolling 12개월로 고정한다.
   // 예전 설정값은 데이터 호환을 위해 남기되 더 긴 범위를 한꺼번에 만들지 않는다.
   state.settings.autoHorizonMonths=12;
-  // HOME 시각화는 간트 + 달력 나란히 보기로 고정한다. 예전 사용자 배치값은 더 이상 사용하지 않는다.\n  state.settings.homeLayout='split';
+  // HOME 시각화는 간트 + 달력 나란히 보기로 고정한다. 예전 사용자 배치값은 더 이상 사용하지 않는다.
+  state.settings.homeLayout='split';
   state.settings.suppressedAutoKeys=state.settings.suppressedAutoKeys||[];
   state.categories.forEach((c,i)=>{if(!state.settings.categoryColors[c])state.settings.categoryColors[c]=V5_PALETTE[i%V5_PALETTE.length]});
 }
