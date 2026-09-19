@@ -1147,7 +1147,7 @@ body.app-v21 .home-hero-v21 p{margin:8px 0 15px;color:#d4e3f3!important;font-siz
 .home-progress-ring-v21::before{content:"";position:absolute;inset:10px;border-radius:50%;background:#204672}
 .home-progress-value-v21{position:relative;z-index:1;font-size:29px;font-weight:900;letter-spacing:-.04em}.home-progress-value-v21 small{font-size:14px}.home-progress-label-v21{position:relative;z-index:1;margin-top:-34px;color:#bfd3ea;font-size:10px;font-weight:750}
 body.app-v21 #homePage .home-toolbar-v3{position:relative!important;top:auto!important;z-index:120!important;margin:0 0 14px!important;background:rgba(255,255,255,.96)!important}
-body.app-v21 #homePage .home-toolbar-v3::before{content:"보기 설정";align-self:center;margin-right:2px;color:#263b57;font-size:12px;font-weight:850}
+
 body.app-v21 .home-layout-control{background:#edf2f8!important;border-radius:11px!important}
 body.app-v21 .home-layout-control button.active{color:#285d9f!important}
 body.app-v21 .kpis{grid-template-columns:repeat(6,minmax(108px,1fr))!important;gap:10px!important;margin:0 0 14px!important}
@@ -1552,8 +1552,6 @@ button.db-health-row-v28{cursor:pointer}button.db-health-row-v28:hover{border-co
             <span>간트차트</span>
             <div class="gantt-heading-tools-v20">
               <span class="muted" id="visualRange"></span>
-              <select id="ganttMonthRangeV13" aria-label="오늘 전후 간트 표시 개월 수"><option value="1">± 1개월 보기</option><option value="2">± 2개월 보기</option><option value="3">± 3개월 보기</option><option value="4">± 4개월 보기</option><option value="5">± 5개월 보기</option><option value="6">± 6개월 보기</option><option value="7">± 7개월 보기</option><option value="8">± 8개월 보기</option><option value="9">± 9개월 보기</option><option value="10">± 10개월 보기</option><option value="11">± 11개월 보기</option><option value="12" selected>± 12개월 보기</option></select>
-              <div class="gantt-cycle-toggles-v13" role="group" aria-label="간트 반복업무 표시" title="연간 반복업무와 비반복 업무는 항상 표시됩니다."><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="weekly" aria-pressed="true">주간</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="monthly" aria-pressed="true">월간</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="quarterly" aria-pressed="true">분기</button><button type="button" class="gantt-cycle-toggle-v13 active" data-gantt-cycle-v13="half" aria-pressed="true">반기</button></div>
             </div>
           </div>
           <div class="panel-body"><div id="ganttView" class="gantt"></div></div>
@@ -1666,7 +1664,15 @@ function openDb(){return new Promise((res,rej)=>{const r=indexedDB.open(DBNAME,1
 async function readLocalState(){try{const db=await openDb();const tx=db.transaction('data','readonly');const req=tx.objectStore('data').get('state');const saved=await new Promise((res,rej)=>{req.onsuccess=()=>res(req.result||null);req.onerror=()=>rej(req.error)});db.close();return saved}catch(e){console.warn('로컬 데이터 확인 실패',e);return null}}
 async function writeLocalState(snapshot){try{const db=await openDb();const tx=db.transaction('data','readwrite');tx.objectStore('data').put(clone(snapshot),'state');await new Promise((res,rej)=>{tx.oncomplete=res;tx.onerror=()=>rej(tx.error)});db.close()}catch(e){console.warn('기기 캐시 저장 실패',e)}}
 async function loadState(){const saved=await readLocalState();window.__legacyStateSnapshot=saved?clone(saved):null;const cloud=await import('./js/cloud-sync.js?v=20260913-33');window.cloudSync=await cloud.bootstrapCloud({state,legacyState:saved})}
-async function saveState(meta={}){const snapshot=clone(state);await writeLocalState(snapshot);if(window.cloudSync)await window.cloudSync.save(snapshot,meta)}
+let localStateWriteQueueV36=Promise.resolve();
+function saveState(meta={}){
+  const snapshot=clone(state);
+  // 클라우드 큐에는 호출 즉시 넣어 빠른 연속 변경의 최신 스냅샷 순서를 보장하고,
+  // IndexedDB 쓰기는 호출 순서대로 직렬화해 오래된 로컬 스냅샷이 마지막에 남지 않게 한다.
+  const cloudSave=window.cloudSync?window.cloudSync.save(snapshot,meta):Promise.resolve();
+  localStateWriteQueueV36=localStateWriteQueueV36.catch(()=>{}).then(()=>writeLocalState(snapshot));
+  return Promise.all([localStateWriteQueueV36,cloudSave]).then(()=>undefined);
+}
 function seed(){state.categories=['소방','시설','행정','교육','회계','인사','복지','기타'];state.owners=['나영훈','관리소장','시설담당','경리담당'];state.holidays=clone(holidaySeed);state.templates=clone(sampleTemplates);state.tasks=clone(sampleTasks);state.selectedCategories=[]}
 
 function isHoliday(s){const d=dateOf(s);if(!d)return false;const wd=d.getDay();return wd===0||wd===6||state.holidays.some(h=>h.date===s)}
@@ -2261,7 +2267,7 @@ function v5EnsureSettings(){
   // DB 반복업무는 비용 예측이 쉬운 Rolling 12개월로 고정한다.
   // 예전 설정값은 데이터 호환을 위해 남기되 더 긴 범위를 한꺼번에 만들지 않는다.
   state.settings.autoHorizonMonths=12;
-  state.settings.homeLayout=state.settings.homeLayout||'split';
+  // HOME 시각화는 간트 + 달력 나란히 보기로 고정한다. 예전 사용자 배치값은 더 이상 사용하지 않는다.\n  state.settings.homeLayout='split';
   state.settings.suppressedAutoKeys=state.settings.suppressedAutoKeys||[];
   state.categories.forEach((c,i)=>{if(!state.settings.categoryColors[c])state.settings.categoryColors[c]=V5_PALETTE[i%V5_PALETTE.length]});
 }
@@ -2293,11 +2299,8 @@ function ensureV5Ui(){
   if($('#newTaskBtn'))$('#newTaskBtn').textContent='＋ 업무 작성';
   if($('#newDbBtn'))$('#newDbBtn').textContent='＋ DB 등록';
 
-  // HOME 배치는 상단의 나란히/간트만/달력만 조작부 한 곳에서만 바꾼다.
-  if($('#refreshHome')&&!$('#homeLayoutControl')){
-    $('#refreshHome').insertAdjacentHTML('beforebegin','<div class="home-layout-control" id="homeLayoutControl"><button data-v5layout="split">나란히</button><button data-v5layout="gantt">간트만</button><button data-v5layout="calendar">달력만</button></div>');
-  }
-  $$('[data-v5layout]').forEach(b=>b.onclick=()=>{state.settings.homeLayout=b.dataset.v5layout;applyHomeLayoutV5();saveState()});
+  // HOME 배치는 간트 + 달력 나란히 보기로 고정한다.
+  $('#homeLayoutControl')?.remove();
   applyHomeLayoutV5();
 
   // Settings: category colors and DB automation.
@@ -2332,12 +2335,10 @@ function ensureV5Ui(){
 }
 
 function applyHomeLayoutV5(){
-  const grid=$('#homeVisualGrid')||$('.home-top-grid-v3'); if(!grid)return;
-  const mode=state.settings.homeLayout||'split';
+  const grid=$('#homeVisualGrid')||$('.home-top-grid-v3');if(!grid)return;
+  state.settings.homeLayout='split';
   grid.classList.remove('mode-gantt','mode-calendar');
-  if(mode==='gantt')grid.classList.add('mode-gantt');
-  if(mode==='calendar')grid.classList.add('mode-calendar');
-  $$('#homeLayoutControl [data-v5layout]').forEach(b=>b.classList.toggle('active',b.dataset.v5layout===mode));
+  $('#homeLayoutControl')?.remove();
 }
 
 function renderCategoryColorsV5(){
@@ -4055,10 +4056,9 @@ setTimeout(()=>{ensureDbRegisterUiV10();renderDbTable();},140);
 const GANTT_FILTER_CYCLES_V13=['weekly','monthly','quarterly','half'];
 function ensureGanttFilterSettingsV13(){
   state.settings=state.settings||{};
-  const months=Number(state.settings.ganttMonthRangeV13);
-  state.settings.ganttMonthRangeV13=Number.isInteger(months)&&months>=1&&months<=12?months:12;
-  if(!Array.isArray(state.settings.ganttVisibleCyclesV13))state.settings.ganttVisibleCyclesV13=[...GANTT_FILTER_CYCLES_V13];
-  else state.settings.ganttVisibleCyclesV13=[...new Set(state.settings.ganttVisibleCyclesV13.filter(cycle=>GANTT_FILTER_CYCLES_V13.includes(cycle)))];
+  // HOME 보기설정 제거 후 기본값을 고정한다: 오늘 기준 ±12개월, 모든 반복주기 표시.
+  state.settings.ganttMonthRangeV13=12;
+  state.settings.ganttVisibleCyclesV13=[...GANTT_FILTER_CYCLES_V13];
 }
 function ganttFilterBoundsV13(anchor=todayISO()){
   ensureGanttFilterSettingsV13();
