@@ -1,4 +1,4 @@
-const CACHE_NAME = "work-manager-v10-shell-2026-09-15-38";
+const CACHE_NAME = "work-manager-v10-shell-2026-09-19-40";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -43,7 +43,10 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
-      const network = fetch(event.request).then((response) => {
+      const request = isAppAsset && event.request.mode === "navigate"
+        ? new Request(event.request, { cache: "no-store" })
+        : event.request;
+      const network = fetch(request).then((response) => {
         if (response.ok || response.type === "opaque") {
           const copy = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
